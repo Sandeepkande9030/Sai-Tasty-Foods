@@ -2,8 +2,7 @@
 // DJANGO BACKEND
 // ================================
 
-const API_URL = "https://backend-dl8i-jtago43vp-sandeepkande9030.vercel.app";
-
+const API_URL = "https://backend-dl8i.vercel.app";
 
 // ================================
 // CART
