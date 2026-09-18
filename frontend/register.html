@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Register - Sai Tasty Foods</title>
+
+<link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+<!-- Navigation Bar -->
+<header>
+
+    <div class="logo">
+        SAI TASTY FOODS
+    </div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Restaurants</a>
+        <a href="#">Offers</a>
+        <a href="login.html">Login</a>
+        <a href="cart.html">🛒 Cart</a>
+    </nav>
+
+</header>
+
+
+<!-- Register Section -->
+<section class="login-section">
+
+    <div class="login-container">
+
+        <h2>Create Account </h2>
+
+        <form id="registerForm">
+
+            <label for="name">Full Name</label>
+
+            <input
+                type="text"
+                id="registerName"
+                placeholder="Enter your name"
+                required
+            >
+
+
+            <label for="email">Email</label>
+
+            <input
+                type="email"
+                id="registerEmail"
+                placeholder="Enter your email"
+                required
+            >
+
+
+            <label for="password">Password</label>
+
+            <input
+                type="password"
+                id="registerPassword"
+                placeholder="Create a password"
+                required
+            >
+
+
+            <label for="confirmPassword">Confirm Password</label>
+
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm your password"
+                required
+            >
+
+
+            <button type="submit">
+                Create Account
+            </button>
+
+        </form>
+
+
+        <p id="registerMessage"></p>
+
+
+        <div class="register-link">
+
+            <p>
+                Already have an account?
+                <a href="login.html">Login</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script src="./script.js"></script>
+
+
+</body>
+
+</html>
