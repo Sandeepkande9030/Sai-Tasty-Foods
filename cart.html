@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Shopping Cart - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+    <!-- Header -->
+
+    <header>
+
+        <div class="logo">
+            SAI TASTY FOODS
+        </div>
+
+        <nav>
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="cart.html">
+                🛒 Cart
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- Cart -->
+
+    <section class="cart-section">
+
+        <h1>🛒 Your Cart</h1>
+
+
+        <!-- Cart Items -->
+
+        <div id="cartItems">
+
+        </div>
+
+
+        <!-- Cart Summary -->
+
+        <div class="cart-summary">
+
+            <h2>
+                Total:
+                <span id="totalPrice">₹0</span>
+            </h2>
+
+            <button onclick="checkout()">
+                Buy
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <script src="./script.js"></script>
+
+</body>
+
+</html>

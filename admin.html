@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="./admin.css">
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <h2>SAI TASTY FOODS</h2>
+
+        <p class="admin-label">
+            👨‍💼 Admin Panel
+        </p>
+
+        <a href="admin.html">🏠 Dashboard</a>
+
+        <a href="users.html">👥 Users</a>
+
+        <a href="restaurants.html">🍽️ Restaurants</a>
+
+        <a href="food-items.html">🍔 Food Items</a>
+
+        <a href="orders.html">📦 Orders</a>
+
+        <a href="payments.html">💳 Payments</a>
+        <button onclick="adminLogout()">
+            🚪 Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="admin-main">
+
+        <div class="admin-topbar">
+
+            <h1>Dashboard</h1>
+
+            <div>👨‍💼 Admin</div>
+
+        </div>
+
+
+        <!-- DASHBOARD CARDS -->
+
+        <div class="dashboard-cards">
+
+            <div class="dashboard-card">
+
+                <span>👥</span>
+
+                <h3>Total Users</h3>
+
+                <p id="totalUsers">0</p>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <span>🍔</span>
+
+                <h3>Food Items</h3>
+
+                <p id="totalFoods">12</p>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <span>📦</span>
+
+                <h3>Total Orders</h3>
+
+                <p id="totalOrders">0</p>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <span>💰</span>
+
+                <h3>Total Revenue</h3>
+
+                <p id="totalRevenue">₹0</p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ORDERS -->
+
+        <div class="orders-section">
+
+            <h2>Recent Orders</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Food</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="orderTable">
+
+                    <tr>
+
+                        <td colspan="5">
+                            No orders available
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+
+    <script src="./admin.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Users - Admin</title>
+
+    <link rel="stylesheet" href="./admin.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <h2>SAI TASTY FOODS</h2>
+
+        <p class="admin-label">
+            👨‍💼 Admin Panel
+        </p>
+
+        <a href="admin.html">🏠 Dashboard</a>
+
+        <a href="users.html">👥 Users</a>
+
+        <a href="restaurants.html">🍽️ Restaurants</a>
+
+        <a href="food-items.html">🍔 Food Items</a>
+
+        <a href="orders.html">📦 Orders</a>
+
+        <a href="payments.html">💳 Payments</a>
+
+        <button onclick="adminLogout()">
+            🚪 Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="admin-main">
+
+        <div class="admin-topbar">
+
+            <h1>Users</h1>
+
+            <div>👨‍💼 Admin</div>
+
+        </div>
+
+
+        <div class="orders-section">
+
+            <h2>Registered Users</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>S.No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="userTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+
+    <script src="./admin.js"></script>
+
+
+    <script>
+
+        // Get registered user
+
+        let userData =
+            localStorage.getItem("user");
+
+
+        let userTable =
+            document.getElementById("userTable");
+
+
+        if (userData) {
+
+            let user =
+                JSON.parse(userData);
+
+
+            userTable.innerHTML = `
+
+                <tr>
+
+                    <td>1</td>
+
+                    <td>${user.name}</td>
+
+                    <td>${user.email}</td>
+
+                    <td>Active</td>
+
+                </tr>
+
+            `;
+
+        } else {
+
+            userTable.innerHTML = `
+
+                <tr>
+
+                    <td colspan="4">
+                        No registered users found
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    </script>
+
+</body>
+
+</html>
