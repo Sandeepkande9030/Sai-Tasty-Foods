@@ -30,6 +30,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "backend-dl8i-eodo0sxgu-sandeepkande9030.vercel.app",
+    "backend-dl8i-q3m1dcg7n-sandeepkande9030.vercel.app",
+    "backend-dl8i-p709hodp1-sandeepkande9030.vercel.app",
+    "backend-dl8i.vercel.app",
     "localhost",
     "127.0.0.1",
 ]
