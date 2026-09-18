@@ -1,3 +1,9 @@
+// ================================
+// DJANGO BACKEND
+// ================================
+
+const API_URL = "https://backend-dl8i-jtago43vp-sandeepkande9030.vercel.app";
+
 
 // ================================
 // CART
@@ -269,61 +275,84 @@ let loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
 
-    loginForm.addEventListener("submit", function(event) {
+    loginForm.addEventListener("submit", async function(event) {
 
         event.preventDefault();
 
-        // Get entered values
         let email = document.getElementById("loginEmail").value;
         let password = document.getElementById("loginPassword").value;
 
-        // Get registered user
-        let user = JSON.parse(localStorage.getItem("user"));
-
         let loginMessage = document.getElementById("loginMessage");
 
+        loginMessage.textContent = "Logging in...";
+        loginMessage.style.color = "black";
 
-        // Check if account exists
-        if (!user) {
+        try {
+
+            let response = await fetch(
+                API_URL + "/api/login/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                }
+            );
+
+            let data = await response.json();
+
+            if (data.success) {
+
+                loginMessage.textContent =
+                    "Login successful";
+
+                loginMessage.style.color = "green";
+
+                // Save user information
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(data.user)
+                );
+
+                // Save login status
+                localStorage.setItem(
+                    "isLoggedIn",
+                    "true"
+                );
+
+                // Go to home page
+                setTimeout(function() {
+
+                    window.location.href = "index.html";
+
+                }, 1000);
+
+            } else {
+
+                loginMessage.textContent =
+                    data.message;
+
+                loginMessage.style.color = "red";
+            }
+
+        } catch (error) {
+
+            console.error("Login Error:", error);
 
             loginMessage.textContent =
-                "No account found. Please create an account.";
-
-            loginMessage.style.color = "red";
-
-            return;
-        }
-
-
-        // Check email and password
-        if (email === user.email && password === user.password) {
-
-            loginMessage.textContent =
-                "Login successful";
-
-            loginMessage.style.color = "green";
-
-
-            // Save login status
-            localStorage.setItem("isLoggedIn", "true");
-
-
-            // Go to home page
-            setTimeout(function() {
-
-                window.location.href = "index.html";
-
-            }, 1000);
-
-        } else {
-
-            loginMessage.textContent =
-                "Invalid email or password.";
+                "Unable to connect to Django server";
 
             loginMessage.style.color = "red";
         }
 
     });
+
 }
 
 // ================================
