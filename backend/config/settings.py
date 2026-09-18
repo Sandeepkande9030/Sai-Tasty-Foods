@@ -139,3 +139,5 @@ MAILERS = {
     },
 }
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = False
+CORS_URLS_REGEX = r"^/api/.*$"

@@ -206,64 +206,95 @@ function updateCartCount() {
 }
 
 updateCartCount();
-/* =========================
-REGISTER FUNCTION
-========================= */
+// =========================
+// REGISTER FUNCTION
+// =========================
 
 let registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
 
+    registerForm.addEventListener("submit", async function(event) {
 
-registerForm.addEventListener("submit", function(event) {
+        event.preventDefault();
 
-    event.preventDefault();
+        let name = document.getElementById("registerName").value;
+        let email = document.getElementById("registerEmail").value;
+        let password = document.getElementById("registerPassword").value;
+        let confirmPassword = document.getElementById("confirmPassword").value;
 
-    let name = document.getElementById("registerName").value;
-    let email = document.getElementById("registerEmail").value;
-    let password = document.getElementById("registerPassword").value;
-    let confirmPassword = document.getElementById("confirmPassword").value;
+        let registerMessage =
+            document.getElementById("registerMessage");
 
-    let registerMessage = document.getElementById("registerMessage");
+        // Check password
+        if (password !== confirmPassword) {
 
+            registerMessage.textContent =
+                "Passwords do not match!";
 
-    // Check passwords
-    if (password !== confirmPassword) {
+            registerMessage.style.color = "red";
 
-        registerMessage.textContent = "Passwords do not match!";
-        registerMessage.style.color = "red";
+            return;
+        }
 
-        return;
-    }
+        registerMessage.textContent =
+            "Creating account...";
 
+        registerMessage.style.color = "black";
 
-    // Create user object
-    let user = {
-        name: name,
-        email: email,
-        password: password
-    };
+        try {
 
+            let response = await fetch(
+                API_URL + "/api/register/",
+                {
+                    method: "POST",
 
-    // Save user
-    localStorage.setItem("user", JSON.stringify(user));
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
 
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password
+                    })
+                }
+            );
 
-    registerMessage.textContent =
-        "Account created successfully!";
+            let data = await response.json();
 
-    registerMessage.style.color = "green";
+            if (data.success) {
 
+                registerMessage.textContent =
+                    "Account created successfully!";
 
-    // Go to login page
-    setTimeout(function() {
+                registerMessage.style.color = "green";
 
-        window.location.href = "login.html";
+                setTimeout(function() {
 
-    }, 1000);
+                    window.location.href = "login.html";
 
-});
+                }, 1000);
 
+            } else {
+
+                registerMessage.textContent =
+                    data.message;
+
+                registerMessage.style.color = "red";
+            }
+
+        } catch (error) {
+
+            console.error("Register Error:", error);
+
+            registerMessage.textContent =
+                "Unable to connect to Django server";
+
+            registerMessage.style.color = "red";
+        }
+
+    });
 
 }
 /* =========================
@@ -445,7 +476,32 @@ function logoutUser() {
 // ================================
 
 showUserAccount();
+// ================================
+// SHOW CART ONLY AFTER LOGIN
+// ================================
 
+function showCartOnlyAfterLogin() {
+
+    let cartLink = document.getElementById("cartLink");
+
+    if (!cartLink) {
+        return;
+    }
+
+    let isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (isLoggedIn === "true") {
+
+        cartLink.style.display = "inline-block";
+
+    } else {
+
+        cartLink.style.display = "none";
+
+    }
+}
+
+showCartOnlyAfterLogin();
 
 
 
