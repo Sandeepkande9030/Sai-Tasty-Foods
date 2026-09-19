@@ -19,45 +19,47 @@
 
         
     <nav>
-        <a href="#">Home</a>
-        <a href="#">Restaurants</a>
-        <a href="#">Offers</a>
+    <a href="#">Home</a>
+    <a href="#">Restaurants</a>
+    <a href="#">Offers</a>
 
-        <a href="cart.html" class="cart-link">
-            🛒 Cart
-            <span id="cartCount" class="cart-badge">0</span>
-        </a>
+    <!-- CART - Hidden before login -->
+    <a href="cart.html" class="cart-link" id="cartLink" style="display: none;">
+        🛒 Cart
+        <span id="cartCount" class="cart-badge">0</span>
+    </a>
 
-        <!-- LOGIN -->
-        <a href="login.html" id="loginLink">Login</a>
+    <!-- LOGIN - Shown before login -->
+    <a href="login.html" id="loginLink">Login</a>
 
-        <!-- USER ACCOUNT -->
-        <div class="user-account" id="userAccount">
+    <!-- USER ACCOUNT - Hidden before login -->
+    <div class="user-account" id="userAccount" style="display: none;">
 
-            <button class="user-button" onclick="toggleUserMenu()">
-                👤 <span id="userName">User</span> ▼
-            </button>
+        <button class="user-button" onclick="toggleUserMenu()">
+            👤 <span id="userName">User</span> ▼
+        </button>
 
-            <div class="user-menu" id="userMenu">
+        <div class="user-menu" id="userMenu">
 
-                <div class="user-menu-name">
-                    👤 <span id="menuUserName">User</span>
-                </div>
-
-                <a href="account.html">My Account</a>
-
-                <a href="#">My Orders</a>
-
-                <button onclick="logoutUser()">
-                    Logout
-                </button>
-
+            <div class="user-menu-name">
+                👤 <span id="menuUserName">User</span>
             </div>
 
-        </div>
-        <a href="admin-login.html">Admin</a>
+            <a href="account.html">My Account</a>
 
-    </nav>
+            <a href="#">My Orders</a>
+
+            <button onclick="logoutUser()">
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ADMIN -->
+    <a href="admin-login.html" id="adminLink" style="display: none;">Admin</a>
+</nav>
 
 
 

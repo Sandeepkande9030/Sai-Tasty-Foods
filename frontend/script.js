@@ -1,4 +1,12 @@
 
+// ========================================
+// DJANGO BACKEND URL
+// ========================================
+
+const API_BASE_URL =
+    "https://backend-dl8i-eodo0sxgu-sandeepkande9030.vercel.app";
+
+
 // ================================
 // CART
 // ================================
@@ -13,16 +21,32 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 function addToCart(name, price) {
 
+    // Check login status
+    let isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    // If user is not logged in
+    if (isLoggedIn !== "true") {
+
+        alert("Please login first to add items to cart.");
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
     console.log("Add to Cart clicked:", name, price);
 
+    // Check whether item already exists
     let existingItem = cart.find(item => item.name === name);
 
     if (existingItem) {
 
+        // Increase quantity
         existingItem.quantity++;
 
     } else {
 
+        // Add new item
         cart.push({
             name: name,
             price: price,
@@ -33,13 +57,16 @@ function addToCart(name, price) {
 
     // Save cart
     localStorage.setItem("cart", JSON.stringify(cart));
+
+    // Update cart count
     updateCartCount();
 
+    // Show message
     alert(name + " added to cart");
 
+    // Display cart
     displayCart();
 }
-
 
 // ================================
 // DISPLAY CART
@@ -239,7 +266,7 @@ if (loginForm) {
         try {
 
             const response = await fetch(
-                "http://127.0.0.1:8000/api/login/",
+                `${API_BASE_URL}/api/login/`,
                 {
                     method: "POST",
 
@@ -316,7 +343,7 @@ if (loginForm) {
 
 }
 // ================================
-// USER ACCOUNT
+// USER ACCOUNT + CART VISIBILITY
 // ================================
 
 function showUserAccount() {
@@ -329,12 +356,17 @@ function showUserAccount() {
 
     let userAccount = document.getElementById("userAccount");
 
+    let cartLink = document.getElementById("cartLink");
+
     let userName = document.getElementById("userName");
 
     let menuUserName = document.getElementById("menuUserName");
 
 
-    // User is logged in
+    // ================================
+    // USER IS LOGGED IN
+    // ================================
+
     if (isLoggedIn === "true" && user) {
 
         // Hide Login
@@ -345,6 +377,11 @@ function showUserAccount() {
         // Show User Account
         if (userAccount) {
             userAccount.style.display = "block";
+        }
+
+        // Show Cart
+        if (cartLink) {
+            cartLink.style.display = "inline-block";
         }
 
         // Show user's name
@@ -358,15 +395,25 @@ function showUserAccount() {
 
     }
 
-    // User is not logged in
+    // ================================
+    // USER IS NOT LOGGED IN
+    // ================================
+
     else {
 
+        // Show Login
         if (loginLink) {
             loginLink.style.display = "block";
         }
 
+        // Hide User Account
         if (userAccount) {
             userAccount.style.display = "none";
+        }
+
+        // Hide Cart
+        if (cartLink) {
+            cartLink.style.display = "none";
         }
 
     }
@@ -386,7 +433,6 @@ function toggleUserMenu() {
     }
 }
 
-
 // ================================
 // LOGOUT
 // ================================
@@ -395,6 +441,9 @@ function logoutUser() {
 
     // Remove login status
     localStorage.removeItem("isLoggedIn");
+
+    // Remove logged-in user
+    localStorage.removeItem("currentUser");
 
     // Go back to home page
     window.location.href = "index.html";
