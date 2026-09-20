@@ -4,9 +4,7 @@
 // ========================================
 
 const API_BASE_URL =
-    "https://backend-dl8i-eodo0sxgu-sandeepkande9030.vercel.app";
-
-
+    "https://backend-dl8i.vercel.app";
 // ================================
 // CART
 // ================================
