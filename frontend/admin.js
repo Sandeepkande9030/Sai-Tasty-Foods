@@ -64,7 +64,7 @@ let users =
 
 
 // GET USERS FROM DJANGO + MYSQL
-fetch("http://127.0.0.1:8000/api/users/")
+fetch("https://backend-dl8i.vercel.app/api/users/")
     .then(response => response.json())
     .then(data => {
 
