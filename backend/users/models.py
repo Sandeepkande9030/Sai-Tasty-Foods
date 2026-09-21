@@ -1,10 +1,26 @@
 from django.db import models
 
 
+# =========================
+# USER MODEL
+# =========================
+
 class User(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)
+
+    # Email verification
+    is_verified = models.BooleanField(default=False)
+
+    # OTP
+    otp = models.CharField(max_length=6, blank=True, null=True)
+
+    # OTP creation time
+    otp_created_at = models.DateTimeField(
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.email

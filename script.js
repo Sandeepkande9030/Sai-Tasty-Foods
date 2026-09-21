@@ -403,8 +403,15 @@ function showUserAccount() {
 
     let menuUserName = document.getElementById("menuUserName");
 
+    let cartLink = document.getElementById("cartLink");
 
-    // User is logged in
+    let adminLink = document.getElementById("adminLink");
+
+
+    // ================================
+    // USER IS LOGGED IN
+    // ================================
+
     if (isLoggedIn === "true" && user) {
 
         // Hide Login
@@ -426,21 +433,49 @@ function showUserAccount() {
             menuUserName.textContent = user.name;
         }
 
+        // Show Cart
+        if (cartLink) {
+            cartLink.style.display = "inline-block";
+        }
+
+        // Keep Admin hidden
+        if (adminLink) {
+            adminLink.style.display = "none";
+        }
+
     }
 
-    // User is not logged in
+
+    // ================================
+    // USER IS NOT LOGGED IN
+    // ================================
+
     else {
 
+        // Show Login
         if (loginLink) {
             loginLink.style.display = "block";
         }
 
+        // Hide User Account
         if (userAccount) {
             userAccount.style.display = "none";
         }
 
+        // Hide Cart
+        if (cartLink) {
+            cartLink.style.display = "none";
+        }
+
+        // Hide Admin
+        if (adminLink) {
+            adminLink.style.display = "none";
+        }
+
     }
 }
+
+
 
 
 // ================================

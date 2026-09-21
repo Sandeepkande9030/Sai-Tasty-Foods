@@ -1,10 +1,9 @@
 
-// ========================================
+/// ========================================
 // DJANGO BACKEND URL
 // ========================================
 
-const API_BASE_URL =
-    "https://backend-dl8i.vercel.app";
+const API_BASE_URL = "http://127.0.0.1:8000";
 // ================================
 // CART
 // ================================
@@ -227,7 +226,8 @@ function updateCartCount() {
 
 updateCartCount();
 
-/// =====================================
+
+// =====================================
 // LOGIN USER - DJANGO + MYSQL
 // =====================================
 
@@ -283,8 +283,11 @@ if (loginForm) {
             const data = await response.json();
 
 
-            // Login successful
-            if (response.ok) {
+            // ================================
+            // LOGIN SUCCESS
+            // ================================
+
+            if (data.success === true) {
 
                 loginMessage.textContent =
                     data.message;
@@ -318,11 +321,16 @@ if (loginForm) {
 
             } else {
 
+                // ================================
+                // LOGIN FAILED
+                // ================================
+
                 loginMessage.textContent =
-                    data.error || "Invalid email or password.";
+                    data.message || "Login failed.";
 
                 loginMessage.style.color =
                     "red";
+
             }
 
 
@@ -340,6 +348,8 @@ if (loginForm) {
     });
 
 }
+
+
 // ================================
 // USER ACCOUNT + CART VISIBILITY
 // ================================
@@ -348,8 +358,7 @@ function showUserAccount() {
 
     let isLoggedIn = localStorage.getItem("isLoggedIn");
 
-    let user = JSON.parse(localStorage.getItem("currentUser"));
-
+    let user = JSON.parse(localStorage.getItem("currentUser") || "null");
     let loginLink = document.getElementById("loginLink");
 
     let userAccount = document.getElementById("userAccount");
@@ -454,34 +463,196 @@ function logoutUser() {
 
 showUserAccount();
     
+
 // =====================================
 // REGISTER USER - DJANGO + MYSQL
 // =====================================
 
-const registerForm = document.getElementById("registerForm");
+const registerForm =
+    document.getElementById("registerForm");
 
 if (registerForm) {
 
-    registerForm.addEventListener("submit", async function(event) {
+    registerForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const name =
+                document.getElementById("registerName").value.trim();
+
+            const email =
+                document.getElementById("registerEmail").value.trim();
+
+            const password =
+                document.getElementById("registerPassword").value;
+
+            const confirmPassword =
+                document.getElementById("confirmPassword").value;
+
+            const registerMessage =
+                document.getElementById("registerMessage");
+
+
+            // ================================
+            // CHECK PASSWORD
+            // ================================
+
+            if (password !== confirmPassword) {
+
+                registerMessage.textContent =
+                    "Passwords do not match.";
+
+                registerMessage.style.color = "red";
+
+                return;
+            }
+
+
+            // ================================
+            // SEND REGISTRATION TO DJANGO
+            // ================================
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE_URL}/api/register/`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+
+                const data =
+                    await response.json();
+
+
+                // ================================
+                // REGISTRATION SUCCESS
+                // ================================
+
+                if (response.ok && data.success === true) {
+
+                    registerMessage.textContent =
+                        data.message;
+
+                    registerMessage.style.color =
+                        "green";
+
+
+                    // Save email for OTP verification
+                    localStorage.setItem(
+                        "verificationEmail",
+                        data.email
+                    );
+
+
+                    // Clear registration form
+                    registerForm.reset();
+
+
+                    // Go to OTP verification page
+                    setTimeout(function() {
+
+                        window.location.href =
+                            "verify-otp.html";
+
+                    }, 1500);
+
+                }
+
+                // ================================
+                // REGISTRATION FAILED
+                // ================================
+
+                else {
+
+                    registerMessage.textContent =
+                        data.message ||
+                        "Registration failed.";
+
+                    registerMessage.style.color =
+                        "red";
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Registration Error:",
+                    error
+                );
+
+                registerMessage.textContent =
+                    "Unable to connect to server.";
+
+                registerMessage.style.color =
+                    "red";
+            }
+
+        }
+    );
+
+}
+
+// =====================================
+// VERIFY OTP - DJANGO + MYSQL
+// =====================================
+
+const verifyOtpForm = document.getElementById("verifyOtpForm");
+
+if (verifyOtpForm) {
+
+    verifyOtpForm.addEventListener("submit", async function(event) {
 
         event.preventDefault();
 
-        const name = document.getElementById("registerName").value.trim();
-        const email = document.getElementById("registerEmail").value.trim();
-        const password = document.getElementById("registerPassword").value;
-        const confirmPassword = document.getElementById("confirmPassword").value;
-        const registerMessage = document.getElementById("registerMessage");
+        const otp = document.getElementById("otp").value.trim();
 
-        // Check password
-        if (password !== confirmPassword) {
-            registerMessage.textContent = "Passwords do not match.";
+        const otpMessage =
+            document.getElementById("otpMessage");
+
+        // Get email saved during registration
+        const email =
+            localStorage.getItem("verificationEmail");
+
+        // Check email
+        if (!email) {
+
+            otpMessage.textContent =
+                "Email information not found. Please register again.";
+
+            otpMessage.style.color = "red";
+
+            return;
+        }
+
+        // Check OTP
+        if (!otp) {
+
+            otpMessage.textContent =
+                "Please enter the OTP.";
+
+            otpMessage.style.color = "red";
+
             return;
         }
 
         try {
 
             const response = await fetch(
-                `${API_BASE_URL}/api/register/`,
+                `${API_BASE_URL}/api/verify-otp/`,
                 {
                     method: "POST",
 
@@ -490,41 +661,136 @@ if (registerForm) {
                     },
 
                     body: JSON.stringify({
-                        name: name,
                         email: email,
-                        password: password
+                        otp: otp
                     })
                 }
             );
 
             const data = await response.json();
 
-            if (response.ok) {
+            if (response.ok && data.success) {
 
-                registerMessage.textContent = data.message;
+                otpMessage.textContent =
+                    data.message;
 
-                // Clear form
-                registerForm.reset();
+                otpMessage.style.color =
+                    "green";
 
-                // After successful registration
+                // Remove saved verification email
+                localStorage.removeItem(
+                    "verificationEmail"
+                );
+
+                // Go to login page
                 setTimeout(function() {
-                    window.location.href = "login.html";
+
+                    window.location.href =
+                        "login.html";
+
                 }, 1500);
 
             } else {
 
-                registerMessage.textContent =
-                    data.error || "Registration failed.";
+                otpMessage.textContent =
+                    data.message || "Invalid OTP.";
 
+                otpMessage.style.color =
+                    "red";
             }
 
         } catch (error) {
 
-            console.error("Registration Error:", error);
+            console.error(
+                "OTP Verification Error:",
+                error
+            );
 
-            registerMessage.textContent =
-                "Unable to connect to server.";
+            otpMessage.textContent =
+                "Unable to connect to Django server.";
 
+            otpMessage.style.color =
+                "red";
+        }
+
+    });
+
+}
+// =====================================
+// RESEND OTP
+// =====================================
+
+const resendOtpBtn =
+    document.getElementById("resendOtpBtn");
+
+if (resendOtpBtn) {
+
+    resendOtpBtn.addEventListener("click", async function() {
+
+        const email =
+            localStorage.getItem("verificationEmail");
+
+        const resendOtpMessage =
+            document.getElementById("resendOtpMessage");
+
+        if (!email) {
+
+            resendOtpMessage.textContent =
+                "Email information not found. Please register again.";
+
+            resendOtpMessage.style.color = "red";
+
+            return;
+        }
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE_URL}/api/resend-otp/`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (data.success === true) {
+
+                resendOtpMessage.textContent =
+                    "New OTP generated successfully. Check Django terminal.";
+
+                resendOtpMessage.style.color =
+                    "green";
+
+            } else {
+
+                resendOtpMessage.textContent =
+                    data.message || "Unable to resend OTP.";
+
+                resendOtpMessage.style.color =
+                    "red";
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Resend OTP Error:",
+                error
+            );
+
+            resendOtpMessage.textContent =
+                "Unable to connect to Django server.";
+
+            resendOtpMessage.style.color =
+                "red";
         }
 
     });
