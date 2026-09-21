@@ -796,3 +796,235 @@ if (resendOtpBtn) {
     });
 
 }
+
+// =========================
+// FORGOT PASSWORD
+// =========================
+
+let forgotPasswordForm =
+    document.getElementById("forgotPasswordForm");
+
+if (forgotPasswordForm) {
+
+    forgotPasswordForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            let email =
+                document.getElementById("forgotEmail").value.trim();
+
+            let forgotMessage =
+                document.getElementById("forgotMessage");
+
+            if (!email) {
+
+                forgotMessage.textContent =
+                    "Please enter your email.";
+
+                forgotMessage.style.color = "red";
+
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE_URL}/api/forgot-password/`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            email: email
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (data.success === true) {
+
+                    // Save email for next step
+                    localStorage.setItem(
+                        "resetEmail",
+                        email
+                    );
+
+                    forgotMessage.textContent =
+                        "OTP sent to your email.";
+
+                    forgotMessage.style.color = "green";
+
+                    // Go to OTP page
+                    setTimeout(function() {
+
+                        window.location.href =
+                            "reset-password.html";
+
+                    }, 1000);
+
+                } else {
+
+                    forgotMessage.textContent =
+                        data.message;
+
+                    forgotMessage.style.color = "red";
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Forgot Password Error:",
+                    error
+                );
+
+                forgotMessage.textContent =
+                    "Unable to connect to Django server.";
+
+                forgotMessage.style.color = "red";
+            }
+        }
+    );
+}
+// =========================
+// RESET PASSWORD
+// =========================
+
+let resetPasswordForm =
+    document.getElementById("resetPasswordForm");
+
+if (resetPasswordForm) {
+
+    resetPasswordForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            let otp =
+                document.getElementById("resetOtp").value.trim();
+
+            let newPassword =
+                document.getElementById("newPassword").value;
+
+            let confirmPassword =
+                document.getElementById("confirmPassword").value;
+
+            let resetMessage =
+                document.getElementById("resetMessage");
+
+            // Get email saved during forgot password
+            let email =
+                localStorage.getItem("resetEmail");
+
+            // Check email
+            if (!email) {
+
+                resetMessage.textContent =
+                    "Please start the forgot password process again.";
+
+                resetMessage.style.color = "red";
+
+                return;
+            }
+
+            // Check OTP
+            if (!otp) {
+
+                resetMessage.textContent =
+                    "Please enter the OTP.";
+
+                resetMessage.style.color = "red";
+
+                return;
+            }
+
+            // Check password
+            if (!newPassword) {
+
+                resetMessage.textContent =
+                    "Please enter a new password.";
+
+                resetMessage.style.color = "red";
+
+                return;
+            }
+
+            // Check confirm password
+            if (newPassword !== confirmPassword) {
+
+                resetMessage.textContent =
+                    "Passwords do not match.";
+
+                resetMessage.style.color = "red";
+
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE_URL}/api/reset-password/`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            email: email,
+                            otp: otp,
+                            new_password: newPassword
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (data.success === true) {
+
+                    resetMessage.textContent =
+                        "Password reset successfully.";
+
+                    resetMessage.style.color = "green";
+
+                    // Remove saved reset email
+                    localStorage.removeItem("resetEmail");
+
+                    // Go back to login
+                    setTimeout(function() {
+
+                        window.location.href =
+                            "login.html";
+
+                    }, 1500);
+
+                } else {
+
+                    resetMessage.textContent =
+                        data.message;
+
+                    resetMessage.style.color = "red";
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Reset Password Error:",
+                    error
+                );
+
+                resetMessage.textContent =
+                    "Unable to connect to Django server.";
+
+                resetMessage.style.color = "red";
+            }
+        }
+    );
+}

@@ -410,3 +410,210 @@ Sai Tasty Foods
         "success": False,
         "message": "Only POST method is allowed"
     })
+# =========================
+# FORGOT PASSWORD
+# =========================
+
+@csrf_exempt
+def forgot_password(request):
+
+    if request.method == "POST":
+
+        try:
+
+            data = json.loads(request.body)
+
+            email = data.get("email")
+
+            if not email:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Email is required"
+                })
+
+            # Find user
+            user = User.objects.filter(
+                email=email
+            ).first()
+
+            if not user:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Email not registered"
+                })
+
+            # Generate 6-digit OTP
+            otp = str(random.randint(100000, 999999))
+
+            print("PASSWORD RESET OTP:", otp, flush=True)
+
+            # Save OTP
+            user.otp = otp
+            user.otp_created_at = timezone.now()
+
+            user.save()
+
+            # =========================
+            # SEND PASSWORD RESET OTP
+            # =========================
+
+            send_mail(
+                subject="Sai Tasty Foods - Password Reset OTP",
+                message=f"""
+Hello {user.name},
+
+We received a request to reset your Sai Tasty Foods password.
+
+Your password reset OTP is:
+
+{otp}
+
+This OTP is valid for 5 minutes.
+
+If you did not request a password reset, please ignore this email.
+
+Regards,
+Sai Tasty Foods
+""",
+                from_email=None,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            print(
+                "PASSWORD RESET OTP EMAIL SENT SUCCESSFULLY",
+                flush=True
+            )
+
+            return JsonResponse({
+                "success": True,
+                "message": "Password reset OTP sent to your email.",
+                "email": email
+            })
+
+        except Exception as e:
+
+            print(
+                "FORGOT PASSWORD ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+                "success": False,
+                "message": str(e)
+            })
+
+    return JsonResponse({
+        "success": False,
+        "message": "Only POST method is allowed"
+    })
+    # =========================
+# RESET PASSWORD
+# =========================
+
+@csrf_exempt
+def reset_password(request):
+
+    if request.method == "POST":
+
+        try:
+
+            data = json.loads(request.body)
+
+            email = data.get("email")
+            otp = data.get("otp")
+            new_password = data.get("new_password")
+
+            # Check required fields
+            if not email or not otp or not new_password:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Email, OTP and new password are required"
+                })
+
+            # Find user
+            user = User.objects.filter(
+                email=email
+            ).first()
+
+            if not user:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "User not found"
+                })
+
+            # =========================
+            # OTP EXPIRY CHECK
+            # =========================
+
+            if not user.otp_created_at:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Please request a new OTP"
+                })
+
+            current_time = timezone.now()
+
+            time_difference = (
+                current_time - user.otp_created_at
+            ).total_seconds()
+
+            # OTP expires after 5 minutes
+            if time_difference > 300:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "OTP has expired. Please request a new OTP."
+                })
+
+            # =========================
+            # CHECK OTP
+            # =========================
+
+            if user.otp != otp:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Invalid OTP"
+                })
+
+            # =========================
+            # CHANGE PASSWORD
+            # =========================
+
+            user.password = new_password
+
+            # Clear OTP after successful reset
+            user.otp = None
+            user.otp_created_at = None
+
+            user.save()
+
+            return JsonResponse({
+                "success": True,
+                "message": "Password reset successfully"
+            })
+
+        except Exception as e:
+
+            print(
+                "RESET PASSWORD ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+                "success": False,
+                "message": str(e)
+            })
+
+    return JsonResponse({
+        "success": False,
+        "message": "Only POST method is allowed"
+    })

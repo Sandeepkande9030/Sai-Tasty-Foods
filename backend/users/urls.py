@@ -5,7 +5,9 @@ from .views import (
     login_user,
     get_users,
     verify_otp,
-    resend_otp
+    resend_otp,
+    forgot_password,
+    reset_password
 )
 
 
@@ -21,5 +23,10 @@ urlpatterns = [
     path("verify-otp/", verify_otp, name="verify_otp"),
     # Resend OTP
     path("resend-otp/", resend_otp, name="resend_otp"),
+    # Forgot password
+    path("forgot-password/", forgot_password, name="forgot_password"),
+    # Reset password
+    path("reset-password/", reset_password, name="reset_password"),
+
 
 ]
