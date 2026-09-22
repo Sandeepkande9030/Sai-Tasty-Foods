@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.core.mail import send_mail
-from .models import User
+from .models import User, Restaurant
 import json
 import random
 import os
@@ -617,4 +617,38 @@ def reset_password(request):
     return JsonResponse({
         "success": False,
         "message": "Only POST method is allowed"
+    })
+    # =========================
+# GET ALL RESTAURANTS
+# =========================
+
+def get_restaurants(request):
+
+    if request.method == "GET":
+
+        restaurants = Restaurant.objects.all().order_by("id")
+
+        restaurant_list = []
+
+        for restaurant in restaurants:
+
+            restaurant_list.append({
+                "id": restaurant.id,
+                "name": restaurant.name,
+                "image": restaurant.image,
+                "cuisine": restaurant.cuisine,
+                "rating": float(restaurant.rating),
+                "delivery_time": restaurant.delivery_time,
+                "location": restaurant.location,
+                "description": restaurant.description
+            })
+
+        return JsonResponse({
+            "success": True,
+            "restaurants": restaurant_list
+        })
+
+    return JsonResponse({
+        "success": False,
+        "message": "Only GET method is allowed"
     })

@@ -7,7 +7,8 @@ from .views import (
     verify_otp,
     resend_otp,
     forgot_password,
-    reset_password
+    reset_password,
+    get_restaurants
 )
 
 
@@ -27,6 +28,6 @@ urlpatterns = [
     path("forgot-password/", forgot_password, name="forgot_password"),
     # Reset password
     path("reset-password/", reset_password, name="reset_password"),
-
+    path("restaurants/", get_restaurants, name="get_restaurants"),
 
 ]
