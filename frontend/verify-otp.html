@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Verify Email - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+<!-- Navigation Bar -->
+<header>
+
+    <div class="logo">
+        SAI TASTY FOODS
+    </div>
+
+    <nav>
+
+        <a href="index.html">Home</a>
+
+        <a href="#">Restaurants</a>
+
+        <a href="#">Offers</a>
+
+        <a href="login.html">Login</a>
+
+    </nav>
+
+</header>
+
+
+<!-- OTP Verification Section -->
+<section class="login-section">
+
+    <div class="login-container">
+
+        <h2>Verify Your Email</h2>
+
+        <p>
+            Enter the OTP sent to your email.
+        </p>
+
+        <form id="verifyOtpForm">
+
+            <label for="otp">
+                Enter OTP
+            </label>
+
+            <input
+                type="text"
+                id="otp"
+                placeholder="Enter 6-digit OTP"
+                maxlength="6"
+                required
+            >
+
+            <button type="submit">
+                Verify OTP
+            </button>
+            <br><br>
+
+            <button type="button" id="resendOtpBtn">
+            Resend OTP
+            </button>
+
+<p id="resendOtpMessage"></p>
+
+        </form>
+
+        <p id="otpMessage"></p>
+
+    </div>
+
+</section>
+
+
+<script src="./script.js"></script>
+
+</body>
+
+</html>

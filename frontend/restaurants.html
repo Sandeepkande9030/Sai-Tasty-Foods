@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Restaurants - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+
+        <div class="logo">
+            SAI TASTY FOODS
+        </div>
+
+        <nav>
+
+            <a href="index.html">Home</a>
+
+            <a href="restaurants.html">Restaurants</a>
+
+            <a href="#">Offers</a>
+
+            <!-- CART -->
+            <a href="cart.html"
+               class="cart-link"
+               id="cartLink"
+               style="display: none;">
+
+                🛒 Cart
+
+                <span id="cartCount"
+                      class="cart-badge">0</span>
+
+            </a>
+
+            <!-- LOGIN -->
+            <a href="login.html"
+               id="loginLink">
+
+                Login
+
+            </a>
+
+            <!-- USER ACCOUNT -->
+            <div class="user-account"
+                 id="userAccount"
+                 style="display: none;">
+
+                <button class="user-button"
+                        onclick="toggleUserMenu()">
+
+                    👤 <span id="userName">User</span> ▼
+
+                </button>
+
+                <div class="user-menu"
+                     id="userMenu">
+
+                    <div class="user-menu-name">
+
+                        👤 <span id="menuUserName">User</span>
+
+                    </div>
+
+                    <a href="account.html">
+                        My Account
+                    </a>
+
+                    <a href="#">
+                        My Orders
+                    </a>
+
+                    <button onclick="logoutUser()">
+                        Logout
+                    </button>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <!-- Restaurant Section -->
+
+    <section class="food-section">
+
+        <h2>Restaurants</h2>
+
+        <p class="food-subtitle">
+            Explore our restaurants and order your favorite food
+        </p>
+
+
+        <!-- Restaurant Cards -->
+
+        <div class="food-container"
+             id="restaurantContainer">
+
+            <p>Loading restaurants...</p>
+
+        </div>
+
+    </section>
+
+
+    <!-- JavaScript -->
+
+    <script src="./script.js"></script>
+
+
+    <script>
+
+        // =========================
+        // LOAD RESTAURANTS
+        // =========================
+
+        async function loadRestaurants() {
+
+            const container =
+                document.getElementById("restaurantContainer");
+
+            try {
+
+                const response =
+                    await fetch(
+                        "https://backend-dl8i.vercel.app/api/restaurants/"
+                    );
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    container.innerHTML =
+                        "<p>Unable to load restaurants.</p>";
+
+                    return;
+                }
+
+
+                container.innerHTML = "";
+
+
+                data.restaurants.forEach(function(restaurant) {
+
+                    const card =
+                        document.createElement("div");
+
+                    card.className = "food-card";
+
+
+                    card.innerHTML = `
+
+                        <img
+                            src="${restaurant.image}"
+                            alt="${restaurant.name}"
+                        >
+
+                        <div class="food-info">
+
+                            <h3>
+                                ${restaurant.name}
+                            </h3>
+
+                            <p>
+                                ${restaurant.description}
+                            </p>
+
+                            <p>
+                                🍴 ${restaurant.cuisine}
+                            </p>
+
+                            <p>
+                                ⭐ ${restaurant.rating}
+                            </p>
+
+                            <p>
+                                🛵 ${restaurant.delivery_time}
+                            </p>
+
+                            <p>
+                                📍 ${restaurant.location}
+                            </p>
+
+                            <button
+                                onclick="viewRestaurant(${restaurant.id})">
+
+                                View Restaurant
+
+                            </button>
+
+                        </div>
+
+                    `;
+
+
+                    container.appendChild(card);
+
+                });
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                container.innerHTML =
+                    "<p>Unable to connect to server.</p>";
+
+            }
+
+        }
+
+
+        // =========================
+        // VIEW RESTAURANT
+        // =========================
+
+        function viewRestaurant(id) {
+
+             window.location.href =
+                "restaurant-details.html?id=" + id;
+
+        }
+
+
+        // LOAD RESTAURANTS
+        loadRestaurants();
+
+    </script>
+
+</body>
+
+</html>
