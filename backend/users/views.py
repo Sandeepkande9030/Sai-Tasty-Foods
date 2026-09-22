@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from .models import User
 import json
 import random
-
+import os
 
 # =========================
 # REGISTER USER
@@ -458,7 +458,8 @@ def forgot_password(request):
             # =========================
             # SEND PASSWORD RESET OTP
             # =========================
-
+            print("EMAIL USER:", os.getenv("EMAIL_HOST_USER"), flush=True)
+            print("EMAIL PASSWORD EXISTS:", bool(os.getenv("EMAIL_HOST_PASSWORD")), flush=True)
             send_mail(
                 subject="Sai Tasty Foods - Password Reset OTP",
                 message=f"""
