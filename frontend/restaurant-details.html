@@ -927,43 +927,110 @@ else if (restaurantId == "3") {
 }
         function addFoodToCart(name, price) {
 
-        let cart =
-            JSON.parse(localStorage.getItem("cart")) || [];
+    // =========================
+    // CHECK LOGIN
+    // =========================
 
-        let existingItem =
-            cart.find(function(item) {
+    let isLoggedIn =
+        localStorage.getItem("isLoggedIn");
 
-                return item.name === name;
+    if (isLoggedIn !== "true") {
 
-            });
+        alert("Please login first to add items to cart.");
 
+        window.location.href = "login.html";
 
-        if (existingItem) {
-
-            existingItem.quantity++;
-
-        } else {
-
-            cart.push({
-
-                name: name,
-                price: price,
-                quantity: 1
-
-            });
-
-        }
+        return;
+    }
 
 
-        localStorage.setItem(
-            "cart",
-            JSON.stringify(cart)
-        );
+    // =========================
+    // GET RESTAURANT ID
+    // =========================
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const restaurantId =
+        params.get("id");
 
 
-        alert(name + " added to cart!");
+    if (!restaurantId) {
+
+        alert("Restaurant information not found.");
+
+        return;
+    }
+
+
+    // =========================
+    // GET CART
+    // =========================
+
+    let cart =
+        JSON.parse(localStorage.getItem("cart")) || [];
+
+
+    // =========================
+    // CHECK EXISTING ITEM
+    // =========================
+
+    let existingItem =
+        cart.find(function(item) {
+
+            return (
+                item.name === name &&
+                item.restaurantId == restaurantId
+            );
+
+        });
+
+
+    // =========================
+    // INCREASE QUANTITY
+    // =========================
+
+    if (existingItem) {
+
+        existingItem.quantity++;
 
     }
+
+
+    // =========================
+    // ADD NEW ITEM
+    // =========================
+
+    else {
+
+        cart.push({
+
+            name: name,
+
+            price: price,
+
+            quantity: 1,
+
+            restaurantId: restaurantId
+
+        });
+
+    }
+
+
+    // =========================
+    // SAVE CART
+    // =========================
+
+    localStorage.setItem(
+        "cart",
+        JSON.stringify(cart)
+    );
+
+
+    alert(name + " added to cart!");
+
+}
         
         function goBack() {
 

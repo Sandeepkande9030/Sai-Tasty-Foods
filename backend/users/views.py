@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.core.mail import send_mail
-from .models import User, Restaurant
+from .models import User, Restaurant, Order, FoodItem
 import json
 import random
 import os
@@ -651,4 +651,399 @@ def get_restaurants(request):
     return JsonResponse({
         "success": False,
         "message": "Only GET method is allowed"
+    })
+    # =========================
+# PLACE ORDER
+# =========================
+
+@csrf_exempt
+def place_order(request):
+
+    if request.method == "POST":
+
+        try:
+
+            data = json.loads(request.body)
+
+            customer_name = data.get("customer_name")
+            customer_email = data.get("customer_email")
+            restaurant_id = data.get("restaurant_id")
+            items = data.get("items")
+            total_amount = data.get("total_amount")
+
+            # Check required fields
+            if not customer_name or not customer_email:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Customer details are required"
+                })
+
+            if not restaurant_id:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant is required"
+                })
+
+            if not items:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Order items are required"
+                })
+
+            # Find restaurant
+            restaurant = Restaurant.objects.filter(
+                id=restaurant_id
+            ).first()
+
+            if not restaurant:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant not found"
+                })
+
+            # Create order
+            order = Order.objects.create(
+                customer_name=customer_name,
+                customer_email=customer_email,
+                restaurant=restaurant,
+                items=json.dumps(items),
+                total_amount=total_amount,
+                status="Pending",
+                is_notified=False
+            )
+
+            return JsonResponse({
+                "success": True,
+                "message": "Order placed successfully",
+                "order": {
+                    "id": order.id,
+                    "restaurant": restaurant.name,
+                    "status": order.status
+                }
+            })
+
+        except Exception as e:
+
+            print("PLACE ORDER ERROR:", str(e), flush=True)
+
+            return JsonResponse({
+                "success": False,
+                "message": str(e)
+            })
+
+    return JsonResponse({
+        "success": False,
+        "message": "Only POST method is allowed"
+    })
+    # =========================
+# RESTAURANT NOTIFICATIONS
+# =========================
+
+@csrf_exempt
+def restaurant_notifications(request):
+
+    if request.method == "GET":
+
+        try:
+
+            restaurant_id = request.GET.get("restaurant_id")
+
+            if not restaurant_id:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant ID is required"
+                })
+
+
+            # Get new orders for this restaurant
+            orders = Order.objects.filter(
+                restaurant_id=restaurant_id,
+                is_notified=False
+            ).order_by("-created_at")
+
+
+            notification_list = []
+
+
+            for order in orders:
+
+                items = json.loads(order.items)
+
+                item_list = []
+
+                for item in items:
+
+                    item_name = item.get("name", "Unknown Item")
+                    quantity = item.get("quantity", 1)
+
+                    item_list.append(
+                        f"{item_name} x {quantity}"
+                    )
+
+
+                local_time = timezone.localtime(order.created_at)
+
+                notification_list.append({
+
+                    "id": order.id,
+
+                    "customer_name":
+                        order.customer_name,
+
+                    "items":
+                        item_list,
+
+                    "total_amount":
+                        str(order.total_amount),
+
+                    "status":
+                        order.status,
+
+                    "created_at":
+                        local_time.strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
+                })
+
+            return JsonResponse({
+
+                "success": True,
+
+                "count":
+                    len(notification_list),
+
+                "notifications":
+                    notification_list
+
+            })
+
+
+        except Exception as e:
+
+            print(
+                "NOTIFICATION ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message":
+                    str(e)
+
+            })
+
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message":
+            "Only GET method is allowed"
+
+    })
+    # =========================
+# RESTAURANT LOGIN
+# =========================
+
+@csrf_exempt
+def restaurant_login(request):
+
+    if request.method == "POST":
+
+        try:
+
+            data = json.loads(request.body)
+
+            email = data.get("email")
+            password = data.get("password")
+
+            # Check required fields
+            if not email or not password:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Email and password are required"
+                })
+
+            # Find restaurant
+            restaurant = Restaurant.objects.filter(
+                email=email,
+                password=password
+            ).first()
+
+            if restaurant:
+
+                return JsonResponse({
+
+                    "success": True,
+
+                    "message": "Restaurant login successful",
+
+                    "restaurant": {
+
+                        "id": restaurant.id,
+
+                        "name": restaurant.name,
+
+                        "email": restaurant.email
+
+                    }
+
+                })
+
+            else:
+
+                return JsonResponse({
+
+                    "success": False,
+
+                    "message": "Invalid restaurant email or password"
+
+                })
+
+        except Exception as e:
+
+            print(
+                "RESTAURANT LOGIN ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message": str(e)
+
+            })
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message": "Only POST method is allowed"
+
+    })
+    # =========================
+# ADD FOOD ITEM
+# =========================
+
+@csrf_exempt
+def add_food_item(request):
+
+    if request.method == "POST":
+
+        try:
+
+            data = json.loads(request.body)
+
+            restaurant_id = data.get("restaurant_id")
+            name = data.get("name")
+            description = data.get("description")
+            price = data.get("price")
+            image = data.get("image")
+
+            if not restaurant_id:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant ID is required"
+                })
+
+            if not name:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Food name is required"
+                })
+
+            if not price:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Food price is required"
+                })
+
+            restaurant = Restaurant.objects.filter(
+                id=restaurant_id
+            ).first()
+
+            if not restaurant:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant not found"
+                })
+
+            food_item = FoodItem.objects.create(
+
+                restaurant=restaurant,
+
+                name=name,
+
+                description=description or "",
+
+                price=price,
+
+                image=image or "",
+
+                is_available=True
+
+            )
+
+            return JsonResponse({
+
+                "success": True,
+
+                "message": "Food item added successfully",
+
+                "food_item": {
+
+                    "id": food_item.id,
+
+                    "restaurant_id":
+                        restaurant.id,
+
+                    "name":
+                        food_item.name,
+
+                    "description":
+                        food_item.description,
+
+                    "price":
+                        str(food_item.price),
+
+                    "image":
+                        food_item.image,
+
+                    "is_available":
+                        food_item.is_available
+
+                }
+
+            })
+
+        except Exception as e:
+
+            print(
+                "ADD FOOD ITEM ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message": str(e)
+
+            })
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message": "Only POST method is allowed"
+
     })

@@ -180,12 +180,13 @@ function removeItem(index) {
 }
 
 
-// ================================
-// CHECKOUT
-// ================================
+/// =========================
+// CHECKOUT / PLACE ORDER
+// =========================
 
-function checkout() {
+async function checkout() {
 
+    // Check cart
     if (cart.length === 0) {
 
         alert("Your cart is empty");
@@ -193,7 +194,195 @@ function checkout() {
         return;
     }
 
-    alert("Proceeding to Buy");
+
+    // =========================
+    // CHECK LOGIN
+    // =========================
+
+    let isLoggedIn =
+        localStorage.getItem("isLoggedIn");
+
+    if (isLoggedIn !== "true") {
+
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
+
+    // =========================
+    // GET CURRENT USER
+    // =========================
+
+    let currentUser =
+        JSON.parse(
+            localStorage.getItem("currentUser")
+        );
+
+
+    if (!currentUser) {
+
+        alert("User information not found.");
+
+        return;
+    }
+
+
+    // =========================
+    // CHECK RESTAURANT
+    // =========================
+
+    let restaurantId =
+        cart[0].restaurantId;
+
+
+    if (!restaurantId) {
+
+        alert(
+            "Restaurant information is missing. Please add the food again from the restaurant page."
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // MAKE SURE ALL ITEMS
+    // ARE FROM SAME RESTAURANT
+    // =========================
+
+    let sameRestaurant =
+        cart.every(function(item) {
+
+            return item.restaurantId == restaurantId;
+
+        });
+
+
+    if (!sameRestaurant) {
+
+        alert(
+            "Please order items from one restaurant at a time."
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // CALCULATE TOTAL
+    // =========================
+
+    let totalAmount = 0;
+
+
+    cart.forEach(function(item) {
+
+        totalAmount +=
+            Number(item.price) *
+            Number(item.quantity);
+
+    });
+
+
+    // =========================
+    // SEND ORDER TO DJANGO
+    // =========================
+
+    try {
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/api/place-order/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        customer_name:
+                            currentUser.name,
+
+                        customer_email:
+                            currentUser.email,
+
+                        restaurant_id:
+                            restaurantId,
+
+                        items:
+                            cart,
+
+                        total_amount:
+                            totalAmount
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        // =========================
+        // ORDER SUCCESS
+        // =========================
+
+        if (data.success) {
+
+            alert(
+                "Order placed successfully!"
+            );
+
+
+            // Clear cart
+            localStorage.removeItem("cart");
+
+
+            // Update global cart
+            cart = [];
+
+
+            // Go to home
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        // =========================
+        // ORDER FAILED
+        // =========================
+
+        else {
+
+            alert(
+                data.message ||
+                "Unable to place order."
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "PLACE ORDER ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to connect to server."
+        );
+
+    }
 
 }
 

@@ -8,7 +8,11 @@ from .views import (
     resend_otp,
     forgot_password,
     reset_password,
-    get_restaurants
+    get_restaurants,
+    place_order,
+    restaurant_notifications,
+    restaurant_login,
+    add_food_item
 )
 
 
@@ -29,5 +33,22 @@ urlpatterns = [
     # Reset password
     path("reset-password/", reset_password, name="reset_password"),
     path("restaurants/", get_restaurants, name="get_restaurants"),
+    path("place-order/", place_order, name="place_order"),
+    path(
+    "restaurant-notifications/",
+    restaurant_notifications,
+    name="restaurant_notifications"
+    ),
+    path(
+        "restaurant-login/",
+        restaurant_login,
+        name="restaurant_login"
+    ),
+    path(
+        "add-food-item/",
+        add_food_item,
+        name="add_food_item"
+    ),
+
 
 ]

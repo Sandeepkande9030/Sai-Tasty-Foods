@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Restaurant Login - Sai Tasty Foods</title>
+
+    <link rel="stylesheet"
+          href="./style.css">
+
+    <style>
+
+        .restaurant-login-section {
+            min-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .restaurant-login-box {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .restaurant-login-box h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .restaurant-login-box input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .restaurant-login-box button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #e63946;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .restaurant-login-box button:hover {
+            opacity: 0.9;
+        }
+
+        #loginMessage {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <header>
+
+        <div class="logo">
+            SAI TASTY FOODS
+        </div>
+
+    </header>
+
+
+    <section class="restaurant-login-section">
+
+        <div class="restaurant-login-box">
+
+            <h1>
+                Restaurant Login
+            </h1>
+
+
+            <input
+                type="email"
+                id="restaurantEmail"
+                placeholder="Restaurant Email"
+            >
+
+
+            <input
+                type="password"
+                id="restaurantPassword"
+                placeholder="Password"
+            >
+
+
+            <button onclick="restaurantLogin()">
+                Login
+            </button>
+
+
+            <p id="loginMessage"></p>
+
+        </div>
+
+    </section>
+
+
+    <script>
+
+        const API_BASE_URL =
+            "https://backend-dl8i.vercel.app";
+        async function restaurantLogin() {
+
+            const email =
+                document.getElementById(
+                    "restaurantEmail"
+                ).value.trim();
+
+            const password =
+                document.getElementById(
+                    "restaurantPassword"
+                ).value.trim();
+
+            const message =
+                document.getElementById(
+                    "loginMessage"
+                );
+
+
+            if (!email || !password) {
+
+                message.textContent =
+                    "Please enter email and password.";
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        API_BASE_URL +
+                        "/api/restaurant-login/",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                email: email,
+
+                                password: password
+
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (data.success) {
+
+                    localStorage.setItem(
+                        "restaurantLoggedIn",
+                        "true"
+                    );
+
+                    localStorage.setItem(
+                        "restaurantId",
+                        data.restaurant.id
+                    );
+
+                    localStorage.setItem(
+                        "restaurantName",
+                        data.restaurant.name
+                    );
+
+                    window.location.href =
+                        "restaurant-dashboard.html";
+
+                }
+                else {
+
+                    message.textContent =
+                        data.message;
+
+                }
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                message.textContent =
+                    "Unable to connect to server.";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
