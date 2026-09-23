@@ -295,7 +295,7 @@ async function checkout() {
 
         const response =
             await fetch(
-                "http://127.0.0.1:8000/api/place-order/",
+                `${API_BASE_URL}/api/place-order/`,
                 {
                     method: "POST",
 
