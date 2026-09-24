@@ -306,8 +306,8 @@
         </button>
 
 
-        <button onclick="showSection('notifications')">
-            🔔 Notifications
+        <button onclick="openNotifications()">
+        🔔 Notifications
         </button>
         <button onclick="showSection('pendingOrders')">
             ⏳ Pending Orders
@@ -361,7 +361,7 @@
 
             <button
                 class="notification-button"
-                onclick="showSection('notifications')">
+                onclick="openNotifications()">
 
                 🔔
 
@@ -699,6 +699,7 @@
 
 const API_BASE_URL =
     "https://backend-dl8i.vercel.app";
+    let notificationsOpen = false;
 // =========================
 // RESTAURANT LOGIN CHECK
 // =========================
@@ -728,6 +729,7 @@ if (restaurantLoggedIn !== "true") {
 // =========================
 
 function showSection(section) {
+    notificationsOpen = (section === "notifications");
 
 
     document.getElementById(
@@ -752,6 +754,10 @@ function showSection(section) {
 
     document.getElementById(
         "profileSection"
+    ).style.display = "none";
+
+    document.getElementById(
+    "pendingOrdersSection"
     ).style.display = "none";
 
 
@@ -800,6 +806,26 @@ function showSection(section) {
         ).style.display = "block";
 
     }
+    if (section === "pendingOrders") {
+
+    document.getElementById(
+        "pendingOrdersSection"
+    ).style.display = "block";
+
+    }
+
+}
+// =========================
+// OPEN NOTIFICATIONS
+// =========================
+
+async function openNotifications() {
+
+    // First open notification section
+    showSection("notifications");
+
+    // Mark current notifications as viewed
+    await markNotificationsViewed();
 
 }
 
@@ -929,31 +955,29 @@ async function loadNotifications() {
 
         if (notificationData.count > 0) {
 
-            badge.textContent =
-                notificationData.count;
+        badge.textContent =
+            notificationData.count;
 
-            badge.style.display =
-                "flex";
+        badge.style.display =
+            "flex";
 
-        }
+}
 
-        else {
+else {
 
-            badge.style.display =
-                "none";
+    badge.style.display =
+        "none";
 
-        }
-
+}
 
         // =================================
         // NEW ORDERS COUNT
         // =================================
 
         document.getElementById(
-            "newOrders"
+        "newOrders"
         ).textContent =
-            notificationData.count;
-
+        notificationData.count;
 
         // =================================
         // DISPLAY NOTIFICATIONS
@@ -965,20 +989,26 @@ async function loadNotifications() {
             );
 
 
-        if (
+                if (
             notificationData.notifications.length === 0
-        ) {
+            ) {
 
-            notificationContainer.innerHTML = `
+            // Do not remove existing notifications
+            // while Notifications section is open.
 
-                <p class="no-orders">
-                    No new notifications.
-                </p>
+            if (!notificationsOpen) {
 
-            `;
+                notificationContainer.innerHTML = `
+
+                    <p class="no-orders">
+                        No new notifications.
+                    </p>
+
+                `;
+
+            }
 
         }
-
         else {
 
             notificationContainer.innerHTML = "";
@@ -1053,6 +1083,7 @@ async function loadNotifications() {
             );
 
         }
+        
 
 
         // =================================
@@ -1335,6 +1366,70 @@ async function loadNotifications() {
 
         console.error(
             "NOTIFICATION / ORDERS ERROR:",
+            error
+        );
+
+    }
+
+}
+// =========================
+// MARK NOTIFICATIONS VIEWED
+// =========================
+
+async function markNotificationsViewed() {
+
+    if (!restaurantId) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE_URL +
+                "/api/mark-notifications-viewed/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        restaurant_id:
+                            restaurantId
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            // Clear New Orders count
+            document.getElementById(
+                "newOrders"
+            ).textContent = "0";
+
+            // Hide notification badge
+            const badge =
+                document.getElementById(
+                    "notificationBadge"
+                );
+
+            badge.textContent = "0";
+            badge.style.display = "none";
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "MARK NOTIFICATIONS ERROR:",
             error
         );
 

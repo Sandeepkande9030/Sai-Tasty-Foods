@@ -7,7 +7,6 @@ from .models import User, Restaurant, Order, FoodItem
 import json
 import random
 import os
-import traceback
 
 # =========================
 # REGISTER USER
@@ -848,6 +847,79 @@ def restaurant_notifications(request):
 
     })
     # =========================
+# MARK NOTIFICATIONS VIEWED
+# =========================
+
+@csrf_exempt
+def mark_notifications_viewed(request):
+
+    if request.method == "POST":
+
+        try:
+
+            data = json.loads(request.body)
+
+            restaurant_id = data.get(
+                "restaurant_id"
+            )
+
+            if not restaurant_id:
+
+                return JsonResponse({
+                    "success": False,
+                    "message":
+                        "Restaurant ID is required"
+                })
+
+
+            updated_count = Order.objects.filter(
+                restaurant_id=restaurant_id,
+                is_notified=False
+            ).update(
+                is_notified=True
+            )
+
+
+            return JsonResponse({
+
+                "success": True,
+
+                "message":
+                    "Notifications marked as viewed",
+
+                "updated_count":
+                    updated_count
+
+            })
+
+
+        except Exception as e:
+
+            print(
+                "MARK NOTIFICATIONS VIEWED ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message":
+                    str(e)
+
+            })
+
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message":
+            "Only POST method is allowed"
+
+    })
+    # =========================
 # RESTAURANT LOGIN
 # =========================
 
@@ -1149,7 +1221,6 @@ def get_all_orders(request):
                 str(e),
                 flush=True
             )
-            traceback.print_exc()
 
             return JsonResponse({
 
@@ -1166,72 +1237,5 @@ def get_all_orders(request):
 
         "message":
             "Only GET method is allowed"
-
-    })
-    # =========================
-# MARK RESTAURANT NOTIFICATIONS AS VIEWED
-# =========================
-
-@csrf_exempt
-def mark_notifications_viewed(request):
-
-    if request.method == "POST":
-
-        try:
-
-            data = json.loads(request.body)
-
-            restaurant_id = data.get("restaurant_id")
-
-            if not restaurant_id:
-
-                return JsonResponse({
-                    "success": False,
-                    "message": "Restaurant ID is required"
-                })
-
-            # Mark all unread orders as viewed
-            updated_count = Order.objects.filter(
-                restaurant_id=restaurant_id,
-                is_notified=False
-            ).update(
-                is_notified=True
-            )
-
-            return JsonResponse({
-
-                "success": True,
-
-                "message":
-                    "Notifications marked as viewed",
-
-                "updated_count":
-                    updated_count
-
-            })
-
-        except Exception as e:
-
-            print(
-                "MARK NOTIFICATIONS VIEWED ERROR:",
-                str(e),
-                flush=True
-            )
-
-            return JsonResponse({
-
-                "success": False,
-
-                "message":
-                    str(e)
-
-            })
-
-    return JsonResponse({
-
-        "success": False,
-
-        "message":
-            "Only POST method is allowed"
 
     })
