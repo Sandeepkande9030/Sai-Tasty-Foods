@@ -12,7 +12,9 @@ from .views import (
     place_order,
     restaurant_notifications,
     restaurant_login,
-    add_food_item
+    add_food_item,
+    get_all_orders,
+    mark_notifications_viewed
 )
 
 
@@ -48,6 +50,16 @@ urlpatterns = [
         "add-food-item/",
         add_food_item,
         name="add_food_item"
+    ),
+    path(
+    "all-orders/",
+    get_all_orders,
+    name="get_all_orders"
+    ),
+    path(
+    "mark-notifications-viewed/",
+    mark_notifications_viewed,
+    name="mark_notifications_viewed"
     ),
 
 

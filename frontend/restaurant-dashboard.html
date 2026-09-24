@@ -309,6 +309,10 @@
         <button onclick="showSection('notifications')">
             🔔 Notifications
         </button>
+        <button onclick="showSection('pendingOrders')">
+            ⏳ Pending Orders
+        </button>
+
 
 
         <button onclick="showSection('profile')">
@@ -627,6 +631,28 @@
         </div>
 
     </section>
+    <!-- =========================
+     PENDING ORDERS SECTION
+    ========================= -->
+
+        <section
+            id="pendingOrdersSection"
+            class="content-section"
+            style="display:none;">
+
+            <h2>
+                ⏳ Pending Orders
+            </h2>
+
+            <div id="pendingOrdersContainer">
+
+                <p class="no-orders">
+                    Loading pending orders...
+                </p>
+
+            </div>
+
+        </section>
 
 
     <!-- =========================
@@ -855,7 +881,7 @@ async function loadRestaurantName() {
 
 
 // =========================
-// LOAD NOTIFICATIONS
+// LOAD NOTIFICATIONS + ALL ORDERS
 // =========================
 
 async function loadNotifications() {
@@ -864,34 +890,36 @@ async function loadNotifications() {
         return;
     }
 
-
     try {
 
-        const response =
+        // =================================
+        // 1. GET UNREAD NOTIFICATIONS
+        // =================================
+
+        const notificationResponse =
             await fetch(
                 API_BASE_URL +
                 "/api/restaurant-notifications/?restaurant_id=" +
                 restaurantId
             );
 
+        const notificationData =
+            await notificationResponse.json();
 
-        const data =
-            await response.json();
 
-
-        if (!data.success) {
+        if (!notificationData.success) {
 
             console.error(
-                data.message
+                notificationData.message
             );
 
             return;
         }
 
 
-        // =========================
-        // BADGE
-        // =========================
+        // =================================
+        // NOTIFICATION BADGE
+        // =================================
 
         const badge =
             document.getElementById(
@@ -899,10 +927,10 @@ async function loadNotifications() {
             );
 
 
-        if (data.count > 0) {
+        if (notificationData.count > 0) {
 
             badge.textContent =
-                data.count;
+                notificationData.count;
 
             badge.style.display =
                 "flex";
@@ -917,19 +945,19 @@ async function loadNotifications() {
         }
 
 
-        // =========================
-        // DASHBOARD COUNTS
-        // =========================
+        // =================================
+        // NEW ORDERS COUNT
+        // =================================
 
         document.getElementById(
             "newOrders"
         ).textContent =
-            data.count;
+            notificationData.count;
 
 
-        // =========================
-        // NOTIFICATION DISPLAY
-        // =========================
+        // =================================
+        // DISPLAY NOTIFICATIONS
+        // =================================
 
         const notificationContainer =
             document.getElementById(
@@ -937,7 +965,9 @@ async function loadNotifications() {
             );
 
 
-        if (data.notifications.length === 0) {
+        if (
+            notificationData.notifications.length === 0
+        ) {
 
             notificationContainer.innerHTML = `
 
@@ -954,7 +984,7 @@ async function loadNotifications() {
             notificationContainer.innerHTML = "";
 
 
-            data.notifications.forEach(
+            notificationData.notifications.forEach(
                 function(order) {
 
                     const card =
@@ -979,11 +1009,16 @@ async function loadNotifications() {
                             </strong>
                             ${order.customer_name}
                         </p>
+
                         <p>
                             <strong>
                                 Food:
                             </strong>
-                            ${order.items ? order.items.join(", ") : "No food details"}
+                            ${
+                                order.items
+                                ? order.items.join(", ")
+                                : "No food details"
+                            }
                         </p>
 
                         <p>
@@ -1020,9 +1055,72 @@ async function loadNotifications() {
         }
 
 
-        // =========================
-        // ORDERS DISPLAY
-        // =========================
+        // =================================
+        // 2. GET ALL ORDERS
+        // =================================
+
+        const ordersResponse =
+            await fetch(
+                API_BASE_URL +
+                "/api/all-orders/?restaurant_id=" +
+                restaurantId
+            );
+
+
+        const ordersData =
+            await ordersResponse.json();
+
+
+        if (!ordersData.success) {
+
+            console.error(
+                "ALL ORDERS ERROR:",
+                ordersData.message
+            );
+
+            return;
+        }
+
+
+        const allOrders =
+            ordersData.orders || [];
+
+
+        // =================================
+        // TOTAL ORDERS
+        // =================================
+
+        document.getElementById(
+            "totalOrders"
+        ).textContent =
+            allOrders.length;
+
+
+        // =================================
+        // PENDING ORDERS COUNT
+        // =================================
+
+        const pendingOrders =
+            allOrders.filter(
+                function(order) {
+
+                    return (
+                        order.status === "Pending"
+                    );
+
+                }
+            );
+
+
+        document.getElementById(
+            "pendingOrders"
+        ).textContent =
+            pendingOrders.length;
+
+
+        // =================================
+        // DISPLAY ALL ORDERS
+        // =================================
 
         const ordersContainer =
             document.getElementById(
@@ -1033,12 +1131,12 @@ async function loadNotifications() {
         ordersContainer.innerHTML = "";
 
 
-        if (data.notifications.length === 0) {
+        if (allOrders.length === 0) {
 
             ordersContainer.innerHTML = `
 
                 <p class="no-orders">
-                    No new orders.
+                    No orders found.
                 </p>
 
             `;
@@ -1047,7 +1145,7 @@ async function loadNotifications() {
 
         else {
 
-            data.notifications.forEach(
+            allOrders.forEach(
                 function(order) {
 
                     const orderCard =
@@ -1072,12 +1170,26 @@ async function loadNotifications() {
                             </strong>
                             ${order.customer_name}
                         </p>
+
                         <p>
                             <strong>
                                 Food:
                             </strong>
-                            ${order.items ? order.items.join(", ") : "No food details"}
+                            ${
+                                order.items
+                                ? order.items.map(
+                                    function(item) {
+                                        return (
+                                            item.name +
+                                            " × " +
+                                            item.quantity
+                                        );
+                                    }
+                                ).join(", ")
+                                : "No food details"
+                            }
                         </p>
+
                         <p>
                             <strong>
                                 Total:
@@ -1112,37 +1224,123 @@ async function loadNotifications() {
         }
 
 
-        document.getElementById(
-            "totalOrders"
-        ).textContent =
-            data.notifications.length;
+        // =================================
+        // DISPLAY PENDING ORDERS
+        // =================================
+
+        const pendingOrdersContainer =
+            document.getElementById(
+                "pendingOrdersContainer"
+            );
 
 
-        document.getElementById(
-            "pendingOrders"
-        ).textContent =
-            data.notifications.filter(
+        pendingOrdersContainer.innerHTML = "";
+
+
+        if (pendingOrders.length === 0) {
+
+            pendingOrdersContainer.innerHTML = `
+
+                <p class="no-orders">
+                    No pending orders.
+                </p>
+
+            `;
+
+        }
+
+        else {
+
+            pendingOrders.forEach(
                 function(order) {
 
-                    return order.status === "Pending";
+                    const orderCard =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    orderCard.className =
+                        "order-card";
+
+
+                    orderCard.innerHTML = `
+
+                        <h3>
+                            ⏳ Pending Order #${order.id}
+                        </h3>
+
+                        <p>
+                            <strong>
+                                Customer:
+                            </strong>
+                            ${order.customer_name}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Food:
+                            </strong>
+                            ${
+                                order.items
+                                ? order.items.map(
+                                    function(item) {
+                                        return (
+                                            item.name +
+                                            " × " +
+                                            item.quantity
+                                        );
+                                    }
+                                ).join(", ")
+                                : "No food details"
+                            }
+                        </p>
+
+                        <p>
+                            <strong>
+                                Total:
+                            </strong>
+                            ₹${order.total_amount}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Status:
+                            </strong>
+                            ${order.status}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Time:
+                            </strong>
+                            ${order.created_at}
+                        </p>
+
+                    `;
+
+
+                    pendingOrdersContainer.appendChild(
+                        orderCard
+                    );
 
                 }
-            ).length;
+            );
+
+        }
 
     }
 
     catch (error) {
 
         console.error(
-            "NOTIFICATION ERROR:",
+            "NOTIFICATION / ORDERS ERROR:",
             error
         );
 
     }
 
 }
-
-
 // =========================
 // LOGOUT
 // =========================

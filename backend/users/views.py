@@ -1036,7 +1036,7 @@ def add_food_item(request):
 
                 "success": False,
 
-                "message": str(e)
+                "messae": str(e)
 
             })
 
@@ -1045,5 +1045,191 @@ def add_food_item(request):
         "success": False,
 
         "message": "Only POST method is allowed"
+
+    })
+    # =========================
+# GET ALL RESTAURANT ORDERS
+# =========================
+
+@csrf_exempt
+def get_all_orders(request):
+
+    if request.method == "GET":
+
+        try:
+
+            restaurant_id = request.GET.get("restaurant_id")
+
+            if not restaurant_id:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant ID is required"
+                })
+
+            # Get ALL orders for this restaurant
+            orders = Order.objects.filter(
+                restaurant_id=restaurant_id
+            ).order_by("-created_at")
+
+            order_list = []
+
+            for order in orders:
+
+                items = json.loads(order.items)
+
+                item_list = []
+
+                for item in items:
+
+                    item_name = item.get(
+                        "name",
+                        "Unknown Item"
+                    )
+
+                    quantity = item.get(
+                        "quantity",
+                        1
+                    )
+
+                    item_list.append({
+                        "name": item_name,
+                        "quantity": quantity
+                    })
+
+                local_time = timezone.localtime(
+                    order.created_at
+                )
+
+                order_list.append({
+
+                    "id": order.id,
+
+                    "customer_name":
+                        order.customer_name,
+
+                    "customer_email":
+                        order.customer_email,
+
+                    "items":
+                        item_list,
+
+                    "total_amount":
+                        str(order.total_amount),
+
+                    "status":
+                        order.status,
+
+                    "is_notified":
+                        order.is_notified,
+
+                    "created_at":
+                        local_time.strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
+                })
+
+            return JsonResponse({
+
+                "success": True,
+
+                "count":
+                    len(order_list),
+
+                "orders":
+                    order_list
+
+            })
+
+        except Exception as e:
+
+            print(
+                "GET ALL ORDERS ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message":
+                    str(e)
+
+            })
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message":
+            "Only GET method is allowed"
+
+    })
+    # =========================
+# MARK RESTAURANT NOTIFICATIONS AS VIEWED
+# =========================
+
+@csrf_exempt
+def mark_notifications_viewed(request):
+
+    if request.method == "POST":
+
+        try:
+
+            data = json.loads(request.body)
+
+            restaurant_id = data.get("restaurant_id")
+
+            if not restaurant_id:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant ID is required"
+                })
+
+            # Mark all unread orders as viewed
+            updated_count = Order.objects.filter(
+                restaurant_id=restaurant_id,
+                is_notified=False
+            ).update(
+                is_notified=True
+            )
+
+            return JsonResponse({
+
+                "success": True,
+
+                "message":
+                    "Notifications marked as viewed",
+
+                "updated_count":
+                    updated_count
+
+            })
+
+        except Exception as e:
+
+            print(
+                "MARK NOTIFICATIONS VIEWED ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message":
+                    str(e)
+
+            })
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message":
+            "Only POST method is allowed"
 
     })
