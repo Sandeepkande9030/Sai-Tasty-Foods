@@ -7,6 +7,7 @@ from .models import User, Restaurant, Order, FoodItem
 import json
 import random
 import os
+import traceback
 
 # =========================
 # REGISTER USER
@@ -1148,6 +1149,7 @@ def get_all_orders(request):
                 str(e),
                 flush=True
             )
+            traceback.print_exc()
 
             return JsonResponse({
 
