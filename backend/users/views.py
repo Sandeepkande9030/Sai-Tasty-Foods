@@ -1454,3 +1454,88 @@ def get_customer_orders(request):
             "Only GET method is allowed"
 
     })
+    # =========================
+# GET RESTAURANT FOOD ITEMS
+# =========================
+
+def get_restaurant_food_items(request):
+
+    if request.method == "GET":
+
+        try:
+
+            restaurant_id = request.GET.get("restaurant_id")
+
+            if not restaurant_id:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant ID is required"
+                })
+
+            food_items = FoodItem.objects.filter(
+                restaurant_id=restaurant_id
+            ).order_by("-id")
+
+            food_list = []
+
+            for food in food_items:
+
+                food_list.append({
+
+                    "id": food.id,
+
+                    "restaurant_id":
+                        food.restaurant_id,
+
+                    "name":
+                        food.name,
+
+                    "description":
+                        food.description,
+
+                    "price":
+                        str(food.price),
+
+                    "image":
+                        food.image,
+
+                    "is_available":
+                        food.is_available
+
+                })
+
+            return JsonResponse({
+
+                "success": True,
+
+                "food_items":
+                    food_list
+
+            })
+
+        except Exception as e:
+
+            print(
+                "GET RESTAURANT FOOD ITEMS ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message":
+                    str(e)
+
+            })
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message":
+            "Only GET method is allowed"
+
+    })

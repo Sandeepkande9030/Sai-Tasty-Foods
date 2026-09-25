@@ -9,6 +9,7 @@ from .views import (
     forgot_password,
     reset_password,
     get_restaurants,
+    get_restaurant_food_items,
     place_order,
     restaurant_notifications,
     restaurant_login,
@@ -56,6 +57,11 @@ urlpatterns = [
         "add-food-item/",
         add_food_item,
         name="add_food_item"
+    ),
+    path(
+    "restaurant-food-items/",
+    get_restaurant_food_items,
+    name="get_restaurant_food_items"
     ),
     path(
     "all-orders/",
