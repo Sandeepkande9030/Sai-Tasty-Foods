@@ -1539,3 +1539,66 @@ def get_restaurant_food_items(request):
             "Only GET method is allowed"
 
     })
+    # =========================
+# DELETE RESTAURANT FOOD ITEM
+# =========================
+
+@csrf_exempt
+def delete_food_item(request):
+
+    if request.method == "DELETE":
+
+        try:
+
+            data = json.loads(request.body)
+
+            food_id = data.get("food_id")
+            restaurant_id = data.get("restaurant_id")
+
+            if not food_id:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Food ID is required"
+                })
+
+            if not restaurant_id:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant ID is required"
+                })
+
+            food_item = FoodItem.objects.filter(
+                id=food_id,
+                restaurant_id=restaurant_id
+            ).first()
+
+            if not food_item:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Food item not found"
+                })
+
+            food_item.delete()
+
+            return JsonResponse({
+                "success": True,
+                "message": "Food item deleted successfully"
+            })
+
+        except Exception as e:
+
+            print(
+                "DELETE FOOD ITEM ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+                "success": False,
+                "message": str(e)
+            })
+
+    return JsonResponse({
+        "success": False,
+        "message": "Only DELETE method is allowed"
+    })
