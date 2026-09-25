@@ -1329,3 +1329,128 @@ def get_all_orders(request):
             "Only GET method is allowed"
 
     })
+
+    # =========================
+# GET CUSTOMER ORDERS
+# =========================
+
+@csrf_exempt
+def get_customer_orders(request):
+
+    if request.method == "GET":
+
+        try:
+
+            customer_email = request.GET.get("email")
+
+            if not customer_email:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Customer email is required"
+                })
+
+            orders = Order.objects.filter(
+                customer_email=customer_email
+            ).order_by("-created_at")
+
+            order_list = []
+
+            for order in orders:
+
+                items = json.loads(order.items)
+
+                item_list = []
+
+                for item in items:
+
+                    item_list.append({
+
+                        "name":
+                            item.get(
+                                "name",
+                                "Unknown Item"
+                            ),
+
+                        "quantity":
+                            item.get(
+                                "quantity",
+                                1
+                            ),
+
+                        "price":
+                            item.get(
+                                "price",
+                                0
+                            )
+
+                    })
+
+                local_time = timezone.localtime(
+                    order.created_at
+                )
+
+                order_list.append({
+
+                    "id":
+                        order.id,
+
+                    "customer_name":
+                        order.customer_name,
+
+                    "customer_email":
+                        order.customer_email,
+
+                    "items":
+                        item_list,
+
+                    "total_amount":
+                        str(order.total_amount),
+
+                    "status":
+                        order.status,
+
+                    "created_at":
+                        local_time.strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
+
+                })
+
+            return JsonResponse({
+
+                "success": True,
+
+                "count":
+                    len(order_list),
+
+                "orders":
+                    order_list
+
+            })
+
+        except Exception as e:
+
+            print(
+                "GET CUSTOMER ORDERS ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message":
+                    str(e)
+
+            })
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message":
+            "Only GET method is allowed"
+
+    })

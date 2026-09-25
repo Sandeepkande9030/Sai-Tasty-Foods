@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>My Orders - Sai Tasty Foods</title>
+
+<link rel="stylesheet" href="./style.css">
+
+
+</head>
+
+<body>
+
+<header>
+
+
+<div class="logo">
+    SAI TASTY FOODS
+</div>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+    <a href="orders.html">My Orders</a>
+</nav>
+
+
+</header>
+
+<main class="orders-page">
+
+
+<div class="orders-container">
+
+    <h1>My Orders</h1>
+
+    <div id="ordersMessage">
+        Loading orders...
+    </div>
+
+    <div id="ordersList"></div>
+
+</div>
+
+
+</main>
+
+<script>
+
+const API_BASE_URL = "https://backend-dl8i.vercel.app";
+
+
+async function loadOrders() {
+
+    const currentUser =
+        JSON.parse(localStorage.getItem("currentUser") || "null");
+
+    if (!currentUser || !currentUser.email) {
+
+        document.getElementById("ordersMessage").innerText =
+            "Please login to view your orders.";
+
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+        `${API_BASE_URL}/api/customer-orders/?email=${encodeURIComponent(currentUser.email)}`
+        );
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            document.getElementById("ordersMessage").innerText =
+                "Unable to load orders.";
+
+            return;
+        }
+
+
+        const orders = data.orders || [];
+
+        
+
+        const ordersList =
+            document.getElementById("ordersList");
+
+        const ordersMessage =
+            document.getElementById("ordersMessage");
+
+
+        if (Orders.length === 0) {
+
+            ordersMessage.innerText =
+                "You have no orders yet.";
+
+            return;
+        }
+
+
+        ordersMessage.innerText = "";
+
+
+        Orders.reverse().forEach(function(order) {
+
+            let items = [];
+
+            try {
+
+                items = JSON.parse(order.items);
+
+            } catch (error) {
+
+                items = [];
+            }
+
+
+            let itemsHTML = "";
+
+            items.forEach(function(item) {
+
+                itemsHTML += `
+                    <div class="order-item">
+                        <span>
+                            ${item.name}
+                            × ${item.quantity}
+                        </span>
+
+                        <span>
+                            ₹${item.price * item.quantity}
+                        </span>
+                    </div>
+                `;
+
+            });
+
+
+            ordersList.innerHTML += `
+
+                <div class="order-card">
+
+                    <div class="order-header">
+
+                        <h2>
+                            Order #${order.id}
+                        </h2>
+
+                        <span class="order-status">
+                            ${order.status}
+                        </span>
+
+                    </div>
+
+
+                    <div class="order-items">
+
+                        ${itemsHTML}
+
+                    </div>
+
+
+                    <div class="order-total">
+
+                        Total:
+                        ₹${order.total_amount}
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+    } catch (error) {
+
+        console.error("Orders Error:", error);
+
+        document.getElementById("ordersMessage").innerText =
+            "Unable to connect to server.";
+
+    }
+
+}
+
+
+loadOrders();
+
+</script>
+
+</body>
+
+</html>

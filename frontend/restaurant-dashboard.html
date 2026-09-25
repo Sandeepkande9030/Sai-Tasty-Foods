@@ -821,12 +821,8 @@ function showSection(section) {
 
 async function openNotifications() {
 
-    // First open notification section
+    // Open notification section
     showSection("notifications");
-
-    // Mark current notifications as viewed
-    await markNotificationsViewed();
-
 }
 
 
@@ -1083,6 +1079,13 @@ else {
             );
 
         }
+        // Mark notifications as viewed
+        // only after they have been displayed
+        if (notificationsOpen && notificationData.count > 0) {
+
+            await markNotificationsViewed();
+
+        }   
         
 
 

@@ -14,7 +14,8 @@ from .views import (
     restaurant_login,
     add_food_item,
     get_all_orders,
-    mark_notifications_viewed
+    mark_notifications_viewed,
+    get_customer_orders
 )
 
 
@@ -36,6 +37,11 @@ urlpatterns = [
     path("reset-password/", reset_password, name="reset_password"),
     path("restaurants/", get_restaurants, name="get_restaurants"),
     path("place-order/", place_order, name="place_order"),
+    path(
+    "customer-orders/",
+    get_customer_orders,
+    name="get_customer_orders"
+    ),
     path(
     "restaurant-notifications/",
     restaurant_notifications,
