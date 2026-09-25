@@ -98,7 +98,7 @@ async function loadOrders() {
             document.getElementById("ordersMessage");
 
 
-        if (Orders.length === 0) {
+        if (orders.length === 0) {
 
             ordersMessage.innerText =
                 "You have no orders yet.";
@@ -110,20 +110,9 @@ async function loadOrders() {
         ordersMessage.innerText = "";
 
 
-        Orders.reverse().forEach(function(order) {
+        orders.reverse().forEach(function(order) {
 
-            let items = [];
-
-            try {
-
-                items = JSON.parse(order.items);
-
-            } catch (error) {
-
-                items = [];
-            }
-
-
+            let items = order.items || [];
             let itemsHTML = "";
 
             items.forEach(function(item) {

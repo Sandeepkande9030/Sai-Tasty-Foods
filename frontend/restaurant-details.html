@@ -923,8 +923,94 @@ else if (restaurantId == "3") {
 }
 
     document.getElementById("foodMenu").innerHTML = menu;
+    loadRestaurantAddedFood(restaurantId);
 
 }
+        async function loadRestaurantAddedFood(restaurantId) {
+
+    try {
+
+        const response = await fetch(
+            "https://backend-dl8i.vercel.app/api/restaurant-food-items/?restaurant_id=" +
+            restaurantId
+        );
+
+        const data = await response.json();
+
+        if (!data.success || data.food_items.length === 0) {
+            return;
+        }
+
+        const foodMenu =
+            document.getElementById("foodMenu");
+
+        data.food_items.forEach(function(food) {
+
+            let imagePath = food.image;
+
+            if (!imagePath) {
+                imagePath = "./images/food-background.jpg";
+            }
+
+            // Convert local Windows image path
+            if (imagePath.includes("C:\\foodigo\\frontend\\")) {
+
+                imagePath = imagePath.replace(
+                    "C:\\foodigo\\frontend\\",
+                    "./"
+                );
+
+                imagePath = imagePath.replaceAll("\\", "/");
+            }
+
+            const foodCard =
+                document.createElement("div");
+
+            foodCard.className = "food-card";
+
+            foodCard.innerHTML = `
+
+                <img
+                    src="${imagePath}"
+                    alt="${food.name}"
+                >
+
+                <div class="food-info">
+
+                    <h3>${food.name}</h3>
+
+                    <p>
+                        ${food.description || ""}
+                    </p>
+
+                    <p>
+                        ₹${food.price}
+                    </p>
+
+                    <button
+                        onclick="addFoodToCart('${food.name.replace(/'/g, "\\'")}', ${food.price})">
+                        Add to Cart
+                    </button>
+
+                </div>
+
+            `;
+
+            foodMenu.appendChild(foodCard);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "LOAD RESTAURANT ADDED FOOD ERROR:",
+            error
+        );
+
+    }
+
+}
+
         function addFoodToCart(name, price) {
 
     // =========================

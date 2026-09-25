@@ -708,6 +708,108 @@ const restaurantId =
     localStorage.getItem(
         "restaurantId"
     );
+  // =========================
+// LOAD RESTAURANT FOOD ITEMS
+// =========================
+
+async function loadFoodItems() {
+
+    try {
+
+        const response = await fetch(
+            API_BASE_URL +
+            "/api/restaurant-food-items/?restaurant_id=" +
+            restaurantId
+        );
+
+        const data = await response.json();
+
+        const container =
+            document.getElementById("foodItemsContainer");
+
+        if (!data.success) {
+
+            container.innerHTML =
+                "<p>Unable to load food items.</p>";
+
+            return;
+        }
+
+        if (data.food_items.length === 0) {
+
+            container.innerHTML =
+                "<p>No food items added yet.</p>";
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.food_items.forEach(function(food) {
+
+            const foodCard =
+                document.createElement("div");
+
+            foodCard.className =
+                "food-item-card";
+
+            foodCard.innerHTML = `
+
+                <h3>
+                    ${food.name}
+                </h3>
+
+                <p>
+                    ${food.description || ""}
+                </p>
+
+                <p>
+                    <strong>
+                        ₹${food.price}
+                    </strong>
+                </p>
+
+                <p>
+                    ${food.is_available
+                        ? "✅ Available"
+                        : "❌ Not Available"}
+                </p>
+
+                <button
+                    onclick="deleteFoodItem(${food.id})"
+                    style="
+                        background:#e63946;
+                        color:white;
+                        border:none;
+                        padding:10px 15px;
+                        border-radius:6px;
+                        cursor:pointer;
+                        margin-top:10px;
+                    ">
+
+                    🗑️ Delete
+
+                </button>
+
+            `;
+
+            container.appendChild(foodCard);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "LOAD FOOD ITEMS ERROR:",
+            error
+        );
+
+        document.getElementById(
+            "foodItemsContainer"
+        ).innerHTML =
+            "<p>Unable to connect to server.</p>";
+    }
+}
 
 
 const restaurantLoggedIn =
@@ -780,11 +882,8 @@ function showSection(section) {
 
 
     if (section === "foodItems") {
-
-        document.getElementById(
-            "foodItemsSection"
-        ).style.display = "block";
-
+    document.getElementById("foodItemsSection").style.display = "block";
+    loadFoodItems();
     }
 
 
@@ -1579,6 +1678,7 @@ async function addFoodItem() {
 
             message.textContent =
                 "Food item added successfully!";
+            loadFoodItems();
 
 
             document.getElementById(
@@ -1629,6 +1729,83 @@ async function addFoodItem() {
 
         message.textContent =
             "Unable to connect to server.";
+
+    }
+
+}
+// =========================
+// DELETE FOOD ITEM
+// =========================
+
+async function deleteFoodItem(foodId) {
+
+    const confirmDelete =
+        confirm("Are you sure you want to delete this food item?");
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE_URL +
+                "/api/delete-food-item/",
+                {
+                    method: "DELETE",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        food_id:
+                            foodId,
+
+                        restaurant_id:
+                            restaurantId
+
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            alert(
+                "Food item deleted successfully!"
+            );
+
+            loadFoodItems();
+
+        }
+
+        else {
+
+            alert(
+                data.message ||
+                "Unable to delete food item."
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "DELETE FOOD ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to connect to server."
+        );
 
     }
 

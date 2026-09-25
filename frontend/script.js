@@ -16,7 +16,7 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 // ADD TO CART
 // ================================
 
-function addToCart(name, price) {
+function addToCart(name, price, restaurantId) {
 
     // Check login status
     let isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -34,7 +34,9 @@ function addToCart(name, price) {
     console.log("Add to Cart clicked:", name, price);
 
     // Check whether item already exists
-    let existingItem = cart.find(item => item.name === name);
+    let existingItem = cart.find(
+    item => item.name === name && item.restaurant_id === restaurantId
+);
 
     if (existingItem) {
 
@@ -44,11 +46,12 @@ function addToCart(name, price) {
     } else {
 
         // Add new item
-        cart.push({
-            name: name,
-            price: price,
-            quantity: 1
-        });
+       cart.push({
+        name: name,
+        price: price,
+        quantity: 1,
+        restaurant_id: restaurantId
+    });
 
     }
 
@@ -1191,7 +1194,7 @@ if (addressForm) {
 
         customer_email: currentUser.email,
 
-        restaurant_id: 1,
+        restaurant_id: cart[0]. restaurantId,
 
         items: cart,
 
