@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Delivery Address - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- Header -->
+
+<header>
+
+    <div class="logo">
+        SAI TASTY FOODS
+    </div>
+
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="cart.html">
+            🛒 Cart
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<!-- Delivery Address -->
+
+<section class="address-page">
+
+
+    <div class="address-container">
+
+
+        <!-- Heading -->
+
+        <div class="address-header">
+
+            <h1>
+                📍 Delivery Address
+            </h1>
+
+            <p>
+                Enter your delivery details
+            </p>
+
+        </div>
+
+
+
+        <!-- Address Form -->
+
+        <form id="addressForm">
+
+
+            <!-- Full Name -->
+
+            <div class="address-field">
+
+                <label for="deliveryName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="deliveryName"
+                    placeholder="Enter your full name"
+                    required>
+
+            </div>
+
+
+
+            <!-- Phone -->
+
+            <div class="address-field">
+
+                <label for="deliveryPhone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="deliveryPhone"
+                    placeholder="Enter 10 digit phone number"
+                    maxlength="10"
+                    required>
+
+            </div>
+
+
+
+            <!-- House -->
+
+            <div class="address-field">
+
+                <label for="deliveryHouse">
+                    House / Flat / Building
+                </label>
+
+                <input
+                    type="text"
+                    id="deliveryHouse"
+                    placeholder="House / Flat / Building"
+                    required>
+
+            </div>
+
+
+
+            <!-- Street -->
+
+            <div class="address-field">
+
+                <label for="deliveryArea">
+                    Street / Area
+                </label>
+
+                <input
+                    type="text"
+                    id="deliveryArea"
+                    placeholder="Street / Area"
+                    required>
+
+            </div>
+
+
+
+            <!-- City + State -->
+
+            <div class="address-row">
+
+
+                <div class="address-field">
+
+                    <label for="deliveryCity">
+                        City
+                    </label>
+
+                    <input
+                        type="text"
+                        id="deliveryCity"
+                        placeholder="Enter city"
+                        required>
+
+                </div>
+
+
+                <div class="address-field">
+
+                    <label for="deliveryState">
+                        State
+                    </label>
+
+                    <input
+                        type="text"
+                        id="deliveryState"
+                        placeholder="Enter state"
+                        required>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Pincode -->
+
+            <div class="address-field">
+
+                <label for="deliveryPincode">
+                    Pincode
+                </label>
+
+                <input
+                    type="text"
+                    id="deliveryPincode"
+                    placeholder="Enter 6 digit pincode"
+                    maxlength="6"
+                    required>
+
+            </div>
+
+
+
+            <!-- Landmark -->
+
+            <div class="address-field">
+
+                <label for="deliveryLandmark">
+                    Landmark
+                    <span>(Optional)</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="deliveryLandmark"
+                    placeholder="Nearby landmark">
+
+            </div>
+
+
+
+            <!-- Buttons -->
+
+            <div class="address-buttons">
+
+
+                <button
+                    type="button"
+                    class="back-btn"
+                    onclick="window.location.href='cart.html'">
+
+                    ← Back to Cart
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-address-btn">
+
+                    Place Order
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</section>
+
+
+<script src="./script.js"></script>
+
+
+</body>
+
+</html>
+

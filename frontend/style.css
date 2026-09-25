@@ -983,3 +983,269 @@ text-decoration: underline;
     color: green;
     font-weight: bold;
 }
+
+/* =========================================
+   DELIVERY ADDRESS PAGE
+========================================= */
+
+.address-page {
+
+    min-height: calc(100vh - 70px);
+
+    background: #f7f7f7;
+
+    padding: 25px 15px;
+
+}
+
+
+.address-container {
+
+    max-width: 600px;
+
+    margin: auto;
+
+    background: white;
+
+    padding: 25px 30px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 3px 15px rgba(0, 0, 0, 0.08);
+
+}
+
+
+/* Heading */
+
+.address-header {
+
+    margin-bottom: 20px;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid #eeeeee;
+
+}
+
+
+.address-header h1 {
+
+    margin: 0 0 5px;
+
+    font-size: 24px;
+
+    color: #222;
+
+}
+
+
+.address-header p {
+
+    margin: 0;
+
+    color: #777;
+
+    font-size: 13px;
+
+}
+
+
+/* Fields */
+
+.address-field {
+
+    margin-bottom: 13px;
+
+}
+
+
+.address-field label {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #333;
+
+}
+
+
+.address-field label span {
+
+    color: #999;
+
+    font-weight: normal;
+
+}
+
+
+.address-field input {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    outline: none;
+
+}
+
+
+.address-field input:focus {
+
+    border-color: #e63946;
+
+    box-shadow:
+        0 0 0 2px rgba(230, 57, 70, 0.08);
+
+}
+
+
+/* City + State */
+
+.address-row {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+}
+
+
+/* Buttons */
+
+.address-buttons {
+
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 20px;
+
+}
+
+
+.back-btn,
+.save-address-btn {
+
+    flex: 1;
+
+    padding: 11px 15px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+/* Back Button */
+
+.back-btn {
+
+    background: white;
+
+    color: #333;
+
+    border: 1px solid #ddd;
+
+}
+
+
+.back-btn:hover {
+
+    background: #f5f5f5;
+
+}
+
+
+/* Place Order */
+
+.save-address-btn {
+
+    background: #e63946;
+
+    color: white;
+
+    border: none;
+
+}
+
+
+.save-address-btn:hover {
+
+    background: #d62839;
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .address-page {
+
+        padding: 15px 10px;
+
+    }
+
+
+    .address-container {
+
+        padding: 20px 15px;
+
+    }
+
+
+    .address-header h1 {
+
+        font-size: 21px;
+
+    }
+
+
+    .address-row {
+
+        grid-template-columns: 1fr;
+
+        gap: 0;
+
+    }
+
+
+    .address-buttons {
+
+        flex-direction: column;
+
+    }
+
+
+    .back-btn,
+    .save-address-btn {
+
+        width: 100%;
+
+    }
+
+}

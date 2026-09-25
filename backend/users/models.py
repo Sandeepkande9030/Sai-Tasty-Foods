@@ -69,9 +69,55 @@ class Restaurant(models.Model):
 
 class Order(models.Model):
 
-    customer_name = models.CharField(max_length=100)
+    customer_name = models.CharField(
+        max_length=100
+    )
 
     customer_email = models.EmailField()
+
+    # Delivery address
+    delivery_phone = models.CharField(
+    max_length=10,
+    blank=True,
+    default=""
+    )
+
+    delivery_house = models.CharField(
+        max_length=255,
+        blank=True,
+        default=""
+    )
+
+    delivery_area = models.CharField(
+        max_length=255,
+        blank=True,
+        default=""
+    )
+
+    delivery_city = models.CharField(
+        max_length=100,
+        blank=True,
+        default=""
+    )
+
+    delivery_state = models.CharField(
+        max_length=100,
+        blank=True,
+        default=""
+    )
+
+    delivery_pincode = models.CharField(
+        max_length=6,
+        blank=True,
+        default=""
+    )
+
+    delivery_landmark = models.CharField(
+        max_length=255,
+        blank=True,
+        default=""
+    )
+        
 
     restaurant = models.ForeignKey(
         Restaurant,

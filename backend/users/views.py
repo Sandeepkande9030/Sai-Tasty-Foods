@@ -665,32 +665,75 @@ def place_order(request):
 
             data = json.loads(request.body)
 
+            # =========================
+            # CUSTOMER DETAILS
+            # =========================
+
             customer_name = data.get("customer_name")
             customer_email = data.get("customer_email")
+
+            # =========================
+            # RESTAURANT
+            # =========================
+
             restaurant_id = data.get("restaurant_id")
+
+            # =========================
+            # ORDER DETAILS
+            # =========================
+
             items = data.get("items")
             total_amount = data.get("total_amount")
 
-            # Check required fields
+            # =========================
+            # DELIVERY ADDRESS
+            # =========================
+
+            delivery_phone = data.get("delivery_phone", "")
+            delivery_house = data.get("delivery_house", "")
+            delivery_area = data.get("delivery_area", "")
+            delivery_city = data.get("delivery_city", "")
+            delivery_state = data.get("delivery_state", "")
+            delivery_pincode = data.get("delivery_pincode", "")
+            delivery_landmark = data.get("delivery_landmark", "")
+
+            # =========================
+            # CHECK CUSTOMER DETAILS
+            # =========================
+
             if not customer_name or not customer_email:
+
                 return JsonResponse({
                     "success": False,
                     "message": "Customer details are required"
                 })
 
+            # =========================
+            # CHECK RESTAURANT
+            # =========================
+
             if not restaurant_id:
+
                 return JsonResponse({
                     "success": False,
                     "message": "Restaurant is required"
                 })
 
+            # =========================
+            # CHECK ITEMS
+            # =========================
+
             if not items:
+
                 return JsonResponse({
                     "success": False,
                     "message": "Order items are required"
                 })
 
-            # Find restaurant
+            # =========================
+            # FIND RESTAURANT
+            # =========================
+
             restaurant = Restaurant.objects.filter(
                 id=restaurant_id
             ).first()
@@ -702,39 +745,86 @@ def place_order(request):
                     "message": "Restaurant not found"
                 })
 
-            # Create order
+            # =========================
+            # CREATE ORDER
+            # =========================
+
             order = Order.objects.create(
+
                 customer_name=customer_name,
+
                 customer_email=customer_email,
+
                 restaurant=restaurant,
+
                 items=json.dumps(items),
+
                 total_amount=total_amount,
+
+                # Delivery address
+                delivery_phone=delivery_phone,
+
+                delivery_house=delivery_house,
+
+                delivery_area=delivery_area,
+
+                delivery_city=delivery_city,
+
+                delivery_state=delivery_state,
+
+                delivery_pincode=delivery_pincode,
+
+                delivery_landmark=delivery_landmark,
+
                 status="Pending",
+
                 is_notified=False
             )
 
+            # =========================
+            # SUCCESS RESPONSE
+            # =========================
+
             return JsonResponse({
+
                 "success": True,
+
                 "message": "Order placed successfully",
+
                 "order": {
+
                     "id": order.id,
+
                     "restaurant": restaurant.name,
+
                     "status": order.status
+
                 }
+
             })
 
         except Exception as e:
 
-            print("PLACE ORDER ERROR:", str(e), flush=True)
+            print(
+                "PLACE ORDER ERROR:",
+                str(e),
+                flush=True
+            )
 
             return JsonResponse({
+
                 "success": False,
+
                 "message": str(e)
+
             })
 
     return JsonResponse({
+
         "success": False,
+
         "message": "Only POST method is allowed"
+
     })
     # =========================
 # RESTAURANT NOTIFICATIONS
