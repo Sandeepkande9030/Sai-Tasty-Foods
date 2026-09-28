@@ -307,10 +307,10 @@
 
 
         <button onclick="openNotifications()">
-        🔔 Notifications
+            🔔 Notifications
         </button>
-        <button onclick="showSection('pendingOrders')">
-            ⏳ Pending Orders
+        <button onclick="showSection('rejectedOrders')">
+            ❌ Rejected Orders
         </button>
 
 
@@ -426,15 +426,14 @@
             <div class="dashboard-card">
 
                 <h3>
-                    ⏳ Pending Orders
+                    ❌ Rejected Orders
                 </h3>
 
-                <p id="pendingOrders">
+                <p id="rejectedOrders">
                     0
                 </p>
 
             </div>
-
         </div>
 
     </section>
@@ -631,29 +630,28 @@
         </div>
 
     </section>
-    <!-- =========================
-     PENDING ORDERS SECTION
-    ========================= -->
+<!-- =========================
+     REJECTED ORDERS SECTION
+========================= -->
 
-        <section
-            id="pendingOrdersSection"
-            class="content-section"
-            style="display:none;">
+    <section
+        id="rejectedOrdersSection"
+        class="content-section"
+        style="display:none;">
 
-            <h2>
-                ⏳ Pending Orders
-            </h2>
+        <h2>
+            ❌ Rejected Orders
+        </h2>
 
-            <div id="pendingOrdersContainer">
+        <div id="rejectedOrdersContainer">
 
-                <p class="no-orders">
-                    Loading pending orders...
-                </p>
+            <p class="no-orders">
+                Loading rejected orders...
+            </p>
 
-            </div>
+        </div>
 
-        </section>
-
+    </section>
 
     <!-- =========================
          PROFILE SECTION
@@ -859,9 +857,8 @@ function showSection(section) {
     ).style.display = "none";
 
     document.getElementById(
-    "pendingOrdersSection"
+    "rejectedOrdersSection"
     ).style.display = "none";
-
 
     if (section === "dashboard") {
 
@@ -878,9 +875,9 @@ function showSection(section) {
             "ordersSection"
         ).style.display = "block";
 
+        loadNotifications();
+
     }
-
-
     if (section === "foodItems") {
     document.getElementById("foodItemsSection").style.display = "block";
     loadFoodItems();
@@ -905,10 +902,10 @@ function showSection(section) {
         ).style.display = "block";
 
     }
-    if (section === "pendingOrders") {
+    if (section === "rejectedOrders") {
 
     document.getElementById(
-        "pendingOrdersSection"
+        "rejectedOrdersSection"
     ).style.display = "block";
 
     }
@@ -1218,38 +1215,17 @@ else {
         const allOrders =
             ordersData.orders || [];
 
-
-        // =================================
-        // TOTAL ORDERS
-        // =================================
+        // Only ACCEPTED orders count as Total Orders
+        const acceptedOrders =
+            allOrders.filter(function(order) {
+                return order.status === "accepted";
+            });
 
         document.getElementById(
             "totalOrders"
         ).textContent =
-            allOrders.length;
-
-
-        // =================================
-        // PENDING ORDERS COUNT
-        // =================================
-
-        const pendingOrders =
-            allOrders.filter(
-                function(order) {
-
-                    return (
-                        order.status === "Pending"
-                    );
-
-                }
-            );
-
-
-        document.getElementById(
-            "pendingOrders"
-        ).textContent =
-            pendingOrders.length;
-
+            acceptedOrders.length;
+        
 
         // =================================
         // DISPLAY ALL ORDERS
@@ -1277,7 +1253,6 @@ else {
         }
 
         else {
-
             allOrders.forEach(
                 function(order) {
 
@@ -1289,6 +1264,59 @@ else {
 
                     orderCard.className =
                         "order-card";
+
+
+                    let actionButtons = "";
+
+
+                    // Show Accept / Reject only for pending orders
+                    if (order.status.toLowerCase() === "pending") {
+
+                        actionButtons = `
+
+                            <div style="
+                                margin-top:15px;
+                                display:flex;
+                                gap:10px;
+                                flex-wrap:wrap;
+                            ">
+
+                                <button
+                                    onclick="updateOrderStatus(${order.id}, 'accepted')"
+                                    style="
+                                        background:#28a745;
+                                        color:white;
+                                        border:none;
+                                        padding:10px 18px;
+                                        border-radius:6px;
+                                        cursor:pointer;
+                                    ">
+
+                                    ✅ Accept
+
+                                </button>
+
+
+                                <button
+                                    onclick="updateOrderStatus(${order.id}, 'rejected')"
+                                    style="
+                                        background:#dc3545;
+                                        color:white;
+                                        border:none;
+                                        padding:10px 18px;
+                                        border-radius:6px;
+                                        cursor:pointer;
+                                    ">
+
+                                    ❌ Reject
+
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    }
 
 
                     orderCard.innerHTML = `
@@ -1334,7 +1362,7 @@ else {
                             <strong>
                                 Status:
                             </strong>
-                            ${order.status}
+                           ${order.status.toLowerCase()}
                         </p>
 
                         <p>
@@ -1343,6 +1371,8 @@ else {
                             </strong>
                             ${order.created_at}
                         </p>
+
+                        ${actionButtons}
 
                     `;
 
@@ -1357,63 +1387,57 @@ else {
         }
 
 
-        // =================================
-        // DISPLAY PENDING ORDERS
-        // =================================
+        // =========================
+        // DISPLAY REJECTED ORDERS
+        // =========================
 
-        const pendingOrdersContainer =
+        const rejectedOrders =
+            allOrders.filter(function(order) {
+                return order.status.toLowerCase() === "rejected";
+            });
+
+        document.getElementById(
+            "rejectedOrders"
+        ).textContent = rejectedOrders.length;
+
+        const rejectedOrdersContainer =
             document.getElementById(
-                "pendingOrdersContainer"
+                "rejectedOrdersContainer"
             );
 
+        rejectedOrdersContainer.innerHTML = "";
 
-        pendingOrdersContainer.innerHTML = "";
+        if (rejectedOrders.length === 0) {
 
-
-        if (pendingOrders.length === 0) {
-
-            pendingOrdersContainer.innerHTML = `
-
+            rejectedOrdersContainer.innerHTML = `
                 <p class="no-orders">
-                    No pending orders.
+                    No rejected orders.
                 </p>
-
             `;
 
-        }
+        } else {
 
-        else {
-
-            pendingOrders.forEach(
+            rejectedOrders.forEach(
                 function(order) {
 
                     const orderCard =
-                        document.createElement(
-                            "div"
-                        );
-
+                        document.createElement("div");
 
                     orderCard.className =
                         "order-card";
 
-
                     orderCard.innerHTML = `
-
                         <h3>
-                            ⏳ Pending Order #${order.id}
+                            Order #${order.id}
                         </h3>
 
                         <p>
-                            <strong>
-                                Customer:
-                            </strong>
+                            <strong>Customer:</strong>
                             ${order.customer_name}
                         </p>
 
                         <p>
-                            <strong>
-                                Food:
-                            </strong>
+                            <strong>Food:</strong>
                             ${
                                 order.items
                                 ? order.items.map(
@@ -1430,34 +1454,107 @@ else {
                         </p>
 
                         <p>
-                            <strong>
-                                Total:
-                            </strong>
+                            <strong>Total:</strong>
                             ₹${order.total_amount}
                         </p>
 
                         <p>
-                            <strong>
-                                Status:
-                            </strong>
-                            ${order.status}
+                            <strong>Status:</strong>
+                            ❌ Rejected
                         </p>
 
                         <p>
-                            <strong>
-                                Time:
-                            </strong>
+                            <strong>Time:</strong>
                             ${order.created_at}
                         </p>
-
                     `;
 
-
-                    pendingOrdersContainer.appendChild(
+                    rejectedOrdersContainer.appendChild(
                         orderCard
                     );
-
                 }
+            );
+        }
+    }
+
+    catch (error) {
+
+        console.error(
+            "LOAD NOTIFICATIONS ERROR:",
+            error
+        );
+    }
+} 
+// =========================
+// UPDATE ORDER STATUS
+// =========================
+
+async function updateOrderStatus(orderId, status) {
+
+    const action =
+        status === "accepted"
+        ? "accept"
+        : "reject";
+
+    const confirmAction =
+        confirm(
+            "Are you sure you want to " +
+            action +
+            " this order?"
+        );
+
+    if (!confirmAction) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE_URL +
+                "/api/update-order-status/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        order_id:
+                            orderId,
+
+                        restaurant_id:
+                            restaurantId,
+
+                        status:
+                            status
+
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            alert(
+                data.message
+            );
+
+            // Reload orders and counts
+            await loadNotifications();
+
+        }
+
+        else {
+
+            alert(
+                data.message ||
+                "Unable to update order status."
             );
 
         }
@@ -1467,14 +1564,18 @@ else {
     catch (error) {
 
         console.error(
-            "NOTIFICATION / ORDERS ERROR:",
+            "UPDATE ORDER STATUS ERROR:",
             error
+        );
+
+        alert(
+            "Unable to connect to server."
         );
 
     }
 
 }
-// =========================
+    //=========================
 // MARK NOTIFICATIONS VIEWED
 // =========================
 
