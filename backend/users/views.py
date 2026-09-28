@@ -776,7 +776,7 @@ def place_order(request):
 
                 delivery_landmark=delivery_landmark,
 
-                status="Pending",
+                status="pending",
 
                 is_notified=False
             )
@@ -1601,4 +1601,114 @@ def delete_food_item(request):
     return JsonResponse({
         "success": False,
         "message": "Only DELETE method is allowed"
+    })
+    # =========================
+# UPDATE ORDER STATUS
+# =========================
+
+@csrf_exempt
+def update_order_status(request):
+
+    if request.method == "POST":
+
+        try:
+
+            data = json.loads(request.body)
+
+            order_id = data.get("order_id")
+            restaurant_id = data.get("restaurant_id")
+            status = data.get("status")
+
+            # Check required fields
+            if not order_id:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Order ID is required"
+                })
+
+            if not restaurant_id:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Restaurant ID is required"
+                })
+
+            if not status:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Order status is required"
+                })
+
+            # Only Accept or Reject is allowed
+            if status not in ["accepted", "rejected"]:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Invalid order status"
+                })
+
+            # Find order belonging to this restaurant
+            order = Order.objects.filter(
+                id=order_id,
+                restaurant_id=restaurant_id
+            ).first()
+
+            if not order:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Order not found"
+                })
+
+            # Order must be pending
+            if order.status != "pending":
+                return JsonResponse({
+                    "success": False,
+                    "message": "Only pending orders can be accepted or rejected"
+                })
+
+            # Update status
+            order.status = status
+            order.save()
+
+            return JsonResponse({
+
+                "success": True,
+
+                "message":
+                    f"Order {status} successfully",
+
+                "order": {
+
+                    "id":
+                        order.id,
+
+                    "status":
+                        order.status
+
+                }
+
+            })
+
+        except Exception as e:
+
+            print(
+                "UPDATE ORDER STATUS ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message":
+                    str(e)
+
+            })
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message":
+            "Only POST method is allowed"
+
     })

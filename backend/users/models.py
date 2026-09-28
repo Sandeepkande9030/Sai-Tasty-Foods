@@ -132,8 +132,8 @@ class Order(models.Model):
     )
 
     status = models.CharField(
-        max_length=50,
-        default="Pending"
+    max_length=50,
+    default="pending"
     )
 
     is_notified = models.BooleanField(
