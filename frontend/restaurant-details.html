@@ -195,738 +195,114 @@
             }
 
         }
-        function loadFoodMenu(restaurantId) {
+        async function loadFoodMenu(restaurantId) {
 
-    let menu = "";
+    const foodMenu = document.getElementById("foodMenu");
 
-    if (restaurantId == "1") {
-
-    menu = `
-
-        <div class="food-card">
-
-            <img
-                src="./images/chicken-biryani.jpg"
-                alt="Chicken Biryani"
-            >
-
-            <div class="food-info">
-
-                <h3>Chicken Biryani</h3>
-
-                <p>
-                    Delicious and spicy chicken biryani
-                </p>
-
-                <p>₹180</p>
-
-                <button onclick="addFoodToCart('Chicken Biryani', 180)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="./images/chicken-65.jpg"
-                alt="Chicken 65"
-            >
-
-            <div class="food-info">
-
-                <h3>Chicken 65</h3>
-
-                <p>
-                    Crispy spicy chicken pieces with South Indian spices
-                </p>
-
-                <p>₹160</p>
-
-                <button onclick="addFoodToCart('Chicken 65', 160)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80"
-                alt="Chicken Curry"
-            >
-
-            <div class="food-info">
-
-                <h3>Chicken Curry</h3>
-
-                <p>
-                    Spicy Andhra-style chicken curry with gravy
-                </p>
-
-                <p>₹190</p>
-
-                <button onclick="addFoodToCart('Chicken Curry', 190)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80"
-                alt="Paneer Butter Masala"
-            >
-
-            <div class="food-info">
-
-                <h3>Paneer Butter Masala</h3>
-
-                <p>
-                    Soft paneer cooked in a rich creamy tomato gravy.
-                </p>
-
-                <p>₹170</p>
-
-                <button onclick="addFoodToCart('Paneer Butter Masala', 170)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="./images/South Indian Meals.jpg"
-                alt="South Indian Meals"
-            >
-
-            <div class="food-info">
-
-                <h3>South Indian Meals</h3>
-
-                <p>
-                    Traditional South Indian meal with rice, sambar, curries
-                </p>
-
-                <p>₹140</p>
-
-                <button onclick="addFoodToCart('South Indian Meals', 140)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1596560548464-f010549b84d7?auto=format&fit=crop&w=800&q=80"
-                alt="Lemon Rice"
-            >
-
-            <div class="food-info">
-
-                <h3>Lemon Rice</h3>
-
-                <p>
-                    Tangy lemon rice prepared with peanuts and curry leaves.
-                </p>
-
-                <p>₹80</p>
-
-                <button onclick="addFoodToCart('Lemon Rice', 80)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=80"
-                alt="Masala Dosa"
-            >
-
-            <div class="food-info">
-
-                <h3>Masala Dosa</h3>
-
-                <p>
-                    Crispy dosa filled with flavorful potato masala.
-                </p>
-
-                <p>₹100</p>
-
-                <button onclick="addFoodToCart('Masala Dosa', 100)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=80"
-                alt="Chicken Fried Rice"
-            >
-
-            <div class="food-info">
-
-                <h3>Chicken Fried Rice</h3>
-
-                <p>
-                    Fried rice with chicken, vegetables and flavorful sauces.
-                </p>
-
-                <p>₹150</p>
-
-                <button onclick="addFoodToCart('Chicken Fried Rice', 150)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="./images/gobi-manchurian.jpg"
-                alt="Gobi Manchurian"
-            >
-
-            <div class="food-info">
-
-                <h3>Gobi Manchurian</h3>
-
-                <p>
-                    Crispy cauliflower tossed in spicy Manchurian sauce.
-                </p>
-
-                <p>₹130</p>
-
-                <button onclick="addFoodToCart('Gobi Manchurian', 130)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="./images/gulab-jamun.jpg"
-                alt="Gulab Jamun"
-            >
-
-            <div class="food-info">
-
-                <h3>Gulab Jamun</h3>
-
-                <p>
-                    Soft and delicious sweet dumplings soaked in sugar syrup.
-                </p>
-
-                <p>₹60</p>
-
-                <button onclick="addFoodToCart('Gulab Jamun', 60)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="./images/chepala-pulusu.jpg"
-                alt="Nellore Chepala Pulusu"
-            >
-
-            <div class="food-info">
-
-                <h3>Fish Curry</h3>
-
-                <p>
-                    Traditional Nellore-style Chepala Pulusu.
-                </p>
-
-                <p>₹160</p>
-
-                <button onclick="addFoodToCart('Fish Curry', 160)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
+    foodMenu.innerHTML = `
+        <p style="text-align:center;">
+            Loading food items...
+        </p>
     `;
 
-}
-   else if (restaurantId == "2") {
+    try {
 
-    menu = `
+        const response = await fetch(
+            `${API_BASE_URL}/api/restaurant-food-items/?restaurant_id=${restaurantId}`
+        );
 
-        <div class="food-card">
+        const data = await response.json();
 
-            <img
-                src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80"
-                alt="Butter Chicken"
-            >
+        console.log("Database food items:", data);
 
-            <div class="food-info">
-
-                <h3>Butter Chicken</h3>
-
-                <p>
-                    Creamy and rich North Indian style butter chicken.
+        if (!data.success) {
+            foodMenu.innerHTML = `
+                <p style="text-align:center;">
+                    Unable to load food items.
                 </p>
+            `;
+            return;
+        }
 
-                <p>₹220</p>
+        const foods = data.food_items || [];
 
-                <button onclick="addFoodToCart('Butter Chicken', 220)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=800&q=80"
-                alt="Chicken Tikka"
-            >
-
-            <div class="food-info">
-
-                <h3>Chicken Tikka</h3>
-
-                <p>
-                    Juicy grilled chicken pieces marinated in spices
+        if (foods.length === 0) {
+            foodMenu.innerHTML = `
+                <p style="text-align:center;">
+                    No food items available.
                 </p>
+            `;
+            return;
+        }
 
-                <p>₹200</p>
+        foodMenu.innerHTML = foods.map(food => {
 
-                <button onclick="addFoodToCart('Chicken Tikka', 200)">
-                    Add to Cart
-                </button>
+            let image = food.image;
 
-            </div>
+            /*
+             * Local images
+             */
+            if (image && image.startsWith("./images/")) {
+                image = image;
+            }
 
-        </div>
+            /*
+             * If image is empty
+             */
+            if (!image) {
+                image = "./images/food-background.jpg";
+            }
 
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1545247181-516773cae754?auto=format&fit=crop&w=800&q=80"
-                alt="Mutton Rogan Josh"
-            >
-
-            <div class="food-info">
-
-                <h3>Mutton Rogan Josh</h3>
-
-                <p>
-                    Traditional Kashmiri-style mutton cooked with aromatic spices.
-                </p>
-
-                <p>₹280</p>
-
-                <button onclick="addFoodToCart('Mutton Rogan Josh', 280)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80"
-                alt="Paneer Butter Masala"
-            >
-
-            <div class="food-info">
-
-                <h3>Paneer Butter Masala</h3>
-
-                <p>
-                    Soft paneer cooked in creamy tomato and butter gravy.
-                </p>
-
-                <p>₹180</p>
-
-                <button onclick="addFoodToCart('Paneer Butter Masala', 180)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
+            return `
                 <div class="food-card">
 
-            <img
-                src="./images/chicken Fry.jpg"
-                alt="Andhra Chicken Fry"
-            >
+                    <img
+                        src="${image}"
+                        alt="${food.name}"
+                        class="food-image"
+                        onerror="this.src='./images/food-background.jpg'"
+                    >
 
-            <div class="food-info">
+                    <div class="food-info">
 
-                <h3>Andhra Chicken Fry</h3>
+                        <h3>${food.name}</h3>
 
-                <p>
-                    Spicy Andhra-style chicken fry cooked with traditional spices.
-                </p>
+                        <p>
+                            ${food.description || ""}
+                        </p>
 
-                <p>₹190</p>
+                        <span>
+                            ₹${Number(food.price).toFixed(2)}
+                        </span>
 
-                <button onclick="addFoodToCart('Andhra Chicken Fry', 190)">
-                    Add to Cart
-                </button>
+                        <button
+                            onclick="addFoodToCart(
+                                '${food.name.replace(/'/g, "\\'")}',
+                                ${Number(food.price)}
+                            )"
+                        >
+                            Add to Cart
+                        </button>
 
-            </div>
+                    </div>
 
-        </div>
+                </div>
+            `;
 
+        }).join("");
 
-        <div class="food-card">
+    } catch (error) {
 
-            <img
-                src="./images/chicken-biryani.jpg"
-                alt="Chicken Biryani"
-            >
+        console.error("Food menu error:", error);
 
-            <div class="food-info">
-
-                <h3>Chicken Biryani</h3>
-
-                <p>
-                    Fragrant basmati rice cooked with tender chicken and spices.
-                </p>
-
-                <p>₹220</p>
-
-                <button onclick="addFoodToCart('Chicken Biryani', 220)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="./images/veg pulav.jpg"
-                alt="Veg Pulao"
-            >
-
-            <div class="food-info">
-
-                <h3>Veg Pulao</h3>
-
-                <p>
-                    Aromatic basmati rice cooked with fresh vegetables and spices.
-                </p>
-
-                <p>₹140</p>
-
-                <button onclick="addFoodToCart('Veg Pulao', 140)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-        <div class="food-card">
-
-            <img
-                src="./images/gulab-jamun.jpg"
-                alt="Gulab Jamun"
-            >
-
-            <div class="food-info">
-
-                <h3>Gulab Jamun</h3>
-
-                <p>
-                    Soft sweet dumplings soaked in delicious sugar syrup.
-                </p>
-
-                <p>₹60</p>
-
-                <button onclick="addFoodToCart('Gulab Jamun', 60)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-    `;
-
+        foodMenu.innerHTML = `
+            <p style="text-align:center;">
+                Unable to connect to server.
+            </p>
+        `;
+    }
 }
-else if (restaurantId == "3") {
-
-    menu = `
-
-        <!-- CHINESE FOOD -->
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=80"
-                alt="Chicken Fried Rice"
-            >
-
-            <div class="food-info">
-
-                <h3>Chicken Fried Rice</h3>
-
-                <p>
-                    Fried rice with chicken, vegetables and Chinese sauces.
-                </p>
-
-                <p>₹160</p>
-
-                <button onclick="addFoodToCart('Chicken Fried Rice', 160)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="./images/Chicken Manchurian.jpg"
-                alt="Chicken Manchurian"
-            >
-
-            <div class="food-info">
-
-                <h3>Chicken Manchurian</h3>
-
-                <p>
-                    Crispy chicken tossed in spicy Manchurian sauce.
-                </p>
-
-                <p>₹180</p>
-
-                <button onclick="addFoodToCart('Chicken Manchurian', 180)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80"
-                alt="Veg Hakka Noodles"
-            >
-
-            <div class="food-info">
-
-                <h3>Noodles</h3>
-
-                <p>
-                    Stir-fried noodles with fresh vegetables and Chinese spices.
-                </p>
-
-                <p>₹130</p>
-
-                <button onclick="addFoodToCart('Noodles', 130)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="./images/gobi-manchurian.jpg"
-                alt="Gobi Manchurian"
-            >
-
-            <div class="food-info">
-
-                <h3>Gobi Manchurian</h3>
-
-                <p>
-                    Crispy cauliflower tossed in spicy Manchurian sauce.
-                </p>
-
-                <p>₹140</p>
-
-                <button onclick="addFoodToCart('Gobi Manchurian', 140)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- INDIAN FOOD -->
-
-        <div class="food-card">
-
-            <img
-                src="./images/chicken-biryani.jpg"
-                alt="Chicken Biryani"
-            >
-
-            <div class="food-info">
-
-                <h3>Chicken Biryani</h3>
-
-                <p>
-                    Aromatic basmati rice cooked with tender chicken and spices.
-                </p>
-
-                <p>₹200</p>
-
-                <button onclick="addFoodToCart('Chicken Biryani', 200)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80"
-                alt="Butter Chicken"
-            >
-
-            <div class="food-info">
-
-                <h3>Butter Chicken</h3>
-
-                <p>
-                    Tender chicken cooked in a rich creamy tomato gravy.
-                </p>
-
-                <p>₹220</p>
-
-                <button onclick="addFoodToCart('Butter Chicken', 220)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=800&q=80"
-                alt="Paneer Butter Masala"
-            >
-
-            <div class="food-info">
-
-                <h3>Paneer Butter Masala</h3>
-
-                <p>
-                    Soft paneer cooked in creamy tomato and butter gravy.
-                </p>
-
-                <p>₹180</p>
-
-                <button onclick="addFoodToCart('Paneer Butter Masala', 180)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="food-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=80"
-                alt="Masala Dosa"
-            >
-
-            <div class="food-info">
-
-                <h3>Masala Dosa</h3>
-
-                <p>
-                    Crispy dosa filled with flavorful potato masala.
-                </p>
-
-                <p>₹100</p>
-
-                <button onclick="addFoodToCart('Masala Dosa', 100)">
-                    Add to Cart
-                </button>
-
-            </div>
-
-        </div>
-
-    `;
-
-}
-
-    document.getElementById("foodMenu").innerHTML = menu;
-    loadRestaurantAddedFood(restaurantId);
-
-}
-        async function loadRestaurantAddedFood(restaurantId) {
+        async function loadFoodMenu(restaurantId) {
 
     try {
 

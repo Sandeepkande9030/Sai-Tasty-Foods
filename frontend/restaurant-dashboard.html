@@ -200,6 +200,61 @@
     padding: 20px;
     color: #666;
 }
+/* =========================
+   FOOD ITEMS
+========================= */
+
+#foodItemsContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.food-item-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.food-item-card h3 {
+    margin-top: 0;
+    color: #222;
+}
+
+.food-item-card p {
+    color: #666;
+    margin: 8px 0;
+}
+
+.food-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #e63946;
+}
+
+.food-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.food-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.food-delete-button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 9px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
 
 /* =========================
@@ -223,7 +278,9 @@
 
     .sidebar-menu {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        #foodItemsContainer {
+        grid-template-columns: 1fr;
+        }
         gap: 5px;
     }
 
@@ -248,6 +305,7 @@
     .dashboard-cards {
         grid-template-columns: 1fr;
     }
+    
 
 }
 
@@ -461,152 +519,161 @@
         </div>
 
     </section>
-
-
     <!-- =========================
-         FOOD ITEMS SECTION
+        FOOD ITEMS SECTION
     ========================= -->
 
     <section
-    id="foodItemsSection"
-    class="content-section"
-    style="display:none;">
+        id="foodItemsSection"
+        class="content-section"
+        style="display:none;">
 
-    <h2>
-        🍔 Food Items
-    </h2>
-
-    <button
-        onclick="showAddFoodForm()"
-        style="
-            background:#e63946;
-            color:white;
-            border:none;
-            padding:12px 18px;
-            border-radius:6px;
-            cursor:pointer;
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
             margin-bottom:20px;
+            flex-wrap:wrap;
+            gap:10px;
         ">
 
-        + Add Food Item
+            <h2 style="margin:0;">
+                🍔 Food Items
+            </h2>
 
-    </button>
+            <button
+                onclick="showAddFoodForm()"
+                style="
+                    background:#e63946;
+                    color:white;
+                    border:none;
+                    padding:12px 18px;
+                    border-radius:6px;
+                    cursor:pointer;
+                    font-size:15px;
+                ">
+
+                ➕ Add Food Item
+
+            </button>
+
+        </div>
 
 
-    <!-- ADD FOOD FORM -->
+        <!-- ADD FOOD FORM -->
 
-    <div
-        id="addFoodForm"
-        style="
-            display:none;
-            background:#f8f8f8;
-            padding:20px;
-            border-radius:10px;
-            margin-bottom:25px;
-        ">
-
-        <h3>
-            Add New Food Item
-        </h3>
-
-
-        <input
-            type="text"
-            id="foodName"
-            placeholder="Food Name"
+        <div
+            id="addFoodForm"
             style="
-                width:100%;
-                box-sizing:border-box;
-                padding:12px;
-                margin-bottom:10px;
+                display:none;
+                background:#f8f8f8;
+                padding:20px;
+                border-radius:10px;
+                margin-bottom:25px;
             ">
 
-
-        <textarea
-            id="foodDescription"
-            placeholder="Food Description"
-            style="
-                width:100%;
-                box-sizing:border-box;
-                padding:12px;
-                margin-bottom:10px;
-                min-height:80px;
-            "></textarea>
+            <h3>
+                ➕ Add New Food Item
+            </h3>
 
 
-        <input
-            type="number"
-            id="foodPrice"
-            placeholder="Price"
-            style="
-                width:100%;
-                box-sizing:border-box;
-                padding:12px;
-                margin-bottom:10px;
-            ">
+            <input
+                type="text"
+                id="foodName"
+                placeholder="Food Name"
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
 
 
-        <input
-            type="text"
-            id="foodImage"
-            placeholder="Image path or URL"
-            style="
-                width:100%;
-                box-sizing:border-box;
-                padding:12px;
-                margin-bottom:10px;
-            ">
+            <textarea
+                id="foodDescription"
+                placeholder="Food Description"
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:12px;
+                    margin-bottom:10px;
+                    min-height:80px;
+                "></textarea>
 
 
-        <button
-            onclick="addFoodItem()"
-            style="
-                background:#e63946;
-                color:white;
-                border:none;
-                padding:12px 18px;
-                border-radius:6px;
-                cursor:pointer;
-            ">
-
-            Save Food Item
-
-        </button>
+            <input
+                type="number"
+                id="foodPrice"
+                placeholder="Price"
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
 
 
-        <button
-            onclick="hideAddFoodForm()"
-            style="
-                background:#777;
-                color:white;
-                border:none;
-                padding:12px 18px;
-                border-radius:6px;
-                cursor:pointer;
-                margin-left:5px;
-            ">
-
-            Cancel
-
-        </button>
+            <input
+                type="text"
+                id="foodImage"
+                placeholder="Image path or URL"
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
 
 
-        <p id="foodMessage"></p>
+            <button
+                onclick="addFoodItem()"
+                style="
+                    background:#e63946;
+                    color:white;
+                    border:none;
+                    padding:12px 18px;
+                    border-radius:6px;
+                    cursor:pointer;
+                ">
 
-    </div>
+                Save Food Item
+
+            </button>
 
 
-    <!-- FOOD ITEMS -->
+            <button
+                onclick="hideAddFoodForm()"
+                style="
+                    background:#777;
+                    color:white;
+                    border:none;
+                    padding:12px 18px;
+                    border-radius:6px;
+                    cursor:pointer;
+                    margin-left:5px;
+                ">
 
-    <div id="foodItemsContainer">
+                Cancel
 
-        <p>
-            No food items added yet.
-        </p>
+            </button>
 
-    </div>
 
-</section>
+            <p id="foodMessage"></p>
+
+        </div>
+
+
+        <!-- FOOD ITEMS LIST -->
+
+        <div id="foodItemsContainer">
+
+            <p class="no-orders">
+                Loading food items...
+            </p>
+
+        </div>
+
+    </section>
 
     <!-- =========================
          NOTIFICATIONS SECTION
@@ -706,44 +773,104 @@ const restaurantId =
     localStorage.getItem(
         "restaurantId"
     );
-  // =========================
-// LOAD RESTAURANT FOOD ITEMS
-// =========================
+  async function loadFoodItems() {
 
-async function loadFoodItems() {
+    const container =
+        document.getElementById("foodItemsContainer");
+
+    if (!restaurantId) {
+
+        container.innerHTML = `
+            <p class="no-orders">
+                Restaurant ID not found.
+            </p>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = `
+        <p class="no-orders">
+            Loading food items...
+        </p>
+    `;
 
     try {
 
-        const response = await fetch(
-            API_BASE_URL +
-            "/api/restaurant-food-items/?restaurant_id=" +
-            restaurantId
-        );
+        const response =
+            await fetch(
+                API_BASE_URL +
+                "/api/restaurant-food-items/?restaurant_id=" +
+                restaurantId
+            );
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
-        const container =
-            document.getElementById("foodItemsContainer");
+        console.log("FOOD ITEMS:", data);
+
 
         if (!data.success) {
 
-            container.innerHTML =
-                "<p>Unable to load food items.</p>";
+            container.innerHTML = `
+                <p class="no-orders">
+                    ${data.message || "Unable to load food items."}
+                </p>
+            `;
 
             return;
         }
 
-        if (data.food_items.length === 0) {
 
-            container.innerHTML =
-                "<p>No food items added yet.</p>";
+        const foodItems =
+            data.food_items || [];
+
+
+        if (foodItems.length === 0) {
+
+            container.innerHTML = `
+
+                <div style="
+                    grid-column:1/-1;
+                    text-align:center;
+                    padding:40px;
+                ">
+
+                    <h3>
+                        🍔 No Food Items Yet
+                    </h3>
+
+                    <p>
+                        Add your first food item to your restaurant menu.
+                    </p>
+
+                    <button
+                        onclick="showAddFoodForm()"
+                        style="
+                            background:#e63946;
+                            color:white;
+                            border:none;
+                            padding:12px 18px;
+                            border-radius:6px;
+                            cursor:pointer;
+                        ">
+
+                        ➕ Add Food Item
+
+                    </button>
+
+                </div>
+
+            `;
 
             return;
         }
+
 
         container.innerHTML = "";
 
-        data.food_items.forEach(function(food) {
+
+        foodItems.forEach(function(food) {
 
             const foodCard =
                 document.createElement("div");
@@ -751,62 +878,84 @@ async function loadFoodItems() {
             foodCard.className =
                 "food-item-card";
 
+
+            let imageHTML = "";
+
+            if (food.image) {
+
+                imageHTML = `
+                    <img
+                        src="${food.image}"
+                        class="food-image"
+                        alt="${food.name}"
+                        onerror="this.style.display='none';">
+                `;
+
+            }
+
+
             foodCard.innerHTML = `
+
+                ${imageHTML}
 
                 <h3>
                     ${food.name}
                 </h3>
 
                 <p>
-                    ${food.description || ""}
+                    ${food.description || "No description available."}
+                </p>
+
+                <p class="food-price">
+                    ₹${food.price}
                 </p>
 
                 <p>
-                    <strong>
-                        ₹${food.price}
-                    </strong>
-                </p>
-
-                <p>
-                    ${food.is_available
+                    ${
+                        food.is_available
                         ? "✅ Available"
-                        : "❌ Not Available"}
+                        : "❌ Not Available"
+                    }
                 </p>
 
-                <button
-                    onclick="deleteFoodItem(${food.id})"
-                    style="
-                        background:#e63946;
-                        color:white;
-                        border:none;
-                        padding:10px 15px;
-                        border-radius:6px;
-                        cursor:pointer;
-                        margin-top:10px;
-                    ">
+                <div class="food-actions">
 
-                    🗑️ Delete
+                    <button
+                        class="food-delete-button"
+                        onclick="deleteFoodItem(${food.id})">
 
-                </button>
+                        🗑️ Delete
+
+                    </button>
+
+                </div>
 
             `;
+
 
             container.appendChild(foodCard);
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "LOAD FOOD ITEMS ERROR:",
             error
         );
 
-        document.getElementById(
-            "foodItemsContainer"
-        ).innerHTML =
-            "<p>Unable to connect to server.</p>";
+        container.innerHTML = `
+
+            <p class="no-orders">
+                Unable to connect to server.
+            </p>
+
+        `;
+
     }
+
 }
 
 
