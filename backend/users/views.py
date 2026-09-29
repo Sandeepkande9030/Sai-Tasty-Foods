@@ -746,6 +746,46 @@ def place_order(request):
                 })
 
             # =========================
+            # CHECK FOOD AVAILABILITY
+            # =========================
+
+            for item in items:
+
+                item_name = item.get("name")
+
+                if not item_name:
+
+                    return JsonResponse({
+                        "success": False,
+                        "message": "Food item name is missing"
+                    })
+
+                # Find food item belonging to this restaurant
+                food_item = FoodItem.objects.filter(
+                    restaurant_id=restaurant_id,
+                    name=item_name
+                ).first()
+
+                # Food item does not exist
+                if not food_item:
+
+                    return JsonResponse({
+                        "success": False,
+                        "message":
+                            f"{item_name} is no longer available."
+                    })
+
+                # Food item is disabled
+                if not food_item.is_available:
+
+                    return JsonResponse({
+                        "success": False,
+                        "message":
+                            f"{item_name} is currently unavailable. "
+                            f"Please remove it from your cart."
+                    })
+
+            # =========================
             # CREATE ORDER
             # =========================
 
