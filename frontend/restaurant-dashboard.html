@@ -663,7 +663,134 @@
         </div>
 
 
-        <!-- FOOD ITEMS LIST -->
+                <!-- =========================
+             EDIT FOOD FORM
+        ========================= -->
+
+        <div
+            id="editFoodForm"
+            style="
+                display:none;
+                background:#f8f8f8;
+                padding:20px;
+                border-radius:10px;
+                margin-bottom:25px;
+            ">
+
+            <h3>
+                ✏️ Edit Food Item
+            </h3>
+
+
+            <input
+                type="hidden"
+                id="editFoodId">
+
+
+            <input
+                type="text"
+                id="editFoodName"
+                placeholder="Food Name"
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
+
+
+            <textarea
+                id="editFoodDescription"
+                placeholder="Food Description"
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:12px;
+                    margin-bottom:10px;
+                    min-height:80px;
+                "></textarea>
+
+
+            <input
+                type="number"
+                id="editFoodPrice"
+                placeholder="Price"
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
+
+
+            <input
+                type="text"
+                id="editFoodImage"
+                placeholder="Image path or URL"
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
+
+
+            <label style="
+                display:block;
+                margin-bottom:15px;
+                font-weight:bold;
+            ">
+
+                <input
+                    type="checkbox"
+                    id="editFoodAvailable">
+
+                Food Available
+
+            </label>
+
+
+            <button
+                onclick="updateFoodItem()"
+                style="
+                    background:#28a745;
+                    color:white;
+                    border:none;
+                    padding:12px 18px;
+                    border-radius:6px;
+                    cursor:pointer;
+                ">
+
+                💾 Save Changes
+
+            </button>
+
+
+            <button
+                onclick="cancelEditFood()"
+                style="
+                    background:#777;
+                    color:white;
+                    border:none;
+                    padding:12px 18px;
+                    border-radius:6px;
+                    cursor:pointer;
+                    margin-left:5px;
+                ">
+
+                Cancel
+
+            </button>
+
+
+            <p id="editFoodMessage"></p>
+
+        </div>
+
+
+        <!-- =========================
+             FOOD ITEMS LIST
+        ========================= -->
 
         <div id="foodItemsContainer">
 
@@ -919,6 +1046,22 @@ const restaurantId =
                 </p>
 
                 <div class="food-actions">
+
+                    <button
+                        onclick="editFoodItem(${food.id})"
+                        style="
+                            background:#007bff;
+                            color:white;
+                            border:none;
+                            padding:9px 14px;
+                            border-radius:6px;
+                            cursor:pointer;
+                        ">
+
+                        ✏️ Edit
+
+                    </button>
+
 
                     <button
                         class="food-delete-button"
@@ -2060,7 +2203,251 @@ async function deleteFoodItem(foodId) {
     }
 
 }
+// =========================
+// EDIT FOOD ITEM
+// =========================
 
+async function editFoodItem(foodId) {
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE_URL +
+                "/api/restaurant-food-items/?restaurant_id=" +
+                restaurantId
+            );
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            alert(
+                data.message ||
+                "Unable to load food items."
+            );
+
+            return;
+        }
+
+        const food =
+            data.food_items.find(
+                function(item) {
+                    return item.id == foodId;
+                }
+            );
+
+        if (!food) {
+
+            alert("Food item not found.");
+
+            return;
+        }
+
+        // Fill edit form
+        document.getElementById(
+            "editFoodId"
+        ).value = food.id;
+
+
+        document.getElementById(
+            "editFoodName"
+        ).value = food.name;
+
+
+        document.getElementById(
+            "editFoodDescription"
+        ).value = food.description || "";
+
+
+        document.getElementById(
+            "editFoodPrice"
+        ).value = food.price;
+
+
+        document.getElementById(
+            "editFoodImage"
+        ).value = food.image || "";
+
+
+        document.getElementById(
+            "editFoodAvailable"
+        ).checked = food.is_available;
+
+
+        // Show edit form
+        document.getElementById(
+            "editFoodForm"
+        ).style.display = "block";
+
+
+        // Scroll to edit form
+        document.getElementById(
+            "editFoodForm"
+        ).scrollIntoView({
+            behavior: "smooth"
+        });
+
+    } catch (error) {
+
+        console.error(
+            "EDIT FOOD ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to connect to server."
+        );
+    }
+}
+// =========================
+// UPDATE FOOD ITEM
+// =========================
+
+async function updateFoodItem() {
+
+    const foodId =
+        document.getElementById(
+            "editFoodId"
+        ).value;
+
+
+    const name =
+        document.getElementById(
+            "editFoodName"
+        ).value.trim();
+
+
+    const description =
+        document.getElementById(
+            "editFoodDescription"
+        ).value.trim();
+
+
+    const price =
+        document.getElementById(
+            "editFoodPrice"
+        ).value.trim();
+
+
+    const image =
+        document.getElementById(
+            "editFoodImage"
+        ).value.trim();
+
+
+    const isAvailable =
+        document.getElementById(
+            "editFoodAvailable"
+        ).checked;
+
+
+    const message =
+        document.getElementById(
+            "editFoodMessage"
+        );
+
+
+    // Validate required fields
+    if (!name || !price) {
+
+        message.textContent =
+            "Food name and price are required.";
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE_URL +
+                "/api/update-food-item/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        food_id: foodId,
+
+                        restaurant_id:
+                            restaurantId,
+
+                        name: name,
+
+                        description:
+                            description,
+
+                        price: price,
+
+                        image: image,
+
+                        is_available:
+                            isAvailable
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.success) {
+
+            alert(
+                "Food item updated successfully!"
+            );
+
+
+            // Hide edit form
+            document.getElementById(
+                "editFoodForm"
+            ).style.display = "none";
+
+
+            // Reload food items
+            loadFoodItems();
+
+        } else {
+
+            message.textContent =
+                data.message ||
+                "Unable to update food item.";
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "UPDATE FOOD ERROR:",
+            error
+        );
+
+
+        message.textContent =
+            "Unable to connect to server.";
+    }
+}
+
+// =========================
+// CANCEL EDIT FOOD
+// =========================
+
+function cancelEditFood() {
+
+    document.getElementById(
+        "editFoodForm"
+    ).style.display = "none";
+
+}
 
 // =========================
 // START DASHBOARD

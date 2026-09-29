@@ -18,6 +18,7 @@ from .views import (
     mark_notifications_viewed,
     get_customer_orders,
     delete_food_item,
+    update_food_item,
     update_order_status,
 
 )
@@ -81,7 +82,12 @@ urlpatterns = [
     delete_food_item,
     name="delete_food_item"
     ),
-        path(
+    path(
+    "update-food-item/",
+    update_food_item,
+    name="update_food_item"
+    ),
+    path(
     "update-order-status/",
     update_order_status,
     name="update_order_status"
