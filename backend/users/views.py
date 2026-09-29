@@ -782,7 +782,7 @@ def place_order(request):
                         "success": False,
                         "message":
                             f"{item_name} is currently unavailable. "
-                            f"Please remove it from your cart."
+                            
                     })
 
             # =========================
@@ -1746,7 +1746,7 @@ def update_food_item(request):
         "success": False,
         "message": "Only POST method is allowed"
     })
-    # =========================
+# =========================
 # UPDATE ORDER STATUS
 # =========================
 
@@ -1762,55 +1762,194 @@ def update_order_status(request):
             order_id = data.get("order_id")
             restaurant_id = data.get("restaurant_id")
             status = data.get("status")
+            rejection_reason = data.get("rejection_reason", "")
 
-            # Check required fields
+            # =========================
+            # CHECK REQUIRED FIELDS
+            # =========================
+
             if not order_id:
+
                 return JsonResponse({
                     "success": False,
                     "message": "Order ID is required"
                 })
 
             if not restaurant_id:
+
                 return JsonResponse({
                     "success": False,
                     "message": "Restaurant ID is required"
                 })
 
             if not status:
+
                 return JsonResponse({
                     "success": False,
                     "message": "Order status is required"
                 })
 
-            # Only Accept or Reject is allowed
+            # =========================
+            # ONLY ACCEPT OR REJECT
+            # =========================
+
             if status not in ["accepted", "rejected"]:
+
                 return JsonResponse({
                     "success": False,
                     "message": "Invalid order status"
                 })
 
-            # Find order belonging to this restaurant
+            # =========================
+            # FIND ORDER
+            # =========================
+
             order = Order.objects.filter(
                 id=order_id,
                 restaurant_id=restaurant_id
             ).first()
 
             if not order:
+
                 return JsonResponse({
                     "success": False,
                     "message": "Order not found"
                 })
 
-            # Order must be pending
+            # =========================
+            # ORDER MUST BE PENDING
+            # =========================
+
             if order.status != "pending":
+
                 return JsonResponse({
                     "success": False,
-                    "message": "Only pending orders can be accepted or rejected"
+                    "message":
+                        "Only pending orders can be accepted or rejected"
                 })
 
-            # Update status
+            # =========================
+            # REJECTION REASON
+            # =========================
+
+            if status == "rejected" and not rejection_reason:
+
+                return JsonResponse({
+                    "success": False,
+                    "message":
+                        "Rejection reason is required"
+                })
+
+            # =========================
+            # UPDATE STATUS
+            # =========================
+
             order.status = status
             order.save()
+
+            # =========================
+            # SEND EMAIL TO CUSTOMER
+            # =========================
+
+            if status == "accepted":
+
+                send_mail(
+
+                    subject="Sai Tasty Foods - Order Confirmed",
+
+                    message=f"""
+Hello {order.customer_name},
+
+
+Your order #{order.id} has been accepted by
+{order.restaurant.name}.
+
+Your food is now being prepared.
+
+Order Status:
+CONFIRMED
+
+Restaurant:
+{order.restaurant.name}
+
+Total Amount:
+₹{order.total_amount}
+
+We will keep you updated about your order.
+
+Thank you for ordering from Sai Tasty Foods.
+
+Regards,
+Sai Tasty Foods
+""",
+
+                    from_email=None,
+
+                    recipient_list=[
+                        order.customer_email
+                    ],
+
+                    fail_silently=False
+                )
+
+                print(
+                    "ORDER ACCEPTED EMAIL SENT TO:",
+                    order.customer_email,
+                    flush=True
+                )
+
+            # =========================
+            # REJECTED ORDER EMAIL
+            # =========================
+
+            elif status == "rejected":
+
+                send_mail(
+
+                    subject="Sai Tasty Foods - Order Rejected",
+
+                    message=f"""
+Hello {order.customer_name},
+
+We are sorry to inform you that your
+order #{order.id} could not be accepted.
+
+Restaurant:
+{order.restaurant.name}
+
+Order Status:
+REJECTED
+
+Reason:
+{rejection_reason}
+
+Please try ordering another food item or
+place a new order later.
+
+We apologize for the inconvenience.
+
+Regards,
+Sai Tasty Foods
+""",
+
+                    from_email=None,
+
+                    recipient_list=[
+                        order.customer_email
+                    ],
+
+                    fail_silently=False
+                )
+
+                print(
+                    "ORDER REJECTED EMAIL SENT TO:",
+                    order.customer_email,
+                    flush=True
+                )
+
+            # =========================
+            # SUCCESS RESPONSE
+            # =========================
 
             return JsonResponse({
 
@@ -1856,3 +1995,4 @@ def update_order_status(request):
             "Only POST method is allowed"
 
     })
+
