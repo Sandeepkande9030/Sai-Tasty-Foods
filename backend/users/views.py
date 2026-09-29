@@ -1649,103 +1649,137 @@ def delete_food_item(request):
 @csrf_exempt
 def update_food_item(request):
 
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed"
+        })
 
-        try:
-            data = json.loads(request.body)
+    try:
 
-            food_id = data.get("food_id")
-            restaurant_id = data.get("restaurant_id")
+        data = json.loads(request.body)
 
-            name = data.get("name")
-            description = data.get("description")
-            price = data.get("price")
-            image = data.get("image")
-            is_available = data.get("is_available")
+        food_id = data.get("food_id")
+        restaurant_id = data.get("restaurant_id")
 
-            # Check Food ID
-            if not food_id:
-                return JsonResponse({
-                    "success": False,
-                    "message": "Food ID is required"
-                })
+        # =========================
+        # CHECK FOOD ID
+        # =========================
 
-            # Check Restaurant ID
-            if not restaurant_id:
-                return JsonResponse({
-                    "success": False,
-                    "message": "Restaurant ID is required"
-                })
+        if not food_id:
+            return JsonResponse({
+                "success": False,
+                "message": "Food ID is required"
+            })
 
-            # Check required fields
-            if not name:
-                return JsonResponse({
-                    "success": False,
-                    "message": "Food name is required"
-                })
+        # =========================
+        # CHECK RESTAURANT ID
+        # =========================
 
-            if not price:
-                return JsonResponse({
-                    "success": False,
-                    "message": "Food price is required"
-                })
+        if not restaurant_id:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant ID is required"
+            })
 
-            # Find food item belonging to this restaurant
-            food_item = FoodItem.objects.filter(
-                id=food_id,
-                restaurant_id=restaurant_id
-            ).first()
+        # =========================
+        # FIND FOOD ITEM
+        # =========================
 
-            if not food_item:
-                return JsonResponse({
-                    "success": False,
-                    "message": "Food item not found"
-                })
+        food_item = FoodItem.objects.filter(
+            id=food_id,
+            restaurant_id=restaurant_id
+        ).first()
 
-            # Update food item
-            food_item.name = name
-            food_item.description = description or ""
-            food_item.price = price
-            food_item.image = image or ""
+        if not food_item:
+            return JsonResponse({
+                "success": False,
+                "message": "Food item not found"
+            })
 
-            # Update availability
-            if is_available is not None:
-                food_item.is_available = is_available
+        # ==================================================
+        # AVAILABILITY ONLY
+        # ==================================================
 
-            food_item.save()
+        if "is_available" in data and "name" not in data:
+
+            food_item.is_available = bool(
+                data.get("is_available")
+            )
+
+            food_item.save(
+                update_fields=["is_available"]
+            )
 
             return JsonResponse({
                 "success": True,
-                "message": "Food item updated successfully",
-
+                "message": "Food availability updated successfully",
                 "food_item": {
                     "id": food_item.id,
-                    "restaurant_id": food_item.restaurant_id,
-                    "name": food_item.name,
-                    "description": food_item.description,
-                    "price": str(food_item.price),
-                    "image": food_item.image,
                     "is_available": food_item.is_available
                 }
             })
 
-        except Exception as e:
+        # ==================================================
+        # FULL FOOD ITEM UPDATE
+        # ==================================================
 
-            print(
-                "UPDATE FOOD ITEM ERROR:",
-                str(e),
-                flush=True
-            )
+        name = data.get("name")
+        description = data.get("description")
+        price = data.get("price")
+        image = data.get("image")
 
+        if not name:
             return JsonResponse({
                 "success": False,
-                "message": str(e)
+                "message": "Food name is required"
             })
 
-    return JsonResponse({
-        "success": False,
-        "message": "Only POST method is allowed"
-    })
+        if not price:
+            return JsonResponse({
+                "success": False,
+                "message": "Food price is required"
+            })
+
+        food_item.name = name
+        food_item.description = description or ""
+        food_item.price = price
+        food_item.image = image or ""
+
+        if "is_available" in data:
+            food_item.is_available = bool(
+                data.get("is_available")
+            )
+
+        food_item.save()
+
+        return JsonResponse({
+            "success": True,
+            "message": "Food item updated successfully",
+            "food_item": {
+                "id": food_item.id,
+                "restaurant_id": food_item.restaurant_id,
+                "name": food_item.name,
+                "description": food_item.description,
+                "price": str(food_item.price),
+                "image": food_item.image,
+                "is_available": food_item.is_available
+            }
+        })
+
+    except Exception as e:
+
+        print(
+            "UPDATE FOOD ITEM ERROR:",
+            str(e),
+            flush=True
+        )
+
+        return JsonResponse({
+            "success": False,
+            "message": str(e)
+        })
+
 # =========================
 # UPDATE ORDER STATUS
 # =========================
@@ -1860,11 +1894,10 @@ def update_order_status(request):
                     message=f"""
 Hello {order.customer_name},
 
-
 Your order #{order.id} has been accepted by
 {order.restaurant.name}.
 
-Your food is now being prepared.
+Your food is now preparing.
 
 Order Status:
 CONFIRMED
