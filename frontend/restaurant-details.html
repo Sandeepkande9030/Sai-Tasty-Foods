@@ -302,7 +302,7 @@
         `;
     }
 }
-        async function loadFoodMenu(restaurantId) {
+       async function loadFoodMenu(restaurantId) {
 
     try {
 
@@ -319,6 +319,8 @@
 
         const foodMenu =
             document.getElementById("foodMenu");
+
+        foodMenu.innerHTML = "";
 
         data.food_items.forEach(function(food) {
 
@@ -344,6 +346,43 @@
 
             foodCard.className = "food-card";
 
+            // =================================
+            // CHECK FOOD AVAILABILITY
+            // =================================
+
+            let buttonHTML = "";
+
+            if (food.is_available === false) {
+
+                buttonHTML = `
+                    <button
+                        disabled
+                        style="
+                            background: #999;
+                            color: white;
+                            cursor: not-allowed;
+                            opacity: 0.7;
+                        "
+                    >
+                        Not Available
+                    </button>
+                `;
+
+            } else {
+
+                buttonHTML = `
+                    <button
+                        onclick="addFoodToCart(
+                            '${food.name.replace(/'/g, "\\'")}',
+                            ${Number(food.price)}
+                        )"
+                    >
+                        Add to Cart
+                    </button>
+                `;
+
+            }
+
             foodCard.innerHTML = `
 
                 <img
@@ -363,10 +402,7 @@
                         ₹${food.price}
                     </p>
 
-                    <button
-                        onclick="addFoodToCart('${food.name.replace(/'/g, "\\'")}', ${food.price})">
-                        Add to Cart
-                    </button>
+                    ${buttonHTML}
 
                 </div>
 
@@ -379,7 +415,7 @@
     } catch (error) {
 
         console.error(
-            "LOAD RESTAURANT ADDED FOOD ERROR:",
+            "LOAD RESTAURANT FOOD ERROR:",
             error
         );
 

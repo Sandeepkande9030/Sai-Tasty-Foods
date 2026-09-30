@@ -16,12 +16,15 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 // ADD TO CART
 // ================================
 
-function addToCart(name, price, restaurantId) {
+async function addToCart(name, price) {
 
-    // Check login status
-    let isLoggedIn = localStorage.getItem("isLoggedIn");
+    // ================================
+    // CHECK LOGIN
+    // ================================
 
-    // If user is not logged in
+    let isLoggedIn =
+        localStorage.getItem("isLoggedIn");
+
     if (isLoggedIn !== "true") {
 
         alert("Please login first to add items to cart.");
@@ -31,41 +34,203 @@ function addToCart(name, price, restaurantId) {
         return;
     }
 
-    console.log("Add to Cart clicked:", name, price);
 
-    // Check whether item already exists
-    let existingItem = cart.find(
-    item => item.name === name && item.restaurant_id === restaurantId
-);
+    // ================================
+    // FIND FOOD ITEM
+    // ================================
 
-    if (existingItem) {
+    try {
 
-        // Increase quantity
-        existingItem.quantity++;
+        const response = await fetch(
+            `${API_BASE_URL}/api/all-food-items/`
+        );
 
-    } else {
+        const data = await response.json();
 
-        // Add new item
-       cart.push({
-        name: name,
-        price: price,
-        quantity: 1,
-        restaurant_id: restaurantId
-    });
+        console.log(
+            "All food items:",
+            data
+        );
+
+
+        if (!data.success) {
+
+            alert(
+                "Unable to find food information."
+            );
+
+            return;
+        }
+
+
+        // ================================
+        // FIND EXACT FOOD
+        // ================================
+
+        const foodItem =
+            data.food_items.find(function(food) {
+
+                return (
+                    food.name.toLowerCase() ===
+                    name.toLowerCase() &&
+                    Number(food.price) ===
+                    Number(price)
+                );
+
+            });
+
+
+        // ================================
+        // FOOD NOT FOUND
+        // ================================
+
+        if (!foodItem) {
+
+            alert(
+                "Food information not found for " +
+                name
+            );
+
+            return;
+        }
+
+
+        // ================================
+        // CHECK AVAILABILITY
+        // ================================
+
+        if (foodItem.is_available === false) {
+
+            alert(
+                name +
+                " is currently unavailable."
+            );
+
+            return;
+        }
+
+
+        // ================================
+        // GET RESTAURANT ID
+        // ================================
+
+        const restaurantId =
+            foodItem.restaurant_id;
+
+
+        if (!restaurantId) {
+
+            alert(
+                "Restaurant information is missing for " +
+                name
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "Food:",
+            foodItem.name
+        );
+
+        console.log(
+            "Restaurant:",
+            foodItem.restaurant_name
+        );
+
+        console.log(
+            "Restaurant ID:",
+            restaurantId
+        );
+
+
+        // ================================
+        // CHECK EXISTING ITEM
+        // ================================
+
+        let existingItem =
+            cart.find(function(item) {
+
+                return (
+                    item.name === foodItem.name &&
+                    Number(item.restaurant_id) ===
+                    Number(restaurantId)
+                );
+
+            });
+
+
+        // ================================
+        // INCREASE QUANTITY
+        // ================================
+
+        if (existingItem) {
+
+            existingItem.quantity++;
+
+        }
+
+
+        // ================================
+        // ADD NEW ITEM
+        // ================================
+
+        else {
+
+            cart.push({
+
+                name: foodItem.name,
+
+                price: Number(foodItem.price),
+
+                quantity: 1,
+
+                restaurant_id: restaurantId
+
+            });
+
+        }
+
+
+        // ================================
+        // SAVE CART
+        // ================================
+
+        localStorage.setItem(
+            "cart",
+            JSON.stringify(cart)
+        );
+
+
+        // ================================
+        // UPDATE CART
+        // ================================
+
+        updateCartCount();
+
+        displayCart();
+
+
+        alert(
+            foodItem.name +
+            " added to cart"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "ADD TO CART ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to get food information."
+        );
 
     }
 
-    // Save cart
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    // Update cart count
-    updateCartCount();
-
-    // Show message
-    alert(name + " added to cart");
-
-    // Display cart
-    displayCart();
 }
 
 // ================================
@@ -181,48 +346,146 @@ function removeItem(index) {
 
     displayCart();
 }
+//===============================
+// CHECKOUT
+//===============================
+
+async function checkout() {
+
+    // ======================================
+    // CHECK CART
+    // ======================================
+
+    if (cart.length === 0) {
+
+        alert("Your cart is empty");
+
+        return;
+    }
 
 
-/// =========================
-// CHECKOUT / PLACE ORDER
-// =========================
-function checkout() {
+    // ======================================
+    // CHECK LOGIN
+    // ======================================
+
+    let isLoggedIn =
+        localStorage.getItem("isLoggedIn");
+
+    if (isLoggedIn !== "true") {
+
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+
+        return;
+    }
 
 
-// Check cart
+    // ======================================
+    // CHECK FOOD AVAILABILITY
+    // ======================================
 
-if (cart.length === 0) {
+    try {
 
-    alert("Your cart is empty");
+        for (let item of cart) {
 
-    return;
+            let restaurantId =
+                item.restaurantId ||
+                item.restaurant_id;
+
+
+            // Check restaurant ID
+            if (!restaurantId) {
+
+                alert(
+                    "Restaurant information is missing for " +
+                    item.name
+                );
+
+                return;
+            }
+
+
+            // Get restaurant food items
+            const response = await fetch(
+                API_BASE_URL +
+                "/api/restaurant-food-items/?restaurant_id=" +
+                restaurantId
+            );
+
+
+            const data = await response.json();
+
+
+            if (!data.success) {
+
+                alert(
+                    "Unable to check food availability."
+                );
+
+                return;
+            }
+
+
+            // Find food item
+            const foodItem =
+                data.food_items.find(function(food) {
+
+                    return food.name === item.name;
+
+                });
+
+
+            // Food not found
+            if (!foodItem) {
+
+                alert(
+                    item.name +
+                    " is no longer available."
+                );
+
+                return;
+            }
+
+
+            // Food disabled by restaurant
+            if (foodItem.is_available === false) {
+
+                alert(
+                    item.name +
+                    " is currently unavailable. " +
+                    "Please remove it from your cart."
+                );
+
+                return;
+            }
+
+        }
+
+
+        // ======================================
+        // ALL ITEMS ARE AVAILABLE
+        // ======================================
+
+        window.location.href = "address.html";
+
+
+    } catch (error) {
+
+        console.error(
+            "CHECK AVAILABILITY ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to check food availability. " +
+            "Please try again."
+        );
+
+        return;
+    }
+
 }
-
-
-// Check login
-
-let isLoggedIn =
-    localStorage.getItem("isLoggedIn");
-
-if (isLoggedIn !== "true") {
-
-    alert("Please login first.");
-
-    window.location.href = "login.html";
-
-    return;
-}
-
-
-// Open delivery address page
-
-window.location.href = "address.html";
-
-
-}
-
-
-
 
 // ================================
 // LOAD CART
@@ -1194,7 +1457,7 @@ if (addressForm) {
 
         customer_email: currentUser.email,
 
-        restaurant_id: cart[0]. restaurantId,
+        restaurant_id: cart[0].restaurant_id,
 
         items: cart,
 

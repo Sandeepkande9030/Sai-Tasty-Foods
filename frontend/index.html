@@ -75,9 +75,11 @@
                 the best restaurants near you.
             </p>
             <div class="search-box">
-                <input type="text" 
-                placeholder="Search for food or restaurants">
-                <button>Search</button>
+                <input type="text"
+                    id="searchInput"
+                    placeholder="Search for food or restaurants">
+
+                <button onclick="searchFood()">Search</button>
             </div>
 
         </div>
@@ -291,6 +293,47 @@
     </div>
 
 </section>
+<script>
+function searchFood() {
+
+    const searchText = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const foodCards = document.querySelectorAll(".food-card");
+
+    let found = false;
+
+    foodCards.forEach(card => {
+
+        const foodName = card
+            .querySelector("h3")
+            .innerText
+            .toLowerCase();
+
+        const foodDescription = card
+            .querySelector("p")
+            .innerText
+            .toLowerCase();
+
+        if (
+            foodName.includes(searchText) ||
+            foodDescription.includes(searchText)
+        ) {
+            card.style.display = "";
+            found = true;
+        } else {
+            card.style.display = "none";
+        }
+    });
+
+    if (!found && searchText !== "") {
+        alert("No food items found");
+    }
+}
+</script>
 <script src="./script.js"></script>  
 
 </body>

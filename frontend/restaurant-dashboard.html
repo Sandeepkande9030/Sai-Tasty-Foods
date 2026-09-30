@@ -308,6 +308,57 @@
     
 
 }
+.food-availability {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.availability-checkbox {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.availability-checkbox input {
+    display: none;
+}
+
+.checkmark {
+    width: 28px;
+    height: 28px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: white;
+    color: transparent;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    transition: 0.2s;
+}
+
+.availability-checkbox input:checked + .checkmark {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.available-text {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.not-available-text {
+    color: #dc3545;
+    font-weight: bold;
+}
 
 </style>
 
@@ -936,7 +987,6 @@ const restaurantId =
 
         console.log("FOOD ITEMS:", data);
 
-
         if (!data.success) {
 
             container.innerHTML = `
@@ -948,15 +998,12 @@ const restaurantId =
             return;
         }
 
-
         const foodItems =
             data.food_items || [];
-
 
         if (foodItems.length === 0) {
 
             container.innerHTML = `
-
                 <div style="
                     grid-column:1/-1;
                     text-align:center;
@@ -980,22 +1027,18 @@ const restaurantId =
                             padding:12px 18px;
                             border-radius:6px;
                             cursor:pointer;
-                        ">
-
+                        "
+                    >
                         ➕ Add Food Item
-
                     </button>
 
                 </div>
-
             `;
 
             return;
         }
 
-
         container.innerHTML = "";
-
 
         foodItems.forEach(function(food) {
 
@@ -1004,7 +1047,6 @@ const restaurantId =
 
             foodCard.className =
                 "food-item-card";
-
 
             let imageHTML = "";
 
@@ -1015,11 +1057,10 @@ const restaurantId =
                         src="${food.image}"
                         class="food-image"
                         alt="${food.name}"
-                        onerror="this.style.display='none';">
+                        onerror="this.style.display='none';"
+                    >
                 `;
-
             }
-
 
             foodCard.innerHTML = `
 
@@ -1037,13 +1078,32 @@ const restaurantId =
                     ₹${food.price}
                 </p>
 
-                <p>
-                    ${
-                        food.is_available
-                        ? "✅ Available"
-                        : "❌ Not Available"
-                    }
-                </p>
+                <!-- FOOD AVAILABILITY -->
+
+                <div class="food-availability">
+
+                    <label class="availability-checkbox">
+
+                        <input
+                            type="checkbox"
+                            ${food.is_available ? "checked" : ""}
+                            onchange="toggleFoodAvailability(${food.id}, this.checked)"
+                        >
+
+                        <span class="checkmark">✓</span>
+
+                    </label>
+
+                    <span
+                        id="availabilityStatus${food.id}"
+                        class="${food.is_available ? "available-text" : "not-available-text"}"
+                    >
+                        ${food.is_available
+                            ? "Available"
+                            : "Not Available"}
+                    </span>
+
+                </div>
 
                 <div class="food-actions">
 
@@ -1056,25 +1116,21 @@ const restaurantId =
                             padding:9px 14px;
                             border-radius:6px;
                             cursor:pointer;
-                        ">
-
+                        "
+                    >
                         ✏️ Edit
-
                     </button>
-
 
                     <button
                         class="food-delete-button"
-                        onclick="deleteFoodItem(${food.id})">
-
+                        onclick="deleteFoodItem(${food.id})"
+                    >
                         🗑️ Delete
-
                     </button>
 
                 </div>
 
             `;
-
 
             container.appendChild(foodCard);
 
@@ -1090,18 +1146,108 @@ const restaurantId =
         );
 
         container.innerHTML = `
-
             <p class="no-orders">
                 Unable to connect to server.
             </p>
-
         `;
 
     }
 
 }
+// =========================
+// TOGGLE FOOD AVAILABILITY
+// =========================
 
+async function toggleFoodAvailability(foodId, isAvailable) {
 
+    try {
+
+        const response =
+            await fetch(
+                API_BASE_URL +
+                "/api/update-food-item/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        food_id:
+                            foodId,
+
+                        restaurant_id:
+                            restaurantId,
+
+                        is_available:
+                            isAvailable
+
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            const status =
+                document.getElementById(
+                    "availabilityStatus" + foodId
+                );
+
+            if (isAvailable) {
+
+                status.textContent =
+                    "✅ Available";
+
+                status.style.color =
+                    "#28a745";
+
+            } else {
+
+                status.textContent =
+                    "❌ Not Available";
+
+                status.style.color =
+                    "#dc3545";
+
+            }
+
+        } else {
+
+            alert(
+                data.message ||
+                "Unable to update food availability."
+            );
+
+            // Reload original database value
+            loadFoodItems();
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "TOGGLE FOOD AVAILABILITY ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to connect to server."
+        );
+
+        // Reload original database value
+        loadFoodItems();
+
+    }
+
+}
 const restaurantLoggedIn =
     localStorage.getItem(
         "restaurantLoggedIn"
@@ -1788,6 +1934,43 @@ async function updateOrderStatus(orderId, status) {
         ? "accept"
         : "reject";
 
+
+    // =========================
+    // REJECTION REASON
+    // =========================
+
+    let rejectionReason = "";
+
+    if (status === "rejected") {
+
+        rejectionReason = prompt(
+            "Enter the reason for rejecting this order:"
+        );
+
+        // Customer cancelled the prompt
+        if (rejectionReason === null) {
+            return;
+        }
+
+        // Remove extra spaces
+        rejectionReason = rejectionReason.trim();
+
+        // Reason is required
+        if (!rejectionReason) {
+
+            alert(
+                "Please enter a rejection reason."
+            );
+
+            return;
+        }
+    }
+
+
+    // =========================
+    // CONFIRM ACTION
+    // =========================
+
     const confirmAction =
         confirm(
             "Are you sure you want to " +
@@ -1795,9 +1978,11 @@ async function updateOrderStatus(orderId, status) {
             " this order?"
         );
 
+
     if (!confirmAction) {
         return;
     }
+
 
     try {
 
@@ -1822,20 +2007,26 @@ async function updateOrderStatus(orderId, status) {
                             restaurantId,
 
                         status:
-                            status
+                            status,
+
+                        rejection_reason:
+                            rejectionReason
 
                     })
                 }
             );
 
+
         const data =
             await response.json();
+
 
         if (data.success) {
 
             alert(
                 data.message
             );
+
 
             // Reload orders and counts
             await loadNotifications();
@@ -1860,6 +2051,7 @@ async function updateOrderStatus(orderId, status) {
             error
         );
 
+
         alert(
             "Unable to connect to server."
         );
@@ -1867,6 +2059,7 @@ async function updateOrderStatus(orderId, status) {
     }
 
 }
+
     //=========================
 // MARK NOTIFICATIONS VIEWED
 // =========================

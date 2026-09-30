@@ -2028,4 +2028,81 @@ Sai Tasty Foods
             "Only POST method is allowed"
 
     })
+    # =========================
+# GET ALL FOOD ITEMS
+# =========================
+
+def get_all_food_items(request):
+
+    if request.method == "GET":
+
+        try:
+
+            food_items = FoodItem.objects.all().order_by("-id")
+
+            food_list = []
+
+            for food in food_items:
+
+                food_list.append({
+
+                    "id": food.id,
+
+                    "restaurant_id":
+                        food.restaurant_id,
+
+                    "restaurant_name":
+                        food.restaurant.name,
+
+                    "name":
+                        food.name,
+
+                    "description":
+                        food.description,
+
+                    "price":
+                        str(food.price),
+
+                    "image":
+                        food.image,
+
+                    "is_available":
+                        food.is_available
+
+                })
+
+            return JsonResponse({
+
+                "success": True,
+
+                "food_items":
+                    food_list
+
+            })
+
+        except Exception as e:
+
+            print(
+                "GET ALL FOOD ITEMS ERROR:",
+                str(e),
+                flush=True
+            )
+
+            return JsonResponse({
+
+                "success": False,
+
+                "message":
+                    str(e)
+
+            })
+
+    return JsonResponse({
+
+        "success": False,
+
+        "message":
+            "Only GET method is allowed"
+
+    })
 
