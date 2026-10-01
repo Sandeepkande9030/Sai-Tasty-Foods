@@ -195,113 +195,7 @@
             }
 
         }
-        async function loadFoodMenu(restaurantId) {
-
-    const foodMenu = document.getElementById("foodMenu");
-
-    foodMenu.innerHTML = `
-        <p style="text-align:center;">
-            Loading food items...
-        </p>
-    `;
-
-    try {
-
-        const response = await fetch(
-            `${API_BASE_URL}/api/restaurant-food-items/?restaurant_id=${restaurantId}`
-        );
-
-        const data = await response.json();
-
-        console.log("Database food items:", data);
-
-        if (!data.success) {
-            foodMenu.innerHTML = `
-                <p style="text-align:center;">
-                    Unable to load food items.
-                </p>
-            `;
-            return;
-        }
-
-        const foods = data.food_items || [];
-
-        if (foods.length === 0) {
-            foodMenu.innerHTML = `
-                <p style="text-align:center;">
-                    No food items available.
-                </p>
-            `;
-            return;
-        }
-
-        foodMenu.innerHTML = foods.map(food => {
-
-            let image = food.image;
-
-            /*
-             * Local images
-             */
-            if (image && image.startsWith("./images/")) {
-                image = image;
-            }
-
-            /*
-             * If image is empty
-             */
-            if (!image) {
-                image = "./images/food-background.jpg";
-            }
-
-            return `
-                <div class="food-card">
-
-                    <img
-                        src="${image}"
-                        alt="${food.name}"
-                        class="food-image"
-                        onerror="this.src='./images/food-background.jpg'"
-                    >
-
-                    <div class="food-info">
-
-                        <h3>${food.name}</h3>
-
-                        <p>
-                            ${food.description || ""}
-                        </p>
-
-                        <span>
-                            ₹${Number(food.price).toFixed(2)}
-                        </span>
-
-                        <button
-                            onclick="addFoodToCart(
-                                '${food.name.replace(/'/g, "\\'")}',
-                                ${Number(food.price)}
-                            )"
-                        >
-                            Add to Cart
-                        </button>
-
-                    </div>
-
-                </div>
-            `;
-
-        }).join("");
-
-    } catch (error) {
-
-        console.error("Food menu error:", error);
-
-        foodMenu.innerHTML = `
-            <p style="text-align:center;">
-                Unable to connect to server.
-            </p>
-        `;
-    }
-}
+        
        async function loadFoodMenu(restaurantId) {
 
     try {
@@ -398,7 +292,7 @@
                         ${food.description || ""}
                     </p>
 
-                    <p>
+                    <p class="food-price">
                         ₹${food.price}
                     </p>
 

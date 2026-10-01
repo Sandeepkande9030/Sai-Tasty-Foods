@@ -294,45 +294,359 @@
 
 </section>
 <script>
-function searchFood() {
 
-    const searchText = document
-        .getElementById("searchInput")
-        .value
-        .toLowerCase()
-        .trim();
+let allFoodItems = [];
 
-    const foodCards = document.querySelectorAll(".food-card");
+/* =========================
+   LOAD ALL FOOD ITEMS
+========================= */
 
-    let found = false;
+async function loadAllFoodItems() {
 
-    foodCards.forEach(card => {
+    try {
 
-        const foodName = card
-            .querySelector("h3")
-            .innerText
-            .toLowerCase();
+        const response = await fetch(
+            "https://backend-dl8i.vercel.app/api/all-food-items/"
+        );
 
-        const foodDescription = card
-            .querySelector("p")
-            .innerText
-            .toLowerCase();
+        const data = await response.json();
 
-        if (
-            foodName.includes(searchText) ||
-            foodDescription.includes(searchText)
-        ) {
-            card.style.display = "";
-            found = true;
-        } else {
-            card.style.display = "none";
+        if (data.success) {
+
+            allFoodItems = data.food_items;
+
+            console.log(
+                "Food items loaded:",
+                allFoodItems
+            );
+
         }
-    });
 
-    if (!found && searchText !== "") {
-        alert("No food items found");
+    } catch (error) {
+
+        console.error(
+            "LOAD FOOD ITEMS ERROR:",
+            error
+        );
+
     }
 }
+
+
+/* =========================
+   SEARCH FOOD
+========================= */
+
+async function searchFood() {
+
+    const searchText =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase()
+            .trim();
+    if (searchText.length < 4) {
+    return;
+    }
+
+    const foodContainer =
+        document.querySelector(".food-container");
+
+
+    /* =========================
+       EMPTY SEARCH
+    ========================= */
+
+    if (searchText === "") {
+
+        location.reload();
+
+        return;
+    }
+
+
+    /* =========================
+       LOAD DATA IF NEEDED
+    ========================= */
+
+    if (allFoodItems.length === 0) {
+
+        await loadAllFoodItems();
+
+    }
+
+
+    /* =========================
+       FILTER FOOD
+    ========================= */
+
+    const matchingFoods =
+        allFoodItems.filter(function(food) {
+
+            return (
+
+                food.name
+                    .toLowerCase()
+                    .includes(searchText)
+
+            );
+
+        });
+
+
+    /* =========================
+       CLEAR OLD CARDS
+    ========================= */
+
+    foodContainer.innerHTML = "";
+
+
+    /* =========================
+       NO RESULTS
+    ========================= */
+
+    if (matchingFoods.length === 0) {
+
+        foodContainer.innerHTML = `
+
+            <p style="
+                text-align:center;
+                width:100%;
+                font-size:20px;
+                padding:30px;
+            ">
+
+                No food items found
+
+            </p>
+
+        `;
+
+        return;
+    }
+
+
+    /* =========================
+       SHOW RESULTS
+    ========================= */
+
+    matchingFoods.forEach(function(food) {
+
+        const image =
+            food.image &&
+            food.image.trim() !== ""
+
+            ? food.image
+
+            : "./images/food-background.jpg";
+
+
+        const card =
+            document.createElement("div");
+
+        card.className = "food-card";
+
+        card.innerHTML = `
+
+            <img
+                src="${image}"
+                alt="${food.name}"
+            >
+
+            <div class="food-info">
+
+                <h3>
+                    ${food.name}
+                </h3>
+
+                <p>
+                    ${food.description || ""}
+                </p>
+
+                <span>
+                    ₹${food.price}
+                </span>
+
+                <p>
+                    <strong>
+                        Restaurant:
+                    </strong>
+
+                    ${food.restaurant_name}
+                </p>
+
+                ${
+                    food.is_available
+
+                    ? `
+                        <button
+                            onclick="addSearchFoodToCart(${food.id})">
+
+                            Add to Cart
+
+                        </button>
+                    `
+
+                    : `
+                        <button
+                            disabled
+                            style="
+                                opacity: 0.5;
+                                cursor: not-allowed;
+                            ">
+
+                            Currently Unavailable
+
+                        </button>
+                    `
+                }
+
+            </div>
+
+        `;
+
+
+
+
+        foodContainer.appendChild(card);
+
+    });
+
+}
+
+async function addSearchFoodToCart(foodId) {
+
+    let isLoggedIn =
+        localStorage.getItem("isLoggedIn");
+
+    if (isLoggedIn !== "true") {
+
+        alert(
+            "Please login first to add items to cart."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+    try {
+
+        const foodItem =
+            allFoodItems.find(function(food) {
+
+                return Number(food.id) ===
+                       Number(foodId);
+
+            });
+
+        if (!foodItem) {
+
+            alert(
+                "Food information not found."
+            );
+
+            return;
+        }
+
+        if (foodItem.is_available === false) {
+
+            alert(
+                foodItem.name +
+                " is currently unavailable."
+            );
+
+            return;
+        }
+
+        const restaurantId =
+            foodItem.restaurant_id;
+
+        if (!restaurantId) {
+
+            alert(
+                "Restaurant information is missing."
+            );
+
+            return;
+        }
+
+        let existingItem =
+            cart.find(function(item) {
+
+                return (
+                    item.name === foodItem.name &&
+                    Number(item.restaurant_id) ===
+                    Number(restaurantId)
+                );
+
+            });
+
+        if (existingItem) {
+
+            existingItem.quantity++;
+
+        } else {
+
+            cart.push({
+
+                name:
+                    foodItem.name,
+
+                price:
+                    Number(foodItem.price),
+
+                quantity:
+                    1,
+
+                restaurant_id:
+                    restaurantId
+
+            });
+
+        }
+
+        localStorage.setItem(
+            "cart",
+            JSON.stringify(cart)
+        );
+
+        updateCartCount();
+
+        alert(
+            foodItem.name +
+            " added to cart"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "SEARCH ADD TO CART ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to add food to cart."
+        );
+    }
+}
+/* =========================
+   SEARCH WHILE TYPING
+========================= */
+
+document
+    .getElementById("searchInput")
+    .addEventListener(
+        "input",
+        function() {
+
+            searchFood();
+
+        }
+    );
+
+
 </script>
 <script src="./script.js"></script>  
 

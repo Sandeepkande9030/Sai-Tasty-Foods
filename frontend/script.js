@@ -346,9 +346,9 @@ function removeItem(index) {
 
     displayCart();
 }
-//===============================
+// ================================
 // CHECKOUT
-//===============================
+// ================================
 
 async function checkout() {
 
@@ -375,7 +375,69 @@ async function checkout() {
 
         alert("Please login first.");
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    // ======================================
+    // GET RESTAURANT IDS
+    // ======================================
+
+    let restaurantIds = [];
+
+
+    cart.forEach(function(item) {
+
+        let restaurantId =
+            item.restaurant_id ||
+            item.restaurantId;
+
+
+        if (restaurantId) {
+
+            if (
+                !restaurantIds.includes(
+                    Number(restaurantId)
+                )
+            ) {
+
+                restaurantIds.push(
+                    Number(restaurantId)
+                );
+
+            }
+
+        }
+
+    });
+
+
+    // ======================================
+    // CHECK RESTAURANT INFORMATION
+    // ======================================
+
+    if (restaurantIds.length === 0) {
+
+        alert(
+            "Restaurant information is missing."
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // ONLY ONE RESTAURANT ALLOWED
+    // ======================================
+
+    if (restaurantIds.length > 1) {
+
+        alert(
+            "Please select food items from one restaurant."
+        );
 
         return;
     }
@@ -387,34 +449,48 @@ async function checkout() {
 
     try {
 
+        const restaurantId =
+            restaurantIds[0];
+
+
         for (let item of cart) {
 
-            let restaurantId =
-                item.restaurantId ||
-                item.restaurant_id;
+            const itemRestaurantId =
+                item.restaurant_id ||
+                item.restaurantId;
 
 
-            // Check restaurant ID
-            if (!restaurantId) {
+            // ================================
+            // SAFETY CHECK
+            // ================================
+
+            if (
+                Number(itemRestaurantId) !==
+                Number(restaurantId)
+            ) {
 
                 alert(
-                    "Restaurant information is missing for " +
-                    item.name
+                    "Please select food items from one restaurant."
                 );
 
                 return;
             }
 
 
-            // Get restaurant food items
-            const response = await fetch(
-                API_BASE_URL +
-                "/api/restaurant-food-items/?restaurant_id=" +
-                restaurantId
-            );
+            // ================================
+            // GET RESTAURANT FOOD ITEMS
+            // ================================
+
+            const response =
+                await fetch(
+                    API_BASE_URL +
+                    "/api/restaurant-food-items/?restaurant_id=" +
+                    restaurantId
+                );
 
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
 
             if (!data.success) {
@@ -427,16 +503,27 @@ async function checkout() {
             }
 
 
-            // Find food item
+            // ================================
+            // FIND FOOD ITEM
+            // ================================
+
             const foodItem =
-                data.food_items.find(function(food) {
+                data.food_items.find(
+                    function(food) {
 
-                    return food.name === item.name;
+                        return (
+                            food.name ===
+                            item.name
+                        );
 
-                });
+                    }
+                );
 
 
-            // Food not found
+            // ================================
+            // FOOD NOT FOUND
+            // ================================
+
             if (!foodItem) {
 
                 alert(
@@ -448,8 +535,13 @@ async function checkout() {
             }
 
 
-            // Food disabled by restaurant
-            if (foodItem.is_available === false) {
+            // ================================
+            // FOOD UNAVAILABLE
+            // ================================
+
+            if (
+                foodItem.is_available === false
+            ) {
 
                 alert(
                     item.name +
@@ -464,10 +556,11 @@ async function checkout() {
 
 
         // ======================================
-        // ALL ITEMS ARE AVAILABLE
+        // ALL ITEMS AVAILABLE
         // ======================================
 
-        window.location.href = "address.html";
+        window.location.href =
+            "address.html";
 
 
     } catch (error) {
@@ -486,7 +579,6 @@ async function checkout() {
     }
 
 }
-
 // ================================
 // LOAD CART
 // ================================
@@ -1321,250 +1413,372 @@ if (resetPasswordForm) {
 // DELIVERY ADDRESS + PLACE ORDER
 // =====================================
 
-const addressForm = document.getElementById("addressForm");
+const addressForm =
+    document.getElementById("addressForm");
 
 if (addressForm) {
 
-    addressForm.addEventListener("submit", async function(event) {
+    addressForm.addEventListener(
+        "submit",
+        async function(event) {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        // ================================
-        // CHECK CART
-        // ================================
 
-        if (cart.length === 0) {
+            // ================================
+            // CHECK CART
+            // ================================
 
-            alert("Your cart is empty.");
+            if (cart.length === 0) {
 
-            window.location.href = "cart.html";
+                alert("Your cart is empty.");
 
-            return;
-        }
+                window.location.href =
+                    "cart.html";
 
+                return;
+            }
 
-        // ================================
-        // CHECK LOGIN
-        // ================================
 
-        const isLoggedIn =
-            localStorage.getItem("isLoggedIn");
+            // ================================
+            // CHECK LOGIN
+            // ================================
 
-        if (isLoggedIn !== "true") {
+            const isLoggedIn =
+                localStorage.getItem("isLoggedIn");
 
-            alert("Please login first.");
+            if (isLoggedIn !== "true") {
 
-            window.location.href = "login.html";
+                alert("Please login first.");
 
-            return;
-        }
+                window.location.href =
+                    "login.html";
 
+                return;
+            }
 
-        // ================================
-        // GET ADDRESS DETAILS
-        // ================================
 
-        const deliveryName =
-            document.getElementById("deliveryName").value.trim();
+            // ================================
+            // GET ADDRESS DETAILS
+            // ================================
 
-        const deliveryPhone =
-            document.getElementById("deliveryPhone").value.trim();
+            const deliveryName =
+                document
+                    .getElementById("deliveryName")
+                    .value
+                    .trim();
 
-        const deliveryHouse =
-            document.getElementById("deliveryHouse").value.trim();
+            const deliveryPhone =
+                document
+                    .getElementById("deliveryPhone")
+                    .value
+                    .trim();
 
-        const deliveryArea =
-            document.getElementById("deliveryArea").value.trim();
+            const deliveryHouse =
+                document
+                    .getElementById("deliveryHouse")
+                    .value
+                    .trim();
 
-        const deliveryCity =
-            document.getElementById("deliveryCity").value.trim();
+            const deliveryArea =
+                document
+                    .getElementById("deliveryArea")
+                    .value
+                    .trim();
 
-        const deliveryState =
-            document.getElementById("deliveryState").value.trim();
+            const deliveryCity =
+                document
+                    .getElementById("deliveryCity")
+                    .value
+                    .trim();
 
-        const deliveryPincode =
-            document.getElementById("deliveryPincode").value.trim();
+            const deliveryState =
+                document
+                    .getElementById("deliveryState")
+                    .value
+                    .trim();
 
-        const deliveryLandmark =
-            document.getElementById("deliveryLandmark").value.trim();
+            const deliveryPincode =
+                document
+                    .getElementById("deliveryPincode")
+                    .value
+                    .trim();
 
+            const deliveryLandmark =
+                document
+                    .getElementById("deliveryLandmark")
+                    .value
+                    .trim();
 
-        // ================================
-        // CHECK PHONE
-        // ================================
 
-        if (!/^[0-9]{10}$/.test(deliveryPhone)) {
+            // ================================
+            // CHECK PHONE
+            // ================================
 
-            alert("Please enter a valid 10 digit phone number.");
+            if (!/^[0-9]{10}$/.test(deliveryPhone)) {
 
-            return;
-        }
+                alert(
+                    "Please enter a valid 10 digit phone number."
+                );
 
+                return;
+            }
 
-        // ================================
-        // CHECK PINCODE
-        // ================================
 
-        if (!/^[0-9]{6}$/.test(deliveryPincode)) {
+            // ================================
+            // CHECK PINCODE
+            // ================================
 
-            alert("Please enter a valid 6 digit pincode.");
+            if (!/^[0-9]{6}$/.test(deliveryPincode)) {
 
-            return;
-        }
+                alert(
+                    "Please enter a valid 6 digit pincode."
+                );
 
+                return;
+            }
 
-        // ================================
-        // GET CURRENT USER
-        // ================================
 
-        const currentUser =
-            JSON.parse(
-                localStorage.getItem("currentUser") || "null"
-            );
+            // ================================
+            // GET CURRENT USER
+            // ================================
 
+            const currentUser =
+                JSON.parse(
+                    localStorage.getItem(
+                        "currentUser"
+                    ) || "null"
+                );
 
-        if (!currentUser) {
 
-            alert("User information not found. Please login again.");
+            if (!currentUser) {
 
-            window.location.href = "login.html";
+                alert(
+                    "User information not found. Please login again."
+                );
 
-            return;
-        }
+                window.location.href =
+                    "login.html";
 
+                return;
+            }
 
-        // ================================
-        // CALCULATE TOTAL
-        // ================================
 
-        let totalAmount = 0;
+            // =========================================
+            // CHECK CART RESTAURANT
+            // =========================================
 
-        cart.forEach(function(item) {
+            const restaurantIds = [];
 
-            totalAmount +=
-                item.price * item.quantity;
+            cart.forEach(function(item) {
 
-        });
+                const restaurantId =
+                    item.restaurant_id ||
+                    item.restaurantId;
 
-
-        // ================================
-        // CREATE ORDER DATA
-        // ================================
-
-        const orderData = {
-
-        customer_name: deliveryName,
-
-        customer_email: currentUser.email,
-
-        restaurant_id: cart[0].restaurant_id,
-
-        items: cart,
-
-        total_amount: totalAmount,
-
-        delivery_phone: deliveryPhone,
-
-        delivery_house: deliveryHouse,
-
-        delivery_area: deliveryArea,
-
-        delivery_city: deliveryCity,
-
-        delivery_state: deliveryState,
-
-        delivery_pincode: deliveryPincode,
-
-        delivery_landmark: deliveryLandmark
-
-    };
-        console.log(
-            "Order Data:",
-            orderData
-        );
-
-
-        // ================================
-        // SEND ORDER TO DJANGO
-        // ================================
-
-        try {
-
-            const response = await fetch(
-                `${API_BASE_URL}/api/place-order/`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify(orderData)
+                if (!restaurantId) {
+                    return;
                 }
-            );
+
+                if (!restaurantIds.includes(Number(restaurantId))) {
+
+                    restaurantIds.push(
+                        Number(restaurantId)
+                    );
+
+                }
+
+            });
 
 
-            const data =
-                await response.json();
+            // =========================================
+            // CHECK RESTAURANT INFORMATION
+            // =========================================
+
+            if (restaurantIds.length === 0) {
+
+                alert(
+                    "Restaurant information is missing."
+                );
+
+                return;
+            }
+
+
+            // =========================================
+            // ONLY ONE RESTAURANT ALLOWED
+            // =========================================
+
+            if (restaurantIds.length > 1) {
+
+                alert(
+                    "Please select food items from one restaurant."
+                );
+
+                window.location.href =
+                    "cart.html";
+
+                return;
+            }
+
+
+            // =========================================
+            // ONE RESTAURANT - PLACE ONE ORDER
+            // =========================================
+
+            const restaurantId =
+                restaurantIds[0];
+
+
+            // =========================================
+            // CALCULATE TOTAL
+            // =========================================
+
+            let totalAmount = 0;
+
+            cart.forEach(function(item) {
+
+                totalAmount +=
+                    Number(item.price) *
+                    Number(item.quantity);
+
+            });
+
+
+            // =========================================
+            // CREATE ORDER DATA
+            // =========================================
+
+            const orderData = {
+
+                customer_name:
+                    deliveryName,
+
+                customer_email:
+                    currentUser.email,
+
+                restaurant_id:
+                    restaurantId,
+
+                items:
+                    cart,
+
+                total_amount:
+                    totalAmount,
+
+                delivery_phone:
+                    deliveryPhone,
+
+                delivery_house:
+                    deliveryHouse,
+
+                delivery_area:
+                    deliveryArea,
+
+                delivery_city:
+                    deliveryCity,
+
+                delivery_state:
+                    deliveryState,
+
+                delivery_pincode:
+                    deliveryPincode,
+
+                delivery_landmark:
+                    deliveryLandmark
+
+            };
 
 
             console.log(
-                "Order Response:",
-                data
+                "Final Order:",
+                orderData
             );
 
 
-            // ================================
-            // ORDER SUCCESS
-            // ================================
+            // =========================================
+            // SEND ONE ORDER TO DJANGO
+            // =========================================
 
-            if (response.ok && data.success === true) {
+            try {
 
-                alert("Order placed successfully!");
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/place-order/`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(orderData)
+                        }
+                    );
 
 
-                // Clear cart
-                localStorage.removeItem("cart");
+                const data =
+                    await response.json();
 
 
-                // Update local cart variable
+                console.log(
+                    "Order Response:",
+                    data
+                );
+
+
+                // =========================================
+                // CHECK RESULT
+                // =========================================
+
+                if (
+                    !response.ok ||
+                    data.success !== true
+                ) {
+
+                    alert(
+                        data.message ||
+                        "Unable to place order."
+                    );
+
+                    return;
+                }
+
+
+                // =========================================
+                // ORDER SUCCESS
+                // =========================================
+
+                alert(
+                    "Order placed successfully!"
+                );
+
+
+                localStorage.removeItem(
+                    "cart"
+                );
+
                 cart = [];
 
 
-                // Go to orders page
                 window.location.href =
                     "orders.html";
 
-            }
 
+            } catch (error) {
 
-            // ================================
-            // ORDER FAILED
-            // ================================
-
-            else {
+                console.error(
+                    "PLACE ORDER ERROR:",
+                    error
+                );
 
                 alert(
-                    data.message ||
-                    "Unable to place order."
+                    "Unable to connect to server."
                 );
 
             }
-
-
-        } catch (error) {
-
-            console.error(
-                "Place Order Error:",
-                error
-            );
-
-            alert(
-                "Unable to connect to server."
-            );
-
         }
-
-    });
-
+    );
 }

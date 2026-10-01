@@ -1369,8 +1369,7 @@ def get_all_orders(request):
             "Only GET method is allowed"
 
     })
-
-    # =========================
+# =========================
 # GET CUSTOMER ORDERS
 # =========================
 
@@ -1397,6 +1396,10 @@ def get_customer_orders(request):
             order_list = []
 
             for order in orders:
+
+                # =========================
+                # GET ORDER ITEMS
+                # =========================
 
                 items = json.loads(order.items)
 
@@ -1426,9 +1429,26 @@ def get_customer_orders(request):
 
                     })
 
+                # =========================
+                # GET RESTAURANT NAME
+                # =========================
+
+                restaurant_name = "Restaurant"
+
+                if order.restaurant:
+                    restaurant_name = order.restaurant.name
+
+                # =========================
+                # LOCAL TIME
+                # =========================
+
                 local_time = timezone.localtime(
                     order.created_at
                 )
+
+                # =========================
+                # ADD ORDER
+                # =========================
 
                 order_list.append({
 
@@ -1440,6 +1460,12 @@ def get_customer_orders(request):
 
                     "customer_email":
                         order.customer_email,
+
+                    "restaurant_id":
+                        order.restaurant_id,
+
+                    "restaurant":
+                        restaurant_name,
 
                     "items":
                         item_list,
@@ -1494,6 +1520,7 @@ def get_customer_orders(request):
             "Only GET method is allowed"
 
     })
+
     # =========================
 # GET RESTAURANT FOOD ITEMS
 # =========================

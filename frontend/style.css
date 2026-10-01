@@ -488,6 +488,14 @@ nav a:hover {
 
     flex: 1;
 }
+.food-price {
+    margin-top: auto;
+    margin-bottom: 8px;
+
+    font-size: 20px;
+    font-weight: bold;
+    color: #e63946;
+}
 .food-info h3 {
     font-size: 20px;
 
@@ -509,11 +517,15 @@ nav a:hover {
 .food-info span,
 .food-price {
     display: block;
+
     font-size: 20px;
+
     font-weight: bold;
+
     color: #e63946;
 
     margin-top: auto;
+
     margin-bottom: 8px;
 }
 /*================================================
@@ -522,11 +534,13 @@ nav a:hover {
 
 .food-info button {
     width: 100%;
+
     padding: 12px;
 
     margin-top: 0;
 
     border: none;
+
     border-radius: 9px;
 
     background: linear-gradient(
@@ -536,11 +550,12 @@ nav a:hover {
     );
 
     color: white;
+
     font-size: 15px;
+
     font-weight: bold;
 
     cursor: pointer;
-    transition: 0.3s;
 }
 .food-info button:hover {
     transform: translateY(-2px);
@@ -1622,5 +1637,40 @@ nav a:hover {
         text-align: center;
     }
 
+}
+/* =========================
+   ORDER BUTTONS
+========================= */
+
+.order-card button {
+    width: auto;
+    padding: 9px 18px;
+
+    margin-top: 12px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: linear-gradient(
+        135deg,
+        #e63946,
+        #f77f00
+    );
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.order-card button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.2);
 }
 

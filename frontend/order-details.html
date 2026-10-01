@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Order Details - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        SAI TASTY FOODS
+    </div>
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="cart.html">
+            Cart
+        </a>
+
+        <a href="orders.html">
+            My Orders
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main class="orders-page">
+
+    <div class="orders-container">
+
+        <h1>
+            Order Details
+        </h1>
+
+        <div id="orderDetails">
+
+            Loading order details...
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+const API_BASE_URL =
+    "https://backend-dl8i.vercel.app";
+
+
+// =====================================
+// GET ORDER ID FROM URL
+// =====================================
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const orderId =
+    params.get("id");
+
+
+// =====================================
+// LOAD ORDER DETAILS
+// =====================================
+
+async function loadOrderDetails() {
+
+    if (!orderId) {
+
+        document.getElementById(
+            "orderDetails"
+        ).innerHTML = `
+            <p>
+                Order not found.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    try {
+
+        const currentUser =
+            JSON.parse(
+                localStorage.getItem(
+                    "currentUser"
+                ) || "null"
+            );
+
+
+        if (!currentUser ||
+            !currentUser.email) {
+
+            document.getElementById(
+                "orderDetails"
+            ).innerHTML = `
+                <p>
+                    Please login to view
+                    order details.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/customer-orders/?email=${encodeURIComponent(currentUser.email)}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            document.getElementById(
+                "orderDetails"
+            ).innerHTML = `
+                <p>
+                    Unable to load order.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        const orders =
+            data.orders || [];
+
+
+        const order =
+            orders.find(function(item) {
+
+                return Number(item.id) ===
+                       Number(orderId);
+
+            });
+
+
+        if (!order) {
+
+            document.getElementById(
+                "orderDetails"
+            ).innerHTML = `
+                <p>
+                    Order not found.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        // =================================
+        // FOOD ITEMS
+        // =================================
+
+        let itemsHTML = "";
+
+
+        const items =
+            order.items || [];
+
+
+        items.forEach(function(item) {
+
+            itemsHTML += `
+
+                <div class="order-item">
+
+                    <span>
+
+                        ${item.name}
+                        × ${item.quantity}
+
+                    </span>
+
+                    <span>
+
+                        ₹${(
+                            Number(item.price) *
+                            Number(item.quantity)
+                        ).toFixed(2)}
+
+                    </span>
+
+                </div>
+
+            `;
+
+        });
+
+
+        // =================================
+        // DISPLAY ORDER
+        // =================================
+
+        document.getElementById(
+            "orderDetails"
+        ).innerHTML = `
+
+            <div class="order-card">
+
+                <div class="order-header">
+
+                    <h2>
+                        Order #${order.id}
+                    </h2>
+
+                    <span class="order-status">
+                        ${order.status}
+                    </span>
+
+                </div>
+
+
+                <div class="order-summary">
+
+                    <p>
+                        <strong>
+                            Restaurant:
+                        </strong>
+
+                        ${order.restaurant ||
+                            "Restaurant"}
+                    </p>
+                </div>
+
+
+                <div class="order-items">
+
+                    ${itemsHTML}
+
+                </div>
+
+
+                <div class="order-total">
+
+                    Total:
+                    ₹${Number(
+                        order.total_amount
+                    ).toFixed(2)}
+
+                </div>
+
+
+                <button
+                    type="button"
+                    onclick="goBackToOrders()"
+                >
+                    ← Back to My Orders
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Order Details Error:",
+            error
+        );
+
+        document.getElementById(
+            "orderDetails"
+        ).innerHTML = `
+            <p>
+                Unable to connect to server.
+            </p>
+        `;
+
+    }
+
+}
+
+// =====================================
+// BACK TO ORDERS
+// =====================================
+
+function goBackToOrders() {
+
+    window.location.href =
+        "orders.html";
+
+}
+
+
+// =====================================
+// START
+// =====================================
+
+loadOrderDetails();
+
+</script>
+
+</body>
+
+</html>

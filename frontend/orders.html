@@ -112,63 +112,49 @@ async function loadOrders() {
 
         orders.reverse().forEach(function(order) {
 
-            let items = order.items || [];
-            let itemsHTML = "";
+        ordersList.innerHTML += `
 
-            items.forEach(function(item) {
+            <div class="order-card">
 
-                itemsHTML += `
-                    <div class="order-item">
-                        <span>
-                            ${item.name}
-                            × ${item.quantity}
-                        </span>
+                <div class="order-header">
 
-                        <span>
-                            ₹${item.price * item.quantity}
-                        </span>
-                    </div>
-                `;
+                    <h2>
+                        Order #${order.id}
+                    </h2>
 
-            });
-
-
-            ordersList.innerHTML += `
-
-                <div class="order-card">
-
-                    <div class="order-header">
-
-                        <h2>
-                            Order #${order.id}
-                        </h2>
-
-                        <span class="order-status">
-                            ${order.status}
-                        </span>
-
-                    </div>
-
-
-                    <div class="order-items">
-
-                        ${itemsHTML}
-
-                    </div>
-
-
-                    <div class="order-total">
-
-                        Total:
-                        ₹${order.total_amount}
-
-                    </div>
+                    <span class="order-status">
+                        ${order.status}
+                    </span>
 
                 </div>
 
-            `;
+                <div class="order-summary">
 
-        });
+                    <p>
+                        <strong>Food Items:</strong>
+                        ${(order.items && order.items.length > 0)
+                            ? order.items.map(item => item.name).join(", ")
+                            : "Food item"}
+                    </p>
+                    <p>
+                        <strong>Total:</strong>
+                        ₹${order.total_amount}
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    onclick="viewOrderDetails(${order.id})"
+                >
+                    View Details
+                </button>
+
+            </div>
+
+        `;
+
+    });
 
     } catch (error) {
 
@@ -180,7 +166,12 @@ async function loadOrders() {
     }
 
 }
+function viewOrderDetails(orderId) {
 
+    window.location.href =
+        "order-details.html?id=" + orderId;
+
+}
 
 loadOrders();
 
