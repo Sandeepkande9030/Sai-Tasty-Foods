@@ -888,10 +888,12 @@ def restaurant_notifications(request):
 
 
             # Get new orders for this restaurant
-            orders = Order.objects.filter(
-                restaurant_id=restaurant_id,
-                is_notified=False
-            ).order_by("-created_at")
+            orders = (
+                Order.objects
+                .filter(customer_email=customer_email)
+                .select_related("restaurant")
+                .order_by("-created_at")
+            )
 
 
             notification_list = []
@@ -899,7 +901,7 @@ def restaurant_notifications(request):
 
             for order in orders:
 
-                items = json.loads(order.items)
+                items = json.loads(order.items or "[]")
 
                 item_list = []
 
