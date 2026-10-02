@@ -1721,29 +1721,43 @@ nav a:hover {
 }
 
 .tracking-circle {
-    width: 36px;
-    height: 36px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    background: #ddd;
+    background: #fff;
+    border: 2px solid #ccc;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-weight: bold;
-    color: #777;
-
     margin-bottom: 8px;
+    flex-shrink: 0;
+
+    font-size: 11px;
+    font-weight: bold;
 }
 
+
+/* Completed steps */
 .tracking-step.completed .tracking-circle {
-    background: #28a745;
-    color: white;
+    background: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
 }
 
+/* Current step */
 .tracking-step.active .tracking-circle {
-    background: #f77f00;
-    color: white;
+    background: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+/* Future steps */
+.tracking-step:not(.completed):not(.active) .tracking-circle {
+    background: white !important;
+    border: 2px solid #ccc !important;
+    color: transparent !important;
 }
 
 .tracking-step span {

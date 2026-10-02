@@ -56,31 +56,64 @@
 
 const API_BASE_URL = "https://backend-dl8i.vercel.app";
 
-
 async function loadOrders() {
 
+    const ordersMessage =
+        document.getElementById("ordersMessage");
+
+    const ordersList =
+        document.getElementById("ordersList");
+
+
     const currentUser =
-        JSON.parse(localStorage.getItem("currentUser") || "null");
+        JSON.parse(
+            localStorage.getItem("currentUser") || "null"
+        );
+
 
     if (!currentUser || !currentUser.email) {
 
-        document.getElementById("ordersMessage").innerText =
+        ordersMessage.innerText =
             "Please login to view your orders.";
 
         return;
     }
 
 
+    // Show loading message
+    ordersMessage.innerText =
+        "Loading orders...";
+
+
     try {
 
-        const response = await fetch(
-        `${API_BASE_URL}/api/customer-orders/?email=${encodeURIComponent(currentUser.email)}`
-        );
-        const data = await response.json();
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/customer-orders/?email=${encodeURIComponent(currentUser.email)}`,
+                {
+                    method: "GET",
+                    cache: "no-cache"
+                }
+            );
+
 
         if (!response.ok) {
 
-            document.getElementById("ordersMessage").innerText =
+            throw new Error(
+                "Server returned " + response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            ordersMessage.innerText =
+                data.message ||
                 "Unable to load orders.";
 
             return;
@@ -89,13 +122,11 @@ async function loadOrders() {
 
         const orders = data.orders || [];
 
-        
+        window.ordersData = orders;
 
-        const ordersList =
-            document.getElementById("ordersList");
 
-        const ordersMessage =
-            document.getElementById("ordersMessage");
+        // Clear old orders
+        ordersList.innerHTML = "";
 
 
         if (orders.length === 0) {
@@ -107,74 +138,145 @@ async function loadOrders() {
         }
 
 
+        // Hide loading message
         ordersMessage.innerText = "";
 
 
-        orders.reverse().forEach(function(order) {
+        // Show newest order first
+        orders.forEach(
+            function(order) {
 
-        ordersList.innerHTML += `
+                ordersList.innerHTML += `
 
-            <div class="order-card">
+                    <div class="order-card">
 
-                <div class="order-header">
+                        <div class="order-header">
 
-                    <h2>
-                        Order #${order.id}
-                    </h2>
+                            <h2>
+                                Order #${order.id}
+                            </h2>
 
-                    <span class="order-status">
-                        ${order.status}
-                    </span>
+                            <span class="order-status">
+                                ${order.status}
+                            </span>
 
-                </div>
+                        </div>
 
-                <div class="order-summary">
 
-                    <p>
-                        <strong>Food Items:</strong>
-                        ${(order.items && order.items.length > 0)
-                            ? order.items.map(item => item.name).join(", ")
-                            : "Food item"}
-                    </p>
-                    <p>
-                        <strong>Total:</strong>
-                        ₹${order.total_amount}
-                    </p>
-                    <p>
-                        <strong>Date & Time:</strong>
-                        ${order.created_at || "Not available"}
-                    </p>
+                        <div class="order-summary">
 
-                </div>
+                            <p>
 
-                <button
-                    type="button"
-                    onclick="viewOrderDetails(${order.id})"
-                >
-                    View Details
-                </button>
+                                <strong>
+                                    Food Items:
+                                </strong>
 
-            </div>
+                                ${
+                                    order.items &&
+                                    order.items.length > 0
 
-        `;
+                                    ? order.items
+                                        .map(
+                                            item =>
+                                                item.name
+                                        )
+                                        .join(", ")
 
-    });
+                                    : "Food item"
+                                }
 
-    } catch (error) {
+                            </p>
 
-        console.error("Orders Error:", error);
 
-        document.getElementById("ordersMessage").innerText =
-            "Unable to connect to server.";
+                            <p>
+
+                                <strong>
+                                    Total:
+                                </strong>
+
+                                ₹${Number(
+                                    order.total_amount
+                                ).toFixed(2)}
+
+                            </p>
+
+
+                            <p>
+
+                                <strong>
+                                    Date & Time:
+                                </strong>
+
+                                ${
+                                    order.created_at ||
+                                    "Not available"
+                                }
+
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            onclick="viewOrderDetails(${order.id})"
+                        >
+                            View Details
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Orders Error:",
+            error
+        );
+
+
+        ordersMessage.innerText =
+            "Unable to connect to server. Please try again.";
 
     }
 
 }
 function viewOrderDetails(orderId) {
 
+    const currentUser =
+        JSON.parse(
+            localStorage.getItem("currentUser") || "null"
+        );
+
+    if (!currentUser || !currentUser.email) {
+        alert("Please login to view order details.");
+        return;
+    }
+
+    // Get the order that was already loaded on My Orders page
+    const order = window.ordersData.find(function(item) {
+        return Number(item.id) === Number(orderId);
+    });
+
+    if (!order) {
+        alert("Order details not found.");
+        return;
+    }
+
+    // Save only the selected order temporarily
+    sessionStorage.setItem(
+        "selectedOrder",
+        JSON.stringify(order)
+    );
+
     window.location.href =
         "order-details.html?id=" + orderId;
-
 }
 
 loadOrders();

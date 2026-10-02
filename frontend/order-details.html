@@ -167,23 +167,21 @@ async function loadOrderDetails() {
         }
 
 
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/customer-orders/?email=${encodeURIComponent(currentUser.email)}`
-            );
+        // =====================================
+        // GET SELECTED ORDER
+        // =====================================
+
+        const savedOrder =
+            sessionStorage.getItem("selectedOrder");
 
 
-        const data =
-            await response.json();
-
-
-        if (!data.success) {
+        if (!savedOrder) {
 
             document.getElementById(
                 "orderDetails"
             ).innerHTML = `
                 <p>
-                    Unable to load order.
+                    Order details not found.
                 </p>
             `;
 
@@ -192,26 +190,21 @@ async function loadOrderDetails() {
         }
 
 
-        const orders =
-            data.orders || [];
-
-
         const order =
-            orders.find(function(item) {
-
-                return Number(item.id) ===
-                       Number(orderId);
-
-            });
+            JSON.parse(savedOrder);
 
 
-        if (!order) {
+        // Make sure the selected order matches the URL
+        if (
+            Number(order.id) !==
+            Number(orderId)
+        ) {
 
             document.getElementById(
                 "orderDetails"
             ).innerHTML = `
                 <p>
-                    Order not found.
+                    Order details not found.
                 </p>
             `;
 
@@ -352,110 +345,175 @@ async function loadOrderDetails() {
 
         }
 
-        else {
+            else {
 
-            let currentIndex =
-                statuses.indexOf(
-                    currentStatus
-                );
+            // =================================
+            // DELIVERED ORDER
+            // =================================
 
+            if (currentStatus === "delivered") {
 
-            // If unknown status
-            if (currentIndex === -1) {
+                trackingHTML = `
 
-                currentIndex = 0;
+                    <div class="order-tracking">
 
-            }
+                        <h3>
+                            Order Tracking
+                        </h3>
 
+                        <div class="tracking-rejected"
+                             style="
+                                background:#f0fff4;
+                                border:none;
+                             ">
 
-            statuses.forEach(
-                function(status, index) {
+                            <div class="tracking-circle"
+                                 style="
+                                    width:18px;
+                                    height:18px;
+                                    background:#28a745;
+                                    border:2px solid #28a745;
+                                    color:white;
+                                    font-size:11px;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    flex-shrink:0;
+                                 ">
+                                ✓
+                            </div>
 
-                    let statusClass = "";
+                            <div>
 
+                                <strong style="color:#28a745;">
+                                    Order Delivered
+                                </strong>
 
-                    if (index < currentIndex) {
+                                <p>
+                                    Your order has been delivered successfully.
+                                </p>
 
-                        statusClass =
-                            "completed";
-
-                    }
-
-                    else if (
-                        index === currentIndex
-                    ) {
-
-                        statusClass =
-                            "active";
-
-                    }
-
-
-                    trackingHTML += `
-
-                        <div class="
-                            tracking-step
-                            ${statusClass}
-                        ">
-
-                            <div class="tracking-circle"></div>
-
-                            <span>
-
-                                ${statusNames[index]}
-
-                            </span>
+                            </div>
 
                         </div>
 
-                    `;
+                    </div>
+
+                `;
+
+            }
+
+            // =================================
+            // NORMAL ORDER TRACKING
+            // =================================
+
+            else {
+
+                let currentIndex =
+                    statuses.indexOf(
+                        currentStatus
+                    );
 
 
-                    if (
-                        index <
-                        statuses.length - 1
-                    ) {
+                // If unknown status
+                if (currentIndex === -1) {
+
+                    currentIndex = 0;
+
+                }
+
+
+                statuses.forEach(
+                    function(status, index) {
+
+                        let statusClass = "";
+
+
+                        if (index < currentIndex) {
+
+                            statusClass =
+                                "completed";
+
+                        }
+
+                        else if (
+                            index === currentIndex
+                        ) {
+
+                            statusClass =
+                                "active";
+
+                        }
+
 
                         trackingHTML += `
 
                             <div class="
-                                tracking-line
-                                ${
-                                    index <
-                                    currentIndex
-                                        ? "completed"
-                                        : ""
-                                }
-                            "></div>
+                                tracking-step
+                                ${statusClass}
+                            ">
+
+                                <div class="tracking-circle">
+                                    ${index <= currentIndex ? "✓" : ""}
+                                </div>
+
+                                <span>
+
+                                    ${statusNames[index]}
+
+                                </span>
+
+                            </div>
 
                         `;
 
+
+                        if (
+                            index <
+                            statuses.length - 1
+                        ) {
+
+                            trackingHTML += `
+
+                                <div class="
+                                    tracking-line
+                                    ${
+                                        index <
+                                        currentIndex
+                                            ? "completed"
+                                            : ""
+                                    }
+                                "></div>
+
+                            `;
+
+                        }
+
                     }
-
-                }
-            );
+                );
 
 
-            trackingHTML = `
+                trackingHTML = `
 
-                <div class="order-tracking">
+                    <div class="order-tracking">
 
-                    <h3>
-                        Order Tracking
-                    </h3>
+                        <h3>
+                            Order Tracking
+                        </h3>
 
-                    <div class="tracking-container">
+                        <div class="tracking-container">
 
-                        ${trackingHTML}
+                            ${trackingHTML}
+
+                        </div>
 
                     </div>
 
-                </div>
+                `;
 
-            `;
+            }
 
         }
-
 
         // =================================
         // DISPLAY ORDER

@@ -1389,9 +1389,13 @@ def get_customer_orders(request):
                     "message": "Customer email is required"
                 })
 
-            orders = Order.objects.filter(
-                customer_email=customer_email
-            ).order_by("-created_at")
+            # Get customer orders and restaurant together
+            orders = (
+                Order.objects
+                .filter(customer_email=customer_email)
+                .select_related("restaurant")
+                .order_by("-created_at")
+            )
 
             order_list = []
 
@@ -1401,7 +1405,7 @@ def get_customer_orders(request):
                 # GET ORDER ITEMS
                 # =========================
 
-                items = json.loads(order.items)
+                items = json.loads(order.items or "[]")
 
                 item_list = []
 
@@ -1435,7 +1439,8 @@ def get_customer_orders(request):
 
                 restaurant_name = "Restaurant"
 
-                if order.restaurant:
+                if order.restaurant_id and order.restaurant:
+
                     restaurant_name = order.restaurant.name
 
                 # =========================
