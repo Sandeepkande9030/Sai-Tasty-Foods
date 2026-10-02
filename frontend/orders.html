@@ -140,6 +140,10 @@ async function loadOrders() {
                         <strong>Total:</strong>
                         ₹${order.total_amount}
                     </p>
+                    <p>
+                        <strong>Date & Time:</strong>
+                        ${order.created_at || "Not available"}
+                    </p>
 
                 </div>
 

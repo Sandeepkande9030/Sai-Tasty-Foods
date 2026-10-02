@@ -1673,4 +1673,126 @@ nav a:hover {
     box-shadow:
         0 4px 8px rgba(0, 0, 0, 0.2);
 }
+/* =========================
+   ORDER DETAILS
+========================= */
+
+.order-summary p {
+    margin-bottom: 15px;
+}
+
+.order-items {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.order-items .order-item {
+    margin-bottom: 10px;
+}
+
+
+/* =========================
+   ORDER TRACKING
+========================= */
+
+.order-tracking {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.order-tracking h3 {
+    margin-bottom: 25px;
+    color: #2b2d42;
+}
+
+.tracking-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.tracking-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 80px;
+}
+
+.tracking-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ddd;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+    color: #777;
+
+    margin-bottom: 8px;
+}
+
+.tracking-step.completed .tracking-circle {
+    background: #28a745;
+    color: white;
+}
+
+.tracking-step.active .tracking-circle {
+    background: #f77f00;
+    color: white;
+}
+
+.tracking-step span {
+    font-size: 12px;
+    font-weight: bold;
+    color: #555;
+}
+
+.tracking-line {
+    height: 4px;
+    background: #ddd;
+    flex: 1;
+    margin: 0 5px;
+    margin-bottom: 28px;
+    border-radius: 5px;
+}
+
+.tracking-line.completed {
+    background: #28a745;
+}
+
+
+/* =========================
+   REJECTED ORDER
+========================= */
+
+.tracking-rejected {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 15px;
+
+    background: #fff0f0;
+    border-radius: 10px;
+}
+
+.tracking-rejected .tracking-circle {
+    background: #e63946;
+    color: white;
+    flex-shrink: 0;
+}
+
+.tracking-rejected strong {
+    color: #e63946;
+}
+
+.tracking-rejected p {
+    margin-top: 5px;
+    color: #777;
+}
 

@@ -1830,31 +1830,37 @@ def update_order_status(request):
             # =========================
 
             if not order_id:
-
                 return JsonResponse({
                     "success": False,
                     "message": "Order ID is required"
                 })
 
             if not restaurant_id:
-
                 return JsonResponse({
                     "success": False,
                     "message": "Restaurant ID is required"
                 })
 
             if not status:
-
                 return JsonResponse({
                     "success": False,
                     "message": "Order status is required"
                 })
 
             # =========================
-            # ONLY ACCEPT OR REJECT
+            # ALLOWED STATUS
             # =========================
 
-            if status not in ["accepted", "rejected"]:
+            allowed_statuses = [
+                "accepted",
+                "rejected",
+                "preparing",
+                "ready",
+                "out for delivery",
+                "delivered"
+            ]
+
+            if status not in allowed_statuses:
 
                 return JsonResponse({
                     "success": False,
@@ -1878,15 +1884,32 @@ def update_order_status(request):
                 })
 
             # =========================
-            # ORDER MUST BE PENDING
+            # STATUS FLOW
             # =========================
 
-            if order.status != "pending":
+            current_status = order.status
+
+            status_flow = {
+                "pending": ["accepted", "rejected"],
+                "accepted": ["preparing"],
+                "preparing": ["ready"],
+                "ready": ["out for delivery"],
+                "out for delivery": ["delivered"]
+            }
+
+            # =========================
+            # CHECK STATUS CHANGE
+            # =========================
+
+            if status not in status_flow.get(
+                current_status, []
+            ):
 
                 return JsonResponse({
                     "success": False,
                     "message":
-                        "Only pending orders can be accepted or rejected"
+                        f"Cannot change order from "
+                        f"{current_status} to {status}"
                 })
 
             # =========================
@@ -1909,7 +1932,7 @@ def update_order_status(request):
             order.save()
 
             # =========================
-            # SEND EMAIL TO CUSTOMER
+            # ACCEPTED EMAIL
             # =========================
 
             if status == "accepted":
@@ -1927,7 +1950,7 @@ Your order #{order.id} has been accepted by
 Your food is now preparing.
 
 Order Status:
-CONFIRMED
+ACCEPTED
 
 Restaurant:
 {order.restaurant.name}
@@ -1952,14 +1975,8 @@ Sai Tasty Foods
                     fail_silently=False
                 )
 
-                print(
-                    "ORDER ACCEPTED EMAIL SENT TO:",
-                    order.customer_email,
-                    flush=True
-                )
-
             # =========================
-            # REJECTED ORDER EMAIL
+            # REJECTED EMAIL
             # =========================
 
             elif status == "rejected":
@@ -1986,8 +2003,6 @@ Reason:
 Please try ordering another food item or
 place a new order later.
 
-We apologize for the inconvenience.
-
 Regards,
 Sai Tasty Foods
 """,
@@ -1999,12 +2014,6 @@ Sai Tasty Foods
                     ],
 
                     fail_silently=False
-                )
-
-                print(
-                    "ORDER REJECTED EMAIL SENT TO:",
-                    order.customer_email,
-                    flush=True
                 )
 
             # =========================

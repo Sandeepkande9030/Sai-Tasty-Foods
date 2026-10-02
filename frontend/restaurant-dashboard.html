@@ -1706,9 +1706,14 @@ else {
 
                     let actionButtons = "";
 
+                    const orderStatus = order.status.toLowerCase();
 
-                    // Show Accept / Reject only for pending orders
-                    if (order.status.toLowerCase() === "pending") {
+
+                    // =========================
+                    // PENDING
+                    // =========================
+
+                    if (orderStatus === "pending") {
 
                         actionButtons = `
 
@@ -1728,10 +1733,9 @@ else {
                                         padding:10px 18px;
                                         border-radius:6px;
                                         cursor:pointer;
-                                    ">
-
+                                    "
+                                >
                                     ✅ Accept
-
                                 </button>
 
 
@@ -1744,10 +1748,9 @@ else {
                                         padding:10px 18px;
                                         border-radius:6px;
                                         cursor:pointer;
-                                    ">
-
+                                    "
+                                >
                                     ❌ Reject
-
                                 </button>
 
                             </div>
@@ -1756,6 +1759,129 @@ else {
 
                     }
 
+
+                    // =========================
+                    // ACCEPTED
+                    // =========================
+
+                    else if (orderStatus === "accepted") {
+
+                        actionButtons = `
+
+                            <div style="margin-top:15px;">
+
+                                <button
+                                    onclick="updateOrderStatus(${order.id}, 'preparing')"
+                                    style="
+                                        background:#f77f00;
+                                        color:white;
+                                        border:none;
+                                        padding:10px 18px;
+                                        border-radius:6px;
+                                        cursor:pointer;
+                                    "
+                                >
+                                    🍳 Mark Preparing
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    }
+
+
+                    // =========================
+                    // PREPARING
+                    // =========================
+
+                    else if (orderStatus === "preparing") {
+
+                        actionButtons = `
+
+                            <div style="margin-top:15px;">
+
+                                <button
+                                    onclick="updateOrderStatus(${order.id}, 'ready')"
+                                    style="
+                                        background:#007bff;
+                                        color:white;
+                                        border:none;
+                                        padding:10px 18px;
+                                        border-radius:6px;
+                                        cursor:pointer;
+                                    "
+                                >
+                                    🍽️ Mark Ready
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    }
+
+
+                    // =========================
+                    // READY
+                    // =========================
+
+                    else if (orderStatus === "ready") {
+
+                        actionButtons = `
+
+                            <div style="margin-top:15px;">
+
+                                <button
+                                    onclick="updateOrderStatus(${order.id}, 'out for delivery')"
+                                    style="
+                                        background:#6f42c1;
+                                        color:white;
+                                        border:none;
+                                        padding:10px 18px;
+                                        border-radius:6px;
+                                        cursor:pointer;
+                                    "
+                                >
+                                    🚴 Out for Delivery
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    }
+
+
+                    // =========================
+                    // OUT FOR DELIVERY
+                    // =========================
+
+                    else if (orderStatus === "out for delivery") {
+
+                        actionButtons = `
+
+                            <div style="margin-top:15px;">
+
+                                <button
+                                    onclick="updateOrderStatus(${order.id}, 'delivered')"
+                                    style="
+                                        background:#28a745;
+                                        color:white;
+                                        border:none;
+                                        padding:10px 18px;
+                                        border-radius:6px;
+                                        cursor:pointer;
+                                    "
+                                >
+                                    ✅ Mark Delivered
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    }
 
                     orderCard.innerHTML = `
 
@@ -1929,10 +2055,26 @@ else {
 
 async function updateOrderStatus(orderId, status) {
 
-    const action =
-        status === "accepted"
-        ? "accept"
-        : "reject";
+    let action = "";
+
+    if (status === "accepted") {
+        action = "accept";
+    }
+    else if (status === "rejected") {
+        action = "reject";
+    }
+    else if (status === "preparing") {
+        action = "mark this order as preparing";
+    }
+    else if (status === "ready") {
+        action = "mark this order as ready";
+    }
+    else if (status === "out for delivery") {
+        action = "mark this order as out for delivery";
+    }
+    else if (status === "delivered") {
+        action = "mark this order as delivered";
+    }
 
 
     // =========================
