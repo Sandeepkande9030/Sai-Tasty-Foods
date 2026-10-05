@@ -890,7 +890,10 @@ def restaurant_notifications(request):
             # Get new orders for this restaurant
             orders = (
                 Order.objects
-                .filter(customer_email=customer_email)
+                .filter(
+                    restaurant_id=restaurant_id,
+                    is_notified=False
+                )
                 .select_related("restaurant")
                 .order_by("-created_at")
             )
