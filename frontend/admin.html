@@ -8,144 +8,74 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Dashboard - Sai Tasty Foods</title>
+    <title>Admin Login - Sai Tasty Foods</title>
 
     <link rel="stylesheet" href="./admin.css">
 
 </head>
 
-<body>
+<body class="admin-login-body">
 
-    <!-- SIDEBAR -->
+    <div class="admin-login-container">
 
-    <aside class="sidebar">
-
-        <h2>SAI TASTY FOODS</h2>
-
-        <p class="admin-label">
-            👨‍💼 Admin Panel
-        </p>
-
-        <a href="admin.html">🏠 Dashboard</a>
-
-        <a href="users.html">👥 Users</a>
-
-        <a href="restaurants.html">🍽️ Restaurants</a>
-
-        <a href="food-items.html">🍔 Food Items</a>
-
-        <a href="orders.html">📦 Orders</a>
-
-        <a href="payments.html">💳 Payments</a>
-        <button onclick="adminLogout()">
-            🚪 Logout
-        </button>
-
-    </aside>
+        <div class="admin-login-box">
 
 
-    <!-- MAIN CONTENT -->
+            <h1>
+                SAI TASTY FOODS
+            </h1>
 
-    <main class="admin-main">
+            <h2>
+                Admin Login
+            </h2>
 
-        <div class="admin-topbar">
+            <div class="input-group">
 
-            <h1>Dashboard</h1>
+                <label for="adminUsername">
+                    Admin Email
+                </label>
 
-            <div>👨‍💼 Admin</div>
+                <input
+                    type="email"
+                    id="adminUsername"
+                    placeholder="Enter admin email">
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label for="adminPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="adminPassword"
+                    placeholder="Enter password">
+
+            </div>
+
+
+            <button
+                class="admin-login-button"
+                onclick="adminLogin()">
+
+                 Login
+
+            </button>
+
+
+            <p id="adminMessage"></p>
+
+
+            <p class="admin-security">
+                🔒 Admin access only
+            </p>
 
         </div>
 
-
-        <!-- DASHBOARD CARDS -->
-
-        <div class="dashboard-cards">
-
-            <div class="dashboard-card">
-
-                <span>👥</span>
-
-                <h3>Total Users</h3>
-
-                <p id="totalUsers">0</p>
-
-            </div>
-
-
-            <div class="dashboard-card">
-
-                <span>🍔</span>
-
-                <h3>Food Items</h3>
-
-                <p id="totalFoods">12</p>
-
-            </div>
-
-
-            <div class="dashboard-card">
-
-                <span>📦</span>
-
-                <h3>Total Orders</h3>
-
-                <p id="totalOrders">0</p>
-
-            </div>
-
-
-            <div class="dashboard-card">
-
-                <span>💰</span>
-
-                <h3>Total Revenue</h3>
-
-                <p id="totalRevenue">₹0</p>
-
-            </div>
-
-        </div>
-
-
-        <!-- ORDERS -->
-
-        <div class="orders-section">
-
-            <h2>Recent Orders</h2>
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th>Food</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="orderTable">
-
-                    <tr>
-
-                        <td colspan="5">
-                            No orders available
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </main>
+    </div>
 
 
     <script src="./admin.js"></script>

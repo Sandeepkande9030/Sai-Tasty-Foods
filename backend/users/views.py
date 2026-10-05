@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.core.mail import send_mail
-from .models import User, Restaurant, Order, FoodItem
+from .models import User, Restaurant, Order, FoodItem, Admin
 import json
 import random
 import os
@@ -2151,4 +2151,68 @@ def get_all_food_items(request):
             "Only GET method is allowed"
 
     })
+    # =========================
+# ADMIN LOGIN
+# =========================
+@csrf_exempt
+def admin_login(request):
+
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed"
+        })
+
+    try:
+
+        data = json.loads(request.body)
+
+        email = data.get("email", "").strip()
+        password = data.get("password", "")
+
+        if not email or not password:
+            return JsonResponse({
+                "success": False,
+                "message": "Email and password are required"
+            })
+
+        admin = Admin.objects.filter(
+            email=email
+        ).first()
+
+        if not admin:
+            return JsonResponse({
+                "success": False,
+                "message": "Invalid admin email or password"
+            })
+
+        if admin.password != password:
+            return JsonResponse({
+                "success": False,
+                "message": "Invalid admin email or password"
+            })
+
+        return JsonResponse({
+            "success": True,
+            "message": "Admin login successful",
+            "admin": {
+                "id": admin.id,
+                "name": admin.name,
+                "email": admin.email
+            }
+        })
+
+    except Exception as e:
+
+        print(
+            "ADMIN LOGIN ERROR:",
+            str(e),
+            flush=True
+        )
+
+        return JsonResponse({
+            "success": False,
+            "message": str(e)
+        })
+
 

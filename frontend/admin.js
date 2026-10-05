@@ -5,31 +5,89 @@
 
 function adminLogin() {
 
-    let username =
-        document.getElementById("adminUsername").value;
+    const email =
+        document.getElementById("adminUsername").value.trim();
 
-    let password =
+    const password =
         document.getElementById("adminPassword").value;
 
+    const message =
+        document.getElementById("adminMessage");
 
-    if (username === "admin" && password === "admin123") {
 
-        localStorage.setItem(
-            "adminLoggedIn",
-            "true"
+    if (!email || !password) {
+
+        message.textContent =
+            "Please enter email and password";
+
+        return;
+    }
+
+
+    message.textContent =
+        "Logging in...";
+
+
+    fetch("https://backend-dl8i.vercel.app/api/admin-login/", {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            email: email,
+            password: password
+        })
+
+    })
+
+    .then(function(response) {
+
+        return response.json();
+
+    })
+
+    .then(function(data) {
+
+        if (data.success) {
+
+            localStorage.setItem(
+                "adminLoggedIn",
+                "true"
+            );
+
+            localStorage.setItem(
+                "adminData",
+                JSON.stringify(data.admin)
+            );
+
+            window.location.href =
+                "admin-dashboard.html";
+
+        } else {
+
+            message.textContent =
+                data.message ||
+                "Invalid admin email or password";
+
+        }
+
+    })
+
+    .catch(function(error) {
+
+        console.error(
+            "ADMIN LOGIN ERROR:",
+            error
         );
 
-        window.location.href = "admin.html";
+        message.textContent =
+            "Unable to connect to server";
 
-    } else {
+    });
 
-        document.getElementById("adminMessage").textContent =
-            "Invalid admin username or password";
-
-    }
 }
-
-
 // =========================
 // CHECK ADMIN LOGIN
 // =========================
