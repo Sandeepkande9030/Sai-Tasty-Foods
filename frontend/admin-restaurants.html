@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Restaurants - Admin - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="./admin.css">
+
+</head>
+
+<body class="admin-dashboard-body">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            SAI TASTY FOODS
+        </div>
+
+
+        <nav class="admin-nav">
+
+            <a href="admin-dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="users.html">
+                👥 Users
+            </a>
+
+            <a href="admin-restaurants.html"
+               class="active">
+                🍽️ Restaurants
+            </a>
+
+            <a href="food-items.html">
+                🍔 Food Items
+            </a>
+
+            <a href="admin-orders.html">
+                📦 Orders
+            </a>
+
+            
+        </nav>
+
+
+        <button
+            class="admin-logout-button"
+            onclick="adminLogout()">
+
+            🚪 Logout
+
+        </button>
+
+    </aside>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="admin-main">
+
+
+        <!-- TOP BAR -->
+
+        <header class="admin-topbar">
+
+            <div>
+
+                <h1>
+                    Restaurants
+                </h1>
+
+                <p>
+                    Manage restaurants in Sai Tasty Foods
+                </p>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="admin-profile-icon">
+                    A
+                </div>
+
+                <div>
+
+                    <strong id="adminName">
+                        Admin
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================
+             RESTAURANTS SECTION
+        ========================== -->
+
+        <section class="orders-section">
+
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        🍽️ Restaurant Details
+                    </h2>
+
+                    <p>
+                        All restaurants registered in Sai Tasty Foods
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="admin-login-button"
+                    onclick="showAddRestaurantForm()">
+
+                    ➕ Add Restaurant
+
+                </button>
+
+            </div>
+
+
+
+            <!-- =========================
+                 RESTAURANT LIST
+            ========================== -->
+
+            <div
+                id="restaurantList"
+                class="restaurant-list">
+
+                <p>
+                    Loading restaurants...
+                </p>
+
+            </div>
+
+
+
+            <!-- =========================
+                 ADD RESTAURANT FORM
+            ========================== -->
+
+            <div
+                id="addRestaurantForm"
+                class="add-restaurant-form"
+                style="display: none;">
+
+                <h2>
+                    ➕ Add Restaurant
+                </h2>
+
+
+                <div class="restaurant-form">
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantName">
+                            Restaurant Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="restaurantName"
+                            placeholder="Enter restaurant name">
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantImage">
+                            Image URL
+                        </label>
+
+                        <input
+                            type="text"
+                            id="restaurantImage"
+                            placeholder="Enter image URL">
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantCuisine">
+                            Cuisine
+                        </label>
+
+                        <input
+                            type="text"
+                            id="restaurantCuisine"
+                            placeholder="Example: North Indian">
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantRating">
+                            Rating
+                        </label>
+
+                        <input
+                            type="number"
+                            id="restaurantRating"
+                            placeholder="Example: 4.3"
+                            step="0.1"
+                            min="0"
+                            max="5">
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantDeliveryTime">
+                            Delivery Time
+                        </label>
+
+                        <input
+                            type="text"
+                            id="restaurantDeliveryTime"
+                            placeholder="Example: 35 mins">
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantLocation">
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            id="restaurantLocation"
+                            placeholder="Enter location">
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantEmail">
+                            Restaurant Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="restaurantEmail"
+                            placeholder="Enter restaurant email">
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantPassword">
+                            Restaurant Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="restaurantPassword"
+                            placeholder="Enter restaurant password">
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="restaurantDescription">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="restaurantDescription"
+                            placeholder="Enter restaurant description">
+                        </textarea>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="restaurant-form-buttons">
+
+                    <button
+                        class="admin-login-button"
+                        onclick="addRestaurant()">
+
+                        💾 Save Restaurant
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="hideAddRestaurantForm()">
+
+                        Cancel
+
+                    </button>
+
+                </div>
+
+
+                <p id="restaurantMessage"></p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="./admin.js"></script>
+
+</body>
+
+</html>

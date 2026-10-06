@@ -22,6 +22,7 @@ from .views import (
     update_order_status,
     get_all_food_items,
     admin_login,
+    add_restaurant,
 
 )
 
@@ -103,6 +104,11 @@ urlpatterns = [
     "admin-login/",
     admin_login,
     name="admin_login"
+    ),
+    path(
+    "add-restaurant/",
+    add_restaurant,
+    name="add_restaurant"
     ),
 
 ]

@@ -1,78 +1,174 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
 
-    <title>Users - Admin</title>
+<meta charset="UTF-8">
 
-    <link rel="stylesheet" href="./admin.css">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Users - Sai Tasty Foods</title>
+
+<link rel="stylesheet" href="./admin.css">
+
+
 </head>
 
-<body>
+<body class="admin-dashboard-body">
 
-    <!-- SIDEBAR -->
+<!-- =========================
+     SIDEBAR
+========================== -->
 
-    <aside class="sidebar">
+<aside class="admin-sidebar">
 
-        <h2>SAI TASTY FOODS</h2>
-
-        <p class="admin-label">
-            👨‍💼 Admin Panel
-        </p>
-
-        <a href="admin.html">🏠 Dashboard</a>
-
-        <a href="users.html">👥 Users</a>
-
-        <a href="restaurants.html">🍽️ Restaurants</a>
-
-        <a href="food-items.html">🍔 Food Items</a>
-
-        <a href="orders.html">📦 Orders</a>
-
-        <a href="payments.html">💳 Payments</a>
-
-        <button onclick="adminLogout()">
-            🚪 Logout
-        </button>
-
-    </aside>
+    <div class="admin-logo">
+        SAI TASTY FOODS
+    </div>
 
 
-    <!-- MAIN CONTENT -->
+    <nav class="admin-nav">
 
-    <main class="admin-main">
+        <a href="admin-dashboard.html">
+            🏠 Dashboard
+        </a>
 
-        <div class="admin-topbar">
+        <a href="users.html"
+           class="active">
+            👥 Users
+        </a>
 
-            <h1>Users</h1>
+        <a href="admin-restaurants.html">
+            🍽️ Restaurants
+        </a>
 
-            <div>👨‍💼 Admin</div>
+        <a href="food-items.html">
+            🍔 Food Items
+        </a>
+
+        <a href="admin-orders.html">
+            📦 Orders
+        </a>
+
+        
+    </nav>
+
+
+    <button
+        class="admin-logout-button"
+        onclick="adminLogout()">
+
+        🚪 Logout
+
+    </button>
+
+</aside>
+
+
+
+<!-- =========================
+     MAIN CONTENT
+========================== -->
+
+<main class="admin-main">
+
+
+    <!-- TOP BAR -->
+
+    <header class="admin-topbar">
+
+        <div>
+
+            <h1>
+                Users
+            </h1>
+
+            <p>
+                Manage registered customers
+            </p>
 
         </div>
 
 
-        <div class="orders-section">
+        <div class="admin-profile">
 
-            <h2>Registered Users</h2>
+            <div class="admin-profile-icon">
+                A
+            </div>
+
+            <div>
+
+                <strong id="adminName">
+                    Admin
+                </strong>
+
+                <span>
+                    Administrator
+                </span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         USERS TABLE
+    ========================== -->
+
+    <section class="orders-section">
+
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>
+                    Registered Users
+                </h2>
+
+                <p>
+                    All customers registered in Sai Tasty Foods
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-container">
 
             <table>
 
                 <thead>
 
                     <tr>
-                        <th>S.No</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Status</th>
+
+                        <th>
+                            S.No
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
                     </tr>
 
                 </thead>
+
 
                 <tbody id="userTable">
 
@@ -82,14 +178,19 @@
 
         </div>
 
-    </main>
+
+    </section>
 
 
-    <!-- ADMIN JAVASCRIPT -->
+</main>
 
-    <script src="./admin.js"></script>
+
+
+<!-- ADMIN JAVASCRIPT -->
+
+<script src="./admin.js"></script>
+
 
 </body>
 
 </html>
-

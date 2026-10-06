@@ -5,9 +5,9 @@
 }
 
 
-/* ============================= */
-/* ADMIN LOGIN PAGE */
-/* ============================= */
+/* =====================================================
+   ADMIN LOGIN PAGE
+===================================================== */
 
 .admin-login-body {
 
@@ -19,7 +19,7 @@
 
     align-items: center;
 
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 
     background:
         linear-gradient(
@@ -32,17 +32,12 @@
 }
 
 
-/* LOGIN CONTAINER */
-
 .admin-login-container {
 
     width: 100%;
-
     max-width: 430px;
 }
 
-
-/* LOGIN BOX */
 
 .admin-login-box {
 
@@ -60,7 +55,7 @@
         0 15px 40px
         rgba(0, 0, 0, 0.25);
 }
-/* BRAND */
+
 
 .admin-login-box h1 {
 
@@ -74,8 +69,6 @@
 }
 
 
-/* LOGIN TITLE */
-
 .admin-login-box h2 {
 
     color: #333;
@@ -85,8 +78,6 @@
     margin-bottom: 8px;
 }
 
-
-/* SUBTITLE */
 
 .login-subtitle {
 
@@ -98,8 +89,6 @@
 }
 
 
-/* INPUT GROUP */
-
 .input-group {
 
     text-align: left;
@@ -107,8 +96,6 @@
     margin-bottom: 18px;
 }
 
-
-/* LABEL */
 
 .input-group label {
 
@@ -123,8 +110,6 @@
     font-weight: bold;
 }
 
-
-/* INPUT */
 
 .input-group input {
 
@@ -144,8 +129,6 @@
 }
 
 
-/* INPUT FOCUS */
-
 .input-group input:focus {
 
     border-color: #e53935;
@@ -155,8 +138,6 @@
         rgba(229, 57, 53, 0.12);
 }
 
-
-/* LOGIN BUTTON */
 
 .admin-login-button {
 
@@ -189,8 +170,6 @@
 }
 
 
-/* BUTTON HOVER */
-
 .admin-login-button:hover {
 
     transform: translateY(-2px);
@@ -200,8 +179,6 @@
         rgba(211, 47, 47, 0.3);
 }
 
-
-/* MESSAGE */
 
 #adminMessage {
 
@@ -213,8 +190,6 @@
 }
 
 
-/* SECURITY TEXT */
-
 .admin-security {
 
     margin-top: 25px;
@@ -225,9 +200,658 @@
 }
 
 
-/* ============================= */
-/* RESPONSIVE */
-/* ============================= */
+/* =====================================================
+   ADMIN DASHBOARD
+===================================================== */
+
+.admin-dashboard-body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f5f6fa;
+
+    color: #222;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.admin-sidebar {
+
+    position: fixed;
+
+    left: 0;
+
+    top: 0;
+
+    width: 245px;
+
+    height: 100vh;
+
+    background:
+        linear-gradient(
+            180deg,
+            #171c2b,
+            #202638
+        );
+
+    padding: 25px 18px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    box-shadow:
+        4px 0 20px
+        rgba(0, 0, 0, 0.08);
+
+    z-index: 1000;
+}
+
+
+/* LOGO */
+
+.admin-logo {
+
+    color: white;
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    text-align: center;
+
+    padding: 10px 5px 30px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+.admin-nav {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    width: 100%;
+}
+
+
+.admin-nav a {
+
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    text-decoration: none;
+
+    color: #c3c7d2;
+
+    padding: 14px 16px;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+    transition: all 0.3s ease;
+}
+
+
+.admin-nav a:hover {
+
+    background: #292f43;
+
+    color: white;
+
+    transform: translateX(3px);
+}
+
+
+.admin-nav a.active {
+
+    background:
+        linear-gradient(
+            90deg,
+            #d32f2f,
+            #ef5350
+        );
+
+    color: white;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 5px 15px
+        rgba(211, 47, 47, 0.25);
+}
+
+
+/* =====================================================
+   LOGOUT BUTTON
+===================================================== */
+
+.admin-logout-button {
+
+    margin-top: auto;
+
+    width: 100%;
+
+    border: none;
+
+    background: #292f43;
+
+    color: white;
+
+    padding: 13px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    transition: all 0.3s ease;
+}
+
+
+.admin-logout-button:hover {
+
+    background: #d32f2f;
+
+    transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   MAIN AREA
+===================================================== */
+
+.admin-main {
+
+    margin-left: 245px;
+
+    min-height: 100vh;
+
+    padding: 30px 35px;
+
+    background: #f5f6fa;
+}
+
+
+/* =====================================================
+   TOP BAR
+===================================================== */
+
+.admin-topbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+}
+
+
+.admin-topbar h1 {
+
+    margin: 0;
+
+    font-size: 30px;
+
+    color: #202020;
+}
+
+
+.admin-topbar p {
+
+    margin-top: 7px;
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   ADMIN PROFILE
+===================================================== */
+
+.admin-profile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    background: white;
+
+    padding: 9px 15px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 4px 18px
+        rgba(0, 0, 0, 0.06);
+}
+
+
+.admin-profile-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #d32f2f,
+            #ff5252
+        );
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: bold;
+
+    font-size: 18px;
+}
+
+
+.admin-profile strong {
+
+    display: block;
+
+    font-size: 14px;
+}
+
+
+.admin-profile span {
+
+    display: block;
+
+    color: #888;
+
+    font-size: 12px;
+
+    margin-top: 3px;
+}
+
+
+/* =====================================================
+   DASHBOARD CARDS
+===================================================== */
+
+.dashboard-cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 20px;
+
+    margin-bottom: 30px;
+}
+
+
+.dashboard-card {
+
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 17px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.06);
+
+    transition: all 0.3s ease;
+
+    border: 1px solid #f0f0f0;
+}
+
+
+.dashboard-card:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 10px 28px
+        rgba(0, 0, 0, 0.10);
+}
+
+
+/* CARD ICON */
+
+.card-icon {
+
+    width: 55px;
+
+    height: 55px;
+
+    min-width: 55px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+    background: #fff0f0;
+}
+
+
+/* CARD TEXT */
+
+.dashboard-card p {
+
+    margin: 0;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+
+.dashboard-card h2 {
+
+    margin: 7px 0 0;
+
+    font-size: 28px;
+
+    color: #222;
+}
+
+
+/* =====================================================
+   RECENT ORDERS
+===================================================== */
+
+.orders-section {
+
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.05);
+
+    border: 1px solid #f0f0f0;
+}
+
+
+/* SECTION HEADER */
+
+.section-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+
+.section-header h2 {
+
+    margin: 0;
+
+    font-size: 20px;
+
+    color: #222;
+}
+
+
+.section-header p {
+
+    margin: 5px 0 0;
+
+    color: #888;
+
+    font-size: 13px;
+}
+
+
+.section-header a {
+
+    text-decoration: none;
+
+    color: #d32f2f;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    padding: 8px 14px;
+
+    border-radius: 8px;
+
+    background: #fff1f1;
+
+    transition: 0.3s;
+}
+
+
+.section-header a:hover {
+
+    background: #d32f2f;
+
+    color: white;
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.table-container {
+
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.table-container table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+
+.table-container th {
+
+    text-align: left;
+
+    padding: 14px 12px;
+
+    background: #fafafa;
+
+    color: #777;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+.table-container td {
+
+    padding: 16px 12px;
+
+    font-size: 14px;
+
+    border-bottom: 1px solid #f0f0f0;
+
+    color: #444;
+}
+
+
+.table-container tr:last-child td {
+
+    border-bottom: none;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .dashboard-cards {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 800px) {
+
+    .admin-sidebar {
+
+        width: 210px;
+    }
+
+    .admin-main {
+
+        margin-left: 210px;
+
+        padding: 25px;
+    }
+
+    .admin-topbar {
+
+        align-items: flex-start;
+
+        gap: 20px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .admin-sidebar {
+
+        position: relative;
+
+        width: 100%;
+
+        height: auto;
+
+        padding: 15px;
+    }
+
+
+    .admin-logo {
+
+        padding-bottom: 18px;
+    }
+
+
+    /* KEEP MENU ONE BELOW ANOTHER */
+
+    .admin-nav {
+
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+
+    .admin-nav a {
+
+        width: 100%;
+    }
+
+
+    .admin-logout-button {
+
+        margin-top: 15px;
+    }
+
+
+    .admin-main {
+
+        margin-left: 0;
+
+        padding: 20px;
+    }
+
+
+    .admin-topbar {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+
+    .dashboard-cards {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .orders-section {
+
+        padding: 18px;
+    }
+}
+
+
+/* =====================================================
+   LOGIN RESPONSIVE
+===================================================== */
 
 @media (max-width: 500px) {
 
@@ -247,239 +871,158 @@
 
         font-size: 21px;
     }
-
 }
+/* =========================
+   ADMIN RESTAURANTS
+========================= */
 
-
-/* SIDEBAR */
-
-.sidebar {
-
-    position: fixed;
-
-    left: 0;
-    top: 0;
-
-    width: 240px;
-
-    height: 100vh;
-
-    background: #222;
-
-    color: white;
-
-    padding: 25px 15px;
-}
-
-
-.sidebar h2 {
-
-    text-align: center;
-
-    color: #ff4d5a;
-
-    margin-bottom: 10px;
-}
-
-
-.admin-label {
-
-    text-align: center;
-
-    margin-bottom: 25px;
-}
-
-
-.sidebar a,
-.sidebar button {
-
-    display: block;
-
-    width: 100%;
-
-    padding: 14px;
-
-    margin-bottom: 5px;
-
-    text-decoration: none;
-
-    color: white;
-
-    background: transparent;
-
-    border: none;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    font-size: 15px;
-
-    border-radius: 5px;
-}
-
-
-.sidebar a:hover,
-.sidebar button:hover {
-
-    background: #333;
-}
-
-
-/* MAIN AREA */
-
-.admin-main {
-
-    margin-left: 240px;
-
-    padding: 30px;
-
-    background: #f5f5f5;
-
-    min-height: 100vh;
-}
-
-
-.admin-topbar {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 30px;
-}
-
-
-/* DASHBOARD CARDS */
-
-.dashboard-cards {
-
+.restaurant-list {
     display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-
-    margin-bottom: 30px;
+    margin-top: 20px;
 }
 
 
-.dashboard-card {
+/* RESTAURANT CARD */
 
-    background: white;
-
-    padding: 25px;
-
-    border-radius: 10px;
-
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+.restaurant-card {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: 0.3s;
 }
 
 
-.dashboard-card span {
-
-    font-size: 30px;
+.restaurant-card:hover {
+    transform: translateY(-4px);
 }
 
 
-.dashboard-card h3 {
+/* RESTAURANT IMAGE */
 
-    margin-top: 10px;
+.restaurant-card-image {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+}
 
+
+.restaurant-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* RESTAURANT DETAILS */
+
+.restaurant-card-content {
+    padding: 16px;
+}
+
+
+.restaurant-card-content h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+}
+
+
+.restaurant-card-content p {
+    margin: 7px 0;
+    font-size: 14px;
     color: #555;
 }
 
 
-.dashboard-card p {
-
-    font-size: 28px;
-
-    font-weight: bold;
-
-    margin-top: 10px;
+.restaurant-description {
+    line-height: 1.5;
 }
 
 
-/* ORDERS */
+/* =========================
+   ADD RESTAURANT BUTTON
+========================= */
 
-.orders-section {
+.section-header .admin-login-button {
+    width: auto;
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
 
-    background: white;
 
+/* =========================
+   ADD RESTAURANT FORM
+========================= */
+
+.add-restaurant-form {
+    margin-top: 25px;
     padding: 25px;
-
-    border-radius: 10px;
-
-    overflow-x: auto;
+    background: #f8f9fc;
+    border-radius: 12px;
 }
 
 
-.orders-section h2 {
-
-    margin-bottom: 20px;
+.restaurant-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
 }
 
 
-table {
-
+.restaurant-form textarea {
     width: 100%;
-
-    border-collapse: collapse;
-}
-
-
-th,
-td {
-
+    min-height: 100px;
     padding: 12px;
-
-    border-bottom: 1px solid #ddd;
-
-    text-align: left;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: vertical;
+    box-sizing: border-box;
 }
 
 
-th {
-
-    background: #f5f5f5;
+.restaurant-form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 
-/* RESPONSIVE */
-
-@media (max-width: 900px) {
-
-    .dashboard-cards {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
+.restaurant-form-buttons button {
+    width: auto;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 
-@media (max-width: 600px) {
+/* =========================
+   RESPONSIVE
+========================= */
 
-    .sidebar {
+@media (max-width: 1000px) {
 
-        width: 100%;
-
-        height: auto;
-
-        position: relative;
+    .restaurant-list {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-
-    .admin-main {
-
-        margin-left: 0;
-    }
+}
 
 
-    .dashboard-cards {
+@media (max-width: 650px) {
 
+    .restaurant-list {
         grid-template-columns: 1fr;
     }
+
+
+    .restaurant-form {
+        grid-template-columns: 1fr;
+    }
+
 }

@@ -653,6 +653,205 @@ def get_restaurants(request):
         "message": "Only GET method is allowed"
     })
     # =========================
+# ADD RESTAURANT - ADMIN
+# =========================
+
+@csrf_exempt
+def add_restaurant(request):
+
+    if request.method != "POST":
+
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed"
+        })
+
+    try:
+
+        data = json.loads(request.body)
+
+        # =========================
+        # GET FORM DATA
+        # =========================
+
+        name = data.get("name", "").strip()
+        image = data.get("image", "").strip()
+        cuisine = data.get("cuisine", "").strip()
+        rating = data.get("rating")
+        delivery_time = data.get(
+            "delivery_time",
+            ""
+        ).strip()
+        location = data.get(
+            "location",
+            ""
+        ).strip()
+        description = data.get(
+            "description",
+            ""
+        ).strip()
+        email = data.get(
+            "email",
+            ""
+        ).strip()
+        password = data.get(
+            "password",
+            ""
+        )
+
+        # =========================
+        # REQUIRED FIELDS
+        # =========================
+
+        if not name:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant name is required"
+            })
+
+        if not cuisine:
+            return JsonResponse({
+                "success": False,
+                "message": "Cuisine is required"
+            })
+
+        if not rating:
+            return JsonResponse({
+                "success": False,
+                "message": "Rating is required"
+            })
+
+        if not delivery_time:
+            return JsonResponse({
+                "success": False,
+                "message": "Delivery time is required"
+            })
+
+        if not location:
+            return JsonResponse({
+                "success": False,
+                "message": "Location is required"
+            })
+
+        if not description:
+            return JsonResponse({
+                "success": False,
+                "message": "Description is required"
+            })
+
+        if not email:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant email is required"
+            })
+
+        if not password:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant password is required"
+            })
+
+        # =========================
+        # CHECK EMAIL
+        # =========================
+
+        if Restaurant.objects.filter(
+            email=email
+        ).exists():
+
+            return JsonResponse({
+                "success": False,
+                "message":
+                    "Restaurant email already exists"
+            })
+
+        # =========================
+        # CREATE RESTAURANT
+        # =========================
+
+        restaurant = Restaurant.objects.create(
+
+            name=name,
+
+            image=image,
+
+            cuisine=cuisine,
+
+            rating=rating,
+
+            delivery_time=delivery_time,
+
+            location=location,
+
+            description=description,
+
+            email=email,
+
+            password=password
+
+        )
+
+        # =========================
+        # SUCCESS RESPONSE
+        # =========================
+
+        return JsonResponse({
+
+            "success": True,
+
+            "message":
+                "Restaurant added successfully",
+
+            "restaurant": {
+
+                "id":
+                    restaurant.id,
+
+                "name":
+                    restaurant.name,
+
+                "image":
+                    restaurant.image,
+
+                "cuisine":
+                    restaurant.cuisine,
+
+                "rating":
+                    float(restaurant.rating),
+
+                "delivery_time":
+                    restaurant.delivery_time,
+
+                "location":
+                    restaurant.location,
+
+                "description":
+                    restaurant.description,
+
+                "email":
+                    restaurant.email
+
+            }
+
+        })
+
+    except Exception as e:
+
+        print(
+            "ADD RESTAURANT ERROR:",
+            str(e),
+            flush=True
+        )
+
+        return JsonResponse({
+
+            "success": False,
+
+            "message":
+                str(e)
+
+        })
+    # =========================
 # PLACE ORDER
 # =========================
 

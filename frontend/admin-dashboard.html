@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="./admin.css">
+
+</head>
+
+<body class="admin-dashboard-body">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            SAI TASTY FOODS
+        </div>
+
+
+        <nav class="admin-nav">
+
+            <a href="admin-dashboard.html"
+               class="active">
+                🏠 Dashboard
+            </a>
+
+            <a href="users.html">
+                👥 Users
+            </a>
+
+            <a href="admin-restaurants.html">
+                🍽️ Restaurants
+            </a>
+
+            <a href="food-items.html">
+                🍔 Food Items
+            </a>
+
+            <a href="admin-orders.html">
+                📦 Orders
+            </a>
+
+        </nav>
+
+
+        <button
+            class="admin-logout-button"
+            onclick="adminLogout()">
+
+            🚪 Logout
+
+        </button>
+
+    </aside>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="admin-main">
+
+
+        <!-- TOP BAR -->
+
+        <header class="admin-topbar">
+
+            <div>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Welcome to Sai Tasty Foods Admin Panel
+                </p>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="admin-profile-icon">
+                    A
+                </div>
+
+                <div>
+
+                    <strong id="adminName">
+                        Admin
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================
+             DASHBOARD CARDS
+        ========================== -->
+
+        <section class="dashboard-cards">
+
+
+            <!-- USERS -->
+
+            <div class="dashboard-card">
+
+                <div class="card-icon">
+                    👥
+                </div>
+
+                <div>
+
+                    <p>
+                        Total Users
+                    </p>
+
+                    <h2 id="totalUsers">
+                        0
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RESTAURANTS -->
+
+            <div class="dashboard-card">
+
+                <div class="card-icon">
+                    🍽️
+                </div>
+
+                <div>
+
+                    <p>
+                        Restaurants
+                    </p>
+
+                    <h2 id="totalRestaurants">
+                        0
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FOOD ITEMS -->
+
+            <div class="dashboard-card">
+
+                <div class="card-icon">
+                    🍔
+                </div>
+
+                <div>
+
+                    <p>
+                        Food Items
+                    </p>
+
+                    <h2 id="totalFoodItems">
+                        0
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ORDERS -->
+
+            <div class="dashboard-card">
+
+                <div class="card-icon">
+                    📦
+                </div>
+
+                <div>
+
+                    <p>
+                        Total Orders
+                    </p>
+
+                    <h2 id="totalOrders">
+                        0
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             RECENT ORDERS
+        ========================== -->
+
+        <section class="orders-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Recent Orders
+                    </h2>
+
+                    <p>
+                        Latest customer orders
+                    </p>
+
+                </div>
+
+                <a href="admin-orders.html">
+                    View All
+                </a>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Order ID
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Restaurant
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="recentOrdersTable">
+
+                        <tr>
+
+                            <td colspan="5">
+                                No orders available
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <script src="./admin.js"></script>
+
+</body>
+
+</html>
