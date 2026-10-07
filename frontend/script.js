@@ -862,7 +862,8 @@ if (registerForm) {
 
             const name =
                 document.getElementById("registerName").value.trim();
-
+            const phone =
+                document.getElementById("registerPhone").value.trim();
             const email =
                 document.getElementById("registerEmail").value.trim();
 
@@ -874,6 +875,19 @@ if (registerForm) {
 
             const registerMessage =
                 document.getElementById("registerMessage");
+            // ================================
+            // CHECK PHONE NUMBER
+            // ================================
+
+            if (!/^[0-9]{10}$/.test(phone)) {
+
+                registerMessage.textContent =
+                    "Please enter a valid 10 digit phone number.";
+
+                registerMessage.style.color = "red";
+
+                return;
+            }
 
 
             // ================================
@@ -908,6 +922,7 @@ if (registerForm) {
 
                         body: JSON.stringify({
                             name: name,
+                            phone: phone,
                             email: email,
                             password: password
                         })

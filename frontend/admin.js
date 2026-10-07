@@ -192,6 +192,9 @@ fetch(
                         <td>
                             ${user.email}
                         </td>
+                        <td>
+                            ${user.phone || "Not provided"}
+                        </td>
 
                         <td>
                             Active
@@ -209,7 +212,7 @@ fetch(
 
                 <tr>
 
-                    <td colspan="4">
+                    <td colspan="5">
                         No registered users found
                     </td>
 

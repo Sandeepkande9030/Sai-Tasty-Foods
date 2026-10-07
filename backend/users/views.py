@@ -24,6 +24,7 @@ def register_user(request):
             print("REGISTER FUNCTION CALLED", flush=True)
 
             name = data.get("name")
+            phone = data.get("phone")
             email = data.get("email")
             password = data.get("password")
 
@@ -31,11 +32,17 @@ def register_user(request):
             print("Email:", email, flush=True)
 
             # Check required fields
-            if not name or not email or not password:
+            if not name or not phone or not email or not password:
 
                 return JsonResponse({
                     "success": False,
                     "message": "All fields are required"
+                })
+            if not phone.isdigit() or len(phone) != 10:
+
+                return JsonResponse({
+                    "success": False,
+                    "message": "Please enter a valid 10 digit phone number"
                 })
 
             # Check whether email already exists
@@ -54,6 +61,7 @@ def register_user(request):
             # Create user
             user = User.objects.create(
                 name=name,
+                phone=phone,
                 email=email,
                 password=password,
                 is_verified=False,
@@ -300,7 +308,8 @@ def get_users(request):
             user_list.append({
                 "id": user.id,
                 "name": user.name,
-                "email": user.email
+                "email": user.email,
+                "phone": user.phone
             })
 
         return JsonResponse({
