@@ -303,23 +303,65 @@ def get_users(request):
 
         user_list = []
 
+        # Current month
+        current_date = timezone.localtime(
+            timezone.now()
+        )
+
+        current_year = current_date.year
+        current_month = current_date.month
+
         for user in users:
 
+            # Check whether user placed an order
+            # during the current month
+            order_count = Order.objects.filter(
+                customer_email=user.email,
+                created_at__year=current_year,
+                created_at__month=current_month
+            ).count()
+
+            # Set user activity status
+            if order_count > 0:
+                user_status = "Active"
+            else:
+                user_status = "Inactive"
+
             user_list.append({
-                "id": user.id,
-                "name": user.name,
-                "email": user.email,
-                "phone": user.phone
+
+                "id":
+                    user.id,
+
+                "name":
+                    user.name,
+
+                "email":
+                    user.email,
+
+                "phone":
+                    user.phone,
+
+                "status":
+                    user_status
+
             })
 
         return JsonResponse({
+
             "success": True,
-            "users": user_list
+
+            "users":
+                user_list
+
         })
 
     return JsonResponse({
+
         "success": False,
-        "message": "Only GET method is allowed"
+
+        "message":
+            "Only GET method is allowed"
+
     })
 
 

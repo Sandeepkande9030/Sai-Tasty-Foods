@@ -197,7 +197,7 @@ fetch(
                         </td>
 
                         <td>
-                            Active
+                            ${user.status || "Inactive"}
                         </td>
 
                     </tr>
@@ -461,5 +461,36 @@ function loadRestaurantCount() {
 // =========================
 
 loadRestaurantCount();
+
+// =========================
+// PRINT USERS
+// =========================
+
+function printUsers() {
+
+    const now = new Date();
+
+    const date =
+        now.toLocaleDateString("en-IN");
+
+    const time =
+        now.toLocaleTimeString(
+            "en-IN",
+            {
+                hour: "2-digit",
+                minute: "2-digit",
+
+            }
+        );
+
+    document.getElementById("printDate").textContent =
+        "Date: " + date;
+
+    document.getElementById("printTime").textContent =
+        "Time: " + time;
+
+    window.print();
+
+}
 
 

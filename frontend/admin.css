@@ -1026,3 +1026,143 @@
     }
 
 }
+/* =========================
+   PRINT HEADER
+========================= */
+
+.print-header {
+    display: none;
+}
+/* =========================
+   PRINT USERS BUTTON
+========================= */
+
+.print-button {
+    background: #502fd3;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.print-button:hover {
+    background: #381cb7;
+}
+
+/* ========================= 
+   PRINT USERS PAGE 
+========================= */
+
+@media print {
+
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+
+    /* HIDE ADMIN UI */
+    .admin-sidebar,
+    .admin-topbar,
+    .print-button {
+        display: none !important;
+    }
+
+    /* MAIN PRINT AREA */
+    .admin-main {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        min-height: auto !important;
+    }
+
+    /* PRINT HEADER */
+    .print-header {
+        display: block !important;
+        position: relative;
+        width: 100%;
+        min-height: 65px;
+        margin-bottom: 20px;
+    }
+
+    .print-header h1 {
+        text-align: center;
+        margin: 0;
+        padding: 5px;
+        font-size: 24px;
+        color: #000 !important;
+    }
+
+    /* DATE AND TIME - RIGHT CORNER */
+    .print-date-time {
+        position: absolute;
+        top: 0;
+        right: 0;
+        text-align: right;
+        font-size: 12px;
+        line-height: 20px;
+        color: #000 !important;
+    }
+
+    /* USERS SECTION */
+    .orders-section {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    /* HIDE ONLY SECTION DESCRIPTION */
+    .section-header {
+        margin-bottom: 20px;
+    }
+
+    /* TABLE */
+    .table-container {
+        display: block !important;
+        width: 100% !important;
+        overflow: visible !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border-spacing: 0 !important;
+        border: 2px solid #000 !important;
+    }
+
+    table thead {
+        display: table-header-group;
+    }
+
+    table tr {
+        page-break-inside: avoid;
+    }
+
+    table th,
+    table td {
+        border: 1px solid #000 !important;
+        padding: 8px !important;
+        text-align: left !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    table th {
+        border: 2px solid #000 !important;
+        font-weight: bold !important;
+        background: #eee !important;
+    }
+
+    /* PRINT BODY */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+}
