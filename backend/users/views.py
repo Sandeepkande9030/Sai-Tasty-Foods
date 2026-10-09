@@ -772,12 +772,6 @@ def add_restaurant(request):
                 "message": "Rating is required"
             })
 
-        if not delivery_time:
-            return JsonResponse({
-                "success": False,
-                "message": "Delivery time is required"
-            })
-
         if not location:
             return JsonResponse({
                 "success": False,

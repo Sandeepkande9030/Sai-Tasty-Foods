@@ -48,7 +48,11 @@ class Restaurant(models.Model):
         decimal_places=1
     )
 
-    delivery_time = models.CharField(max_length=50)
+    delivery_time = models.CharField(
+    max_length=50,
+    blank=True,
+    default=""
+    )
 
     location = models.CharField(max_length=200)
 

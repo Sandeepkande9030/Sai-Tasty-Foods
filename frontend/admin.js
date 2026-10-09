@@ -342,10 +342,6 @@ function loadAdminRestaurants() {
                         </p>
 
                         <p>
-                            🛵 ${restaurant.delivery_time}
-                        </p>
-
-                        <p>
                             📍 ${restaurant.location}
                         </p>
 
@@ -493,4 +489,131 @@ function printUsers() {
 
 }
 
+ // =========================
+ // SHOW ADD RESTAURANT FORM
+ // =========================
 
+function showAddRestaurantForm() {
+
+    const form = document.getElementById("addRestaurantForm");
+
+    if (form) {
+        form.style.display = "block";
+    }
+
+}
+
+
+// =========================
+// HIDE ADD RESTAURANT FORM
+// =========================
+
+function hideAddRestaurantForm() {
+
+    const form = document.getElementById("addRestaurantForm");
+
+    if (form) {
+        form.style.display = "none";
+    }
+
+}
+
+
+// =========================
+// ADD RESTAURANT
+// =========================
+
+async function addRestaurant() {
+
+
+const message = document.getElementById("restaurantMessage");
+
+const restaurant = {
+    name: document.getElementById("restaurantName").value.trim(),
+    image: document.getElementById("restaurantImage").value.trim(),
+    cuisine: document.getElementById("restaurantCuisine").value.trim(),
+    rating: document.getElementById("restaurantRating").value,
+    location: document.getElementById("restaurantLocation").value.trim(),
+    email: document.getElementById("restaurantEmail").value.trim(),
+    password: document.getElementById("restaurantPassword").value,
+    description: document.getElementById("restaurantDescription").value.trim()
+};
+
+// Check required fields
+if (
+    !restaurant.name ||
+    !restaurant.image ||
+    !restaurant.cuisine ||
+    !restaurant.rating ||
+    !restaurant.location ||
+    !restaurant.email ||
+    !restaurant.password ||
+    !restaurant.description
+) {
+    message.textContent = "Please fill in all fields.";
+    return;
+}
+
+message.style.color = "#d32f2f";
+message.textContent = "Saving restaurant...";
+
+try {
+
+    const response = await fetch(
+        "https://backend-dl8i.vercel.app/api/add-restaurant/",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(restaurant)
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.message || "Unable to add restaurant."
+        );
+    }
+
+    message.style.color = "green";
+    message.textContent = "Restaurant added successfully!";
+
+    // Clear the form
+    document.getElementById("restaurantName").value = "";
+    document.getElementById("restaurantImage").value = "";
+    document.getElementById("restaurantCuisine").value = "";
+    document.getElementById("restaurantRating").value = "";
+    document.getElementById("restaurantLocation").value = "";
+    document.getElementById("restaurantEmail").value = "";
+    document.getElementById("restaurantPassword").value = "";
+    document.getElementById("restaurantDescription").value = "";
+
+    // Refresh the admin restaurant list
+    if (typeof loadAdminRestaurants === "function") {
+        await loadAdminRestaurants();
+    }
+
+    // Refresh the dashboard restaurant count
+    if (typeof loadRestaurantCount === "function") {
+        await loadRestaurantCount();
+    }
+
+    // Hide the form after a successful save
+    if (typeof hideAddRestaurantForm === "function") {
+        hideAddRestaurantForm();
+    }
+
+} catch (error) {
+
+    console.error("Add restaurant error:", error);
+
+    message.style.color = "#d32f2f";
+    message.textContent =
+        error.message || "Unable to connect to the server.";
+}
+
+
+}
