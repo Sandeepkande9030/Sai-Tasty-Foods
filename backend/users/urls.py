@@ -23,6 +23,7 @@ from .views import (
     get_all_food_items,
     admin_login,
     add_restaurant,
+    delete_restaurant,
 
 )
 
@@ -109,6 +110,11 @@ urlpatterns = [
     "add-restaurant/",
     add_restaurant,
     name="add_restaurant"
+    ),
+        path(
+        "delete-restaurant/<int:restaurant_id>/",
+        delete_restaurant,
+        name="delete_restaurant"
     ),
 
 ]

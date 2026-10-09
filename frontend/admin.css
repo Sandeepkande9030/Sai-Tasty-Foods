@@ -1257,3 +1257,199 @@ margin-top: 18px;
     }
 
 }
+
+/* Keep Restaurant Permissions on one line */
+.admin-nav a {
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+/* Give the sidebar enough width */
+.admin-sidebar {
+    width: 260px;
+    min-width: 260px;
+}
+
+/* Keep main content beside the sidebar */
+.admin-main {
+    margin-left: 260px;
+}
+
+/* =====================================
+   RESTAURANT PERMISSIONS PAGE
+===================================== */
+
+.restaurant-permissions-section {
+    margin-top: 25px;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+}
+
+.restaurant-permissions-section .section-header {
+    margin-bottom: 22px;
+}
+
+.restaurant-permissions-section .section-header h2 {
+    font-size: 24px;
+    color: #252525;
+    margin-bottom: 8px;
+}
+
+.restaurant-permissions-section .section-header p {
+    color: #777;
+    font-size: 14px;
+}
+
+/* Table wrapper */
+
+.restaurant-permissions-section .table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+}
+
+/* Table */
+
+.restaurant-permissions-table,
+.restaurant-permissions-section table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+    background: #ffffff;
+}
+
+/* Table headings */
+
+
+.restaurant-permissions-section thead {
+    background: #ffffff;
+    color: #000000;
+}
+
+.restaurant-permissions-section th {
+    color: #000000;
+    font-weight: 700;
+}
+/* Table rows */
+
+.restaurant-permissions-section td {
+    padding: 17px 20px;
+    border-bottom: 1px solid #eeeeee;
+    color: #333333;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.restaurant-permissions-section tbody tr:nth-child(even) {
+    background: #fff8f8;
+}
+
+.restaurant-permissions-section tbody tr:hover {
+    background: #fff0f0;
+}
+
+.restaurant-permissions-section tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Restaurant name */
+
+.restaurant-permissions-section td:first-child {
+    font-weight: 600;
+    color: #292929;
+}
+
+/* Permission checkboxes */
+.restaurant-permissions-section input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: #16a34a;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-right: 7px;
+}
+
+/* Permission labels */
+
+.restaurant-permissions-section td label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* Delete button */
+
+.delete-restaurant-button {
+    padding: 9px 17px;
+    border: none;
+    border-radius: 7px;
+    background: #bc4949;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.delete-restaurant-button:hover {
+    background: #a71919;
+    transform: translateY(-1px);
+}
+
+.delete-restaurant-button:active {
+    transform: scale(0.97);
+}
+
+/* Status message */
+
+#permissionsMessage {
+    font-size: 14px;
+    color: #555555;
+}
+
+/* Responsive layout */
+
+@media (max-width: 768px) {
+
+    .restaurant-permissions-section {
+        padding: 15px;
+        margin-top: 18px;
+    }
+
+    .restaurant-permissions-section .section-header h2 {
+        font-size: 20px;
+    }
+
+    .restaurant-permissions-section th,
+    .restaurant-permissions-section td {
+        padding: 13px 12px;
+    }
+}
+
+/* FIX: Restaurant Permissions table headings */
+.restaurant-permissions-section .table-container table thead th {
+    background: #ffffff !important;
+    color: #000000f6 !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+    text-align: left;
+}
+
+/* FORCE BLACK TEXT ON RESTAURANT PERMISSIONS HEADINGS */
+body .restaurant-permissions-section table th,
+body .restaurant-permissions-section table thead th,
+body .restaurant-permissions-table th {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    font-weight: bold !important;
+    opacity: 1 !important;
+}
+
+

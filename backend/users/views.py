@@ -2459,4 +2459,63 @@ def admin_login(request):
             "message": str(e)
         })
 
+# =========================
+# DELETE RESTAURANT - ADMIN
+# =========================
+
+@csrf_exempt
+def delete_restaurant(request, restaurant_id):
+
+    if request.method != "DELETE":
+        return JsonResponse({
+            "success": False,
+            "message": "Only DELETE method is allowed"
+        }, status=405)
+
+    try:
+        # Find the selected restaurant
+        restaurant = Restaurant.objects.filter(
+            id=restaurant_id
+        ).first()
+
+        if not restaurant:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant not found"
+            }, status=404)
+
+        # Preserve customer order history
+        if Order.objects.filter(
+            restaurant_id=restaurant_id
+        ).exists():
+            return JsonResponse({
+                "success": False,
+                "message": (
+                    "This restaurant has existing orders "
+                    "and cannot be deleted."
+                )
+            }, status=409)
+
+        restaurant_name = restaurant.name
+
+        # Delete the restaurant.
+        # Related food items may also be deleted according
+        # to the on_delete setting in your models.
+        restaurant.delete()
+
+        return JsonResponse({
+            "success": True,
+            "message": (
+                f"{restaurant_name} deleted successfully."
+            )
+        })
+
+    except Exception as e:
+        print("DELETE RESTAURANT ERROR:", str(e), flush=True)
+
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to delete restaurant."
+        }, status=500)
+
 

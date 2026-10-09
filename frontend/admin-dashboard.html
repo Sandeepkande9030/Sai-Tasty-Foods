@@ -17,52 +17,51 @@
 <body class="admin-dashboard-body">
 
 
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
+    
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar">
 
-    <aside class="admin-sidebar">
+            <div class="admin-logo">
+                SAI TASTY FOODS
+            </div>
 
-        <div class="admin-logo">
-            SAI TASTY FOODS
-        </div>
+            <nav class="admin-nav">
+
+                <a href="admin-dashboard.html" class="active">
+                    🏠 Dashboard
+                </a>
+
+                <a href="users.html">
+                    👥 Users
+                </a>
+
+                <a href="admin-restaurants.html">
+                    🍽️ Restaurants
+                </a>
+
+                <a href="restaurant-permissions.html">
+                    🔐 Restaurant Permissions
+                </a>
+
+                <a href="food-items.html">
+                    🍔 Food Items
+                </a>
+
+                <a href="admin-orders.html">
+                    📦 Orders
+                </a>
+
+            </nav>
+
+            <button
+                class="admin-logout-button"
+                onclick="adminLogout()">
+                🚪 Logout
+            </button>
+
+        </aside>
 
 
-        <nav class="admin-nav">
-
-            <a href="admin-dashboard.html"
-               class="active">
-                🏠 Dashboard
-            </a>
-
-            <a href="users.html">
-                👥 Users
-            </a>
-
-            <a href="admin-restaurants.html">
-                🍽️ Restaurants
-            </a>
-
-            <a href="food-items.html">
-                🍔 Food Items
-            </a>
-
-            <a href="admin-orders.html">
-                📦 Orders
-            </a>
-
-        </nav>
-
-
-        <button
-            class="admin-logout-button"
-            onclick="adminLogout()">
-
-            🚪 Logout
-
-        </button>
-
-    </aside>
 
 
 

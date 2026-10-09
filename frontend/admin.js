@@ -617,3 +617,145 @@ try {
 
 
 }
+
+// ===============================
+// LOAD RESTAURANT PERMISSIONS
+// ===============================
+
+async function loadRestaurantPermissions() {
+
+    const table = document.getElementById(
+        "restaurantPermissionsTable"
+    );
+
+    if (!table) return;
+
+    try {
+
+        const response = await fetch(
+            "https://backend-dl8i.vercel.app/api/restaurants/"
+        );
+
+        const data = await response.json();
+
+        const restaurants = Array.isArray(data)
+            ? data
+            : data.restaurants || data.data || [];
+
+        if (!restaurants.length) {
+            table.innerHTML = `
+                <tr>
+                    <td colspan="4">No restaurants found</td>
+                </tr>
+            `;
+            return;
+        }
+
+        table.innerHTML = restaurants.map(restaurant => `
+            <tr>
+                <td>${restaurant.name}</td>
+
+                <td>
+                    <label>
+                        <input type="checkbox" checked>
+                        Active
+                    </label>
+                </td>
+
+                <td>
+                    <label>
+                        <input type="checkbox" checked>
+                        Active
+                    </label>
+                </td>
+
+                <td>
+                    <button
+                        type="button"
+                        class="delete-restaurant-button"
+                        onclick="deleteRestaurantPermission(${restaurant.id}, '${String(restaurant.name).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+
+    } catch (error) {
+
+        console.error(
+            "Error loading restaurant permissions:",
+            error
+        );
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="4">
+                    Unable to load restaurants.
+                    Check the backend connection.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadRestaurantPermissions
+);
+
+async function deleteRestaurantPermission(restaurantId, restaurantName) {
+    const confirmed = confirm(
+        `Are you sure you want to delete "${restaurantName}"?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const message = document.getElementById("permissionsMessage");
+
+    if (message) {
+        message.style.color = "#333333";
+        message.textContent = "Deleting restaurant...";
+    }
+
+    try {
+        const response = await fetch(
+            `https://backend-dl8i.vercel.app/api/delete-restaurant/${restaurantId}/`,
+            {
+                method: "DELETE"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to delete restaurant."
+            );
+        }
+
+        if (message) {
+            message.style.color = "green";
+            message.textContent = data.message;
+        }
+
+        // Refresh the table after successful deletion
+        await loadRestaurantPermissions();
+
+        // Refresh restaurant count if available
+        if (typeof loadRestaurantCount === "function") {
+            await loadRestaurantCount();
+        }
+
+    } catch (error) {
+        console.error("DELETE RESTAURANT ERROR:", error);
+
+        if (message) {
+            message.style.color = "red";
+            message.textContent = error.message;
+        } else {
+            alert(error.message);
+        }
+    }
+}
