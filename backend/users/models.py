@@ -84,12 +84,7 @@ class Restaurant(models.Model):
     )
 
     fssai_is_demo = models.BooleanField(default=True)
-    # Uploaded FSSAI license PDF
-    fssai_license_pdf = models.FileField(
-        upload_to="restaurant_licenses/",
-        blank=True,
-        null=True
-    )    
+   
     email = models.EmailField(
         unique=True,
         null=True,
