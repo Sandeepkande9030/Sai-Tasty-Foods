@@ -57,6 +57,34 @@ class Restaurant(models.Model):
     location = models.CharField(max_length=200)
 
     description = models.TextField()
+    # Controls whether customers can see this restaurant
+    is_visible = models.BooleanField(default=True)
+    
+    # Sample FSSAI details for project demonstration
+    fssai_number = models.CharField(
+        max_length=14,
+        blank=True,
+        default=""
+    )
+
+    fssai_license_type = models.CharField(
+        max_length=100,
+        blank=True,
+        default="Sample Registration"
+    )
+
+    fssai_valid_from = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    fssai_valid_until = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    fssai_is_demo = models.BooleanField(default=True)
+
 
     email = models.EmailField(
         unique=True,

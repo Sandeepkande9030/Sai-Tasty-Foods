@@ -669,7 +669,9 @@ def reset_password(request):
         "success": False,
         "message": "Only POST method is allowed"
     })
-    # =========================
+    
+
+# =========================
 # GET ALL RESTAURANTS
 # =========================
 
@@ -677,11 +679,32 @@ def get_restaurants(request):
 
     if request.method == "GET":
 
-        restaurants = Restaurant.objects.all().order_by("id")
+        # Customers can request visible restaurants only
+        if request.GET.get("visible_only") == "true":
+            restaurants = Restaurant.objects.filter(
+                is_visible=True
+            ).order_by("id")
+        else:
+            # Admin can see all restaurants
+            restaurants = Restaurant.objects.all().order_by("id")
 
         restaurant_list = []
 
         for restaurant in restaurants:
+
+            # Generate a sample number if missing.
+            # This is demo data, not a real FSSAI license.
+            if not restaurant.fssai_number:
+                restaurant.fssai_number = (
+                    f"{restaurant.id:014d}"
+                )
+                restaurant.fssai_is_demo = True
+                restaurant.save(
+                    update_fields=[
+                        "fssai_number",
+                        "fssai_is_demo"
+                    ]
+                )
 
             restaurant_list.append({
                 "id": restaurant.id,
@@ -689,9 +712,22 @@ def get_restaurants(request):
                 "image": restaurant.image,
                 "cuisine": restaurant.cuisine,
                 "rating": float(restaurant.rating),
-                "delivery_time": restaurant.delivery_time,
                 "location": restaurant.location,
-                "description": restaurant.description
+                "description": restaurant.description,
+                "is_visible": restaurant.is_visible,
+
+                # Sample FSSAI details
+                "fssai_number": restaurant.fssai_number,
+                "fssai_license_type": restaurant.fssai_license_type,
+                "fssai_valid_from": (
+                    restaurant.fssai_valid_from.isoformat()
+                    if restaurant.fssai_valid_from else None
+                ),
+                "fssai_valid_until": (
+                    restaurant.fssai_valid_until.isoformat()
+                    if restaurant.fssai_valid_until else None
+                ),
+                "fssai_is_demo": restaurant.fssai_is_demo
             })
 
         return JsonResponse({
@@ -703,6 +739,64 @@ def get_restaurants(request):
         "success": False,
         "message": "Only GET method is allowed"
     })
+
+# =========================
+# UPDATE RESTAURANT VISIBILITY
+# =========================
+
+@csrf_exempt
+def update_restaurant_visibility(request):
+
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed"
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        restaurant_id = data.get("restaurant_id")
+        is_visible = data.get("is_visible")
+
+        if not isinstance(is_visible, bool):
+            return JsonResponse({
+                "success": False,
+                "message": "Invalid visibility value"
+            }, status=400)
+
+        restaurant = Restaurant.objects.filter(
+            id=restaurant_id
+        ).first()
+
+        if not restaurant:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant not found"
+            }, status=404)
+
+        restaurant.is_visible = is_visible
+        restaurant.save(update_fields=["is_visible"])
+
+        return JsonResponse({
+            "success": True,
+            "message": "Restaurant visibility updated",
+            "is_visible": restaurant.is_visible
+        })
+
+    except (json.JSONDecodeError, TypeError, ValueError):
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request data"
+        }, status=400)
+
+    except Exception as e:
+        print("UPDATE VISIBILITY ERROR:", str(e), flush=True)
+
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to update restaurant visibility"
+        }, status=500)
     # =========================
 # ADD RESTAURANT - ADMIN
 # =========================

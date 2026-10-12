@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSSAI License Details - Sai Tasty Foods</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #f4f6fa;
+            color: #252b36;
+        }
+
+        .license-card {
+            max-width: 600px;
+            margin: 45px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 5px 22px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #c62828;
+            font-size: 25px;
+        }
+
+        .restaurant-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 25px 0;
+        }
+
+        .field {
+            padding: 15px 0;
+            border-bottom: 1px solid #e8eaf0;
+        }
+
+        .label {
+            display: block;
+            color: #697386;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .value {
+            font-size: 16px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .sample-number {
+            color: #b45309;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .demo-warning {
+            margin-top: 22px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #fff3cd;
+            color: #805600;
+            font-weight: bold;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 22px;
+            color: #c62828;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="license-card">
+        <h1>FSSAI License Details</h1>
+
+        <div class="field">
+            <span class="label">Restaurant Name</span>
+            <div class="value" id="restaurantName">Loading...</div>
+        </div>
+
+        <div class="field">
+            <span class="label">License Number</span>
+            <div class="value sample-number" id="licenseNumber">Loading...</div>
+        </div>
+
+        <div class="field">
+            <span class="label">License Type</span>
+            <div class="value" id="licenseType">Not provided</div>
+        </div>
+
+        <div class="field">
+            <span class="label">Valid From</span>
+            <div class="value" id="validFrom">Not provided</div>
+        </div>
+
+        <div class="field">
+            <span class="label">Valid Until</span>
+            <div class="value" id="validUntil">Not provided</div>
+        </div>
+
+
+        <a href="restaurants.html" class="back-link">
+            ← Back to Restaurants
+        </a>
+    </main>
+
+    <script>
+        const API_BASE_URL = "https://backend-dl8i.vercel.app";
+
+        async function loadLicenseDetails() {
+            const params = new URLSearchParams(window.location.search);
+            const restaurantId = params.get("id");
+
+            if (!restaurantId || !/^\d+$/.test(restaurantId)) {
+                document.getElementById("restaurantName").textContent =
+                    "Restaurant not found";
+                document.getElementById("licenseNumber").textContent = "—";
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/api/restaurants/`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Unable to load restaurant information");
+                }
+
+                const data = await response.json();
+                const restaurants = data.restaurants || [];
+
+                const restaurant = restaurants.find(
+                    item => String(item.id) === restaurantId
+                );
+
+                if (!restaurant) {
+                    document.getElementById("restaurantName").textContent =
+                        "Restaurant not found";
+                    document.getElementById("licenseNumber").textContent = "—";
+                    return;
+                }
+
+                document.getElementById("restaurantName").textContent =
+                    restaurant.name || "Not provided";
+
+                document.getElementById("licenseNumber").textContent =
+                    restaurant.fssai_number || "Not assigned";
+
+                document.getElementById("licenseType").textContent =
+                    restaurant.fssai_license_type || "Sample registration";
+
+                document.getElementById("validFrom").textContent =
+                    restaurant.fssai_valid_from || "Not provided";
+
+                document.getElementById("validUntil").textContent =
+                    restaurant.fssai_valid_until || "Not provided";
+
+            } catch (error) {
+                document.getElementById("restaurantName").textContent =
+                    "Unable to load details";
+                document.getElementById("licenseNumber").textContent = "—";
+                console.error(error);
+            }
+        }
+
+        loadLicenseDetails();
+    </script>
+</body>
+</html>
