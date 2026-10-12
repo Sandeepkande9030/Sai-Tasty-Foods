@@ -146,3 +146,9 @@ DEFAULT_FROM_EMAIL = f"Sai Tasty Foods <{EMAIL_HOST_USER}>"
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = False
 CORS_URLS_REGEX = r"^/api/.*$"
+# =========================
+# PDF FILE STORAGE
+# =========================
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"

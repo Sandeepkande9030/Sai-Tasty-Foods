@@ -1,6 +1,7 @@
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.files.uploadedfile import UploadedFile
 from django.utils import timezone
 from django.core.mail import send_mail
 from .models import User, Restaurant, Order, FoodItem, Admin
@@ -692,11 +693,12 @@ def get_restaurants(request):
 
         for restaurant in restaurants:
 
-            # Generate a sample number if missing.
-            # This is demo data, not a real FSSAI license.
+                # Generate a sample number if missing.
+                # This is demo data, not a real FSSAI license.
+            
             if not restaurant.fssai_number:
-                restaurant.fssai_number = (
-                    f"{restaurant.id:014d}"
+                restaurant.fssai_number = "".join(
+                    random.choices("123456789", k=14)
                 )
                 restaurant.fssai_is_demo = True
                 restaurant.save(
@@ -705,6 +707,7 @@ def get_restaurants(request):
                         "fssai_is_demo"
                     ]
                 )
+
 
             restaurant_list.append({
                 "id": restaurant.id,
@@ -715,6 +718,19 @@ def get_restaurants(request):
                 "location": restaurant.location,
                 "description": restaurant.description,
                 "is_visible": restaurant.is_visible,
+                # Restaurant contact and timings
+                "email": restaurant.email or "",
+                "phone": restaurant.phone or "",
+
+                "opening_time": (
+                    restaurant.opening_time.strftime("%H:%M")
+                    if restaurant.opening_time else ""
+                ),
+
+                "closing_time": (
+                    restaurant.closing_time.strftime("%H:%M")
+                    if restaurant.closing_time else ""
+                ),
 
                 # Sample FSSAI details
                 "fssai_number": restaurant.fssai_number,
@@ -727,7 +743,17 @@ def get_restaurants(request):
                     restaurant.fssai_valid_until.isoformat()
                     if restaurant.fssai_valid_until else None
                 ),
-                "fssai_is_demo": restaurant.fssai_is_demo
+                
+                "fssai_is_demo": restaurant.fssai_is_demo,
+
+                "email": restaurant.email,
+
+                "fssai_license_pdf": (
+                    request.build_absolute_uri(restaurant.fssai_license_pdf.url)
+                    if restaurant.fssai_license_pdf
+                    else ""
+                ),
+
             })
 
         return JsonResponse({
@@ -2611,5 +2637,96 @@ def delete_restaurant(request, restaurant_id):
             "success": False,
             "message": "Unable to delete restaurant."
         }, status=500)
+
+# =========================
+# UPLOAD RESTAURANT FSSAI LICENSE PDF
+# =========================
+
+@csrf_exempt
+def upload_restaurant_license(request):
+
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed"
+        }, status=405)
+
+    try:
+        restaurant_id = request.POST.get("restaurant_id", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "")
+        pdf_file = request.FILES.get("license_pdf")
+
+        if not restaurant_id or not email or not password:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant login details are required"
+            }, status=400)
+
+        restaurant = Restaurant.objects.filter(
+            id=restaurant_id,
+            email=email,
+            password=password
+        ).first()
+
+        if not restaurant:
+            return JsonResponse({
+                "success": False,
+                "message": "Invalid restaurant login details"
+            }, status=403)
+
+        if not pdf_file:
+            return JsonResponse({
+                "success": False,
+                "message": "Please select a PDF file"
+            }, status=400)
+
+        if not pdf_file.name.lower().endswith(".pdf"):
+            return JsonResponse({
+                "success": False,
+                "message": "Only PDF files are allowed"
+            }, status=400)
+
+        if pdf_file.size > 5 * 1024 * 1024:
+            return JsonResponse({
+                "success": False,
+                "message": "PDF size must not exceed 5 MB"
+            }, status=400)
+
+        # Check the PDF file signature
+        if pdf_file.read(5) != b"%PDF-":
+            return JsonResponse({
+                "success": False,
+                "message": "The selected file is not a valid PDF"
+            }, status=400)
+
+        pdf_file.seek(0)
+
+        # Replace the restaurant's previous license, if any
+        if restaurant.fssai_license_pdf:
+            restaurant.fssai_license_pdf.delete(save=False)
+
+        restaurant.fssai_license_pdf.save(
+            pdf_file.name,
+            pdf_file,
+            save=True
+        )
+
+        return JsonResponse({
+            "success": True,
+            "message": "FSSAI license PDF uploaded successfully",
+            "pdf_url": request.build_absolute_uri(
+                restaurant.fssai_license_pdf.url
+            )
+        })
+
+    except Exception as e:
+        print("LICENSE PDF UPLOAD ERROR:", str(e), flush=True)
+
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to upload license PDF"
+        }, status=500)
+
 
 

@@ -84,10 +84,30 @@ class Restaurant(models.Model):
     )
 
     fssai_is_demo = models.BooleanField(default=True)
-
-
+    # Uploaded FSSAI license PDF
+    fssai_license_pdf = models.FileField(
+        upload_to="restaurant_licenses/",
+        blank=True,
+        null=True
+    )    
     email = models.EmailField(
         unique=True,
+        null=True,
+        blank=True
+    )
+
+    phone = models.CharField(
+        max_length=15,
+        blank=True,
+        default=""
+    )
+
+    opening_time = models.TimeField(
+        null=True,
+        blank=True
+    )
+
+    closing_time = models.TimeField(
         null=True,
         blank=True
     )
@@ -97,6 +117,7 @@ class Restaurant(models.Model):
         null=True,
         blank=True
     )
+
 
     def __str__(self):
         return self.name

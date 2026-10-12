@@ -1,4 +1,5 @@
 from django.urls import path
+from .views import upload_restaurant_license
 
 from .views import (
     register_user,
@@ -122,5 +123,10 @@ urlpatterns = [
     update_restaurant_visibility,
     name="update_restaurant_visibility"
     ),
+    path(
+    "upload-restaurant-license/",
+    upload_restaurant_license,
+    name="upload_restaurant_license"
+),
 
 ]

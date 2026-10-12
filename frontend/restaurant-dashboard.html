@@ -897,35 +897,342 @@
         </div>
 
     </section>
+<!-- =========================
+     PROFILE SECTION
+========================= -->
 
-    <!-- =========================
-         PROFILE SECTION
-    ========================= -->
+<section
+    id="profileSection"
+    class="content-section"
+    style="display:none;">
 
-    <section
-        id="profileSection"
-        class="content-section"
-        style="display:none;">
+    <h2>👤 Restaurant Profile Management</h2>
 
-        <h2>
-            👤 Restaurant Profile
-        </h2>
+    <p style="color:#666;">
+        View your restaurant details and edit them required.
+    </p>
 
-        <p>
-            <strong>Restaurant:</strong>
-            <span id="profileRestaurantName">
-                Loading...
-            </span>
-        </p>
+    <form id="restaurantProfileForm">
 
-        <p>
-            <strong>Restaurant ID:</strong>
-            <span id="profileRestaurantId">
-                Loading...
-            </span>
-        </p>
+        <!-- RESTAURANT IMAGE -->
+        <div style="margin-bottom:25px;">
+            <h3>🖼️ Restaurant Image</h3>
 
-    </section>
+            <div style="margin-bottom:12px;">
+                <img
+                    id="profileRestaurantImage"
+                    src=""
+                    alt="Restaurant Image"
+                    style="
+                        width:160px;
+                        height:120px;
+                        object-fit:cover;
+                        border-radius:10px;
+                        display:none;
+                        border:1px solid #ddd;
+                    ">
+            </div>
+
+            <label for="profileImageInput">
+                Upload Restaurant Image
+            </label>
+
+            <input
+                type="file"
+                id="profileImageInput"
+                accept="image/*"
+                disabled>
+        </div>
+
+        <hr>
+
+        <!-- BASIC INFORMATION -->
+        <h3>🏪 Basic Information</h3>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+
+            <div>
+                <label for="profileNameInput">Restaurant Name</label>
+                <input
+                    type="text"
+                    id="profileNameInput"
+                    required
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label for="profileIdInput">Restaurant ID </label>
+                <input
+                    type="text"
+                    id="profileIdInput"
+                    readonly
+                    style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
+            </div>
+
+            <div>
+                <label for="profileCuisineInput">Cuisine</label>
+                <input
+                    type="text"
+                    id="profileCuisineInput"
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label for="profileRatingInput">Rating </label>
+                <input
+                    type="text"
+                    id="profileRatingInput"
+                    readonly
+                    style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
+            </div>
+
+            <div>
+                <label for="profileLocationInput">Restaurant Location</label>
+                <input
+                    type="text"
+                    id="profileLocationInput"
+                    required
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+        </div>
+
+        <div style="margin-top:18px;">
+            <label for="profileDescriptionInput">Restaurant Description</label>
+
+            <textarea
+                id="profileDescriptionInput"
+                rows="4"
+                disabled
+                style="width:100%;padding:11px;box-sizing:border-box;"></textarea>
+        </div>
+
+        <hr style="margin-top:25px;">
+
+        <!-- CONTACT DETAILS -->
+        <h3>📞 Contact Information</h3>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+
+            <div>
+                <label for="profileEmailInput">Restaurant Email</label>
+                <input
+                    type="email"
+                    id="profileEmailInput"
+                    required
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label for="profilePhoneInput">Contact Number</label>
+                <input
+                    type="tel"
+                    id="profilePhoneInput"
+                    placeholder="Contact number, if available"
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+        </div>
+
+        <hr style="margin-top:25px;">
+
+        <!-- WORKING HOURS -->
+        <h3>🕒 Working Hours</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:18px;">
+
+            <div>
+                <label for="profileOpeningTimeInput">Opening Time</label>
+                <input
+                    type="time"
+                    id="profileOpeningTimeInput"
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label for="profileClosingTimeInput">Closing Time</label>
+                <input
+                    type="time"
+                    id="profileClosingTimeInput"
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+        </div>
+
+        <div style="margin-top:18px;">
+            <label>
+                <input
+                    type="checkbox"
+                    id="profileTemporarilyClosed"
+                    disabled>
+                Temporarily close my restaurant
+            </label>
+        </div>
+
+        <hr style="margin-top:25px;">
+        <!-- FSSAI DETAILS -->
+        <h3>📋 FSSAI License Details</h3>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+
+            <div>
+                <label for="profileFssaiNumberInput">FSSAI License Number</label>
+                <input
+                    type="text"
+                    id="profileFssaiNumberInput"
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label for="profileFssaiTypeInput">License Type</label>
+                <select
+                    id="profileFssaiTypeInput"
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+                    <option value="">Select license type</option>
+                    <option value="Basic Registration">Basic Registration</option>
+                    <option value="State License">State License</option>
+                    <option value="Central License">Central License</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="profileFssaiValidFromInput">Valid From</label>
+                <input
+                    type="date"
+                    id="profileFssaiValidFromInput"
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label for="profileFssaiValidUntilInput">Valid Until</label>
+                <input
+                    type="date"
+                    id="profileFssaiValidUntilInput"
+                    disabled
+                    style="width:100%;padding:11px;box-sizing:border-box;">
+            </div>
+
+        </div>
+        
+            <!-- FSSAI LICENSE PDF UPLOAD -->
+            <hr style="margin-top:25px;">
+
+            <h3>📄 Upload FSSAI License PDF</h3>
+
+            <p style="color:#666;">
+                Upload your restaurant's actual FSSAI license document.
+                PDF files only, maximum size 5 MB.
+            </p>
+
+            <div style="
+                background:#fff8f8;
+                border:1px solid #f0cccc;
+                border-radius:10px;
+                padding:20px;
+                margin-top:15px;
+            ">
+
+                <label for="licensePdfInput"
+                    style="display:block;font-weight:bold;margin-bottom:10px;">
+                    Select License PDF
+                </label>
+
+                <input
+                    type="file"
+                    id="licensePdfInput"
+                    accept=".pdf,application/pdf"
+                    style="display:block;margin-bottom:15px;"
+                >
+
+                <label for="licensePasswordInput"
+                    style="display:block;font-weight:bold;margin-bottom:8px;">
+                    Confirm Restaurant Password
+                </label>
+
+                <input
+                    type="password"
+                    id="licensePasswordInput"
+                    autocomplete="current-password"
+                    placeholder="Enter restaurant password"
+                    style="width:100%;max-width:400px;padding:11px;
+                        box-sizing:border-box;margin-bottom:15px;"
+                >
+
+                <button
+                    type="button"
+                    onclick="uploadRestaurantLicense()"
+                    style="background:#d32f2f;color:white;border:none;
+                        padding:12px 20px;border-radius:6px;cursor:pointer;">
+                    📤 Upload License PDF
+                </button>
+
+                <p id="licenseUploadMessage" role="status"></p>
+
+                <p id="existingLicensePdf"></p>
+
+            </div>
+
+
+        <!-- ACTION BUTTONS -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+
+            <button
+                type="button"
+                id="editRestaurantProfileBtn"
+                style="
+                    background:#d32f2f;
+                    color:white;
+                    border:none;
+                    padding:12px 22px;
+                    border-radius:6px;
+                    cursor:pointer;">
+                ✏️ Edit Profile
+            </button>
+
+            <button
+                type="submit"
+                id="saveRestaurantProfileBtn"
+                disabled
+                style="
+                    background:#198754;
+                    color:white;
+                    border:none;
+                    padding:12px 22px;
+                    border-radius:6px;
+                    cursor:pointer;">
+                💾 Save Changes
+            </button>
+
+            <button
+                type="button"
+                id="cancelRestaurantProfileBtn"
+                disabled
+                style="
+                    background:#6c757d;
+                    color:white;
+                    border:none;
+                    padding:12px 22px;
+                    border-radius:6px;
+                    cursor:pointer;">
+                Cancel
+            </button>
+
+        </div>
+
+        <p id="restaurantProfileMessage" role="status"></p>
+
+    </form>
+
+</section>
 
 
 </main>
@@ -1360,79 +1667,154 @@ async function openNotifications() {
 }
 
 
-// =========================
-// LOAD RESTAURANT NAME
-// =========================
 
 async function loadRestaurantName() {
 
     if (!restaurantId) {
+        console.error("Restaurant ID not found in localStorage.");
         return;
     }
 
-
     try {
 
-        const response =
-            await fetch(
-                API_BASE_URL +
-                "/api/restaurants/"
-            );
+        const response = await fetch(
+            API_BASE_URL + "/api/restaurants/"
+        );
 
+        if (!response.ok) {
+            throw new Error("Failed to load restaurants.");
+        }
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
+        if (!data.success || !Array.isArray(data.restaurants)) {
+            throw new Error("Invalid restaurant API response.");
+        }
 
-        if (!data.success) {
+        const restaurant = data.restaurants.find(function(item) {
+            return String(item.id) === String(restaurantId);
+        });
+
+        if (!restaurant) {
+            document.getElementById("restaurantName").textContent =
+                "Restaurant not found.";
             return;
         }
 
+        console.log("RESTAURANT PROFILE DATA:", restaurant);
 
-        const restaurant =
-            data.restaurants.find(
-                function(item) {
+        // Dashboard heading
+        document.getElementById("restaurantName").textContent =
+            restaurant.name || "Restaurant";
 
-                    return (
-                        item.id == restaurantId
-                    );
+        // Helper to fill profile fields safely
+        function setProfileValue(id, value) {
+            const field = document.getElementById(id);
 
-                }
-            );
-
-
-        if (restaurant) {
-
-            document.getElementById(
-                "restaurantName"
-            ).textContent =
-                restaurant.name;
-
-
-            document.getElementById(
-                "profileRestaurantName"
-            ).textContent =
-                restaurant.name;
-
-
-            document.getElementById(
-                "profileRestaurantId"
-            ).textContent =
-                restaurant.id;
-
+            if (field) {
+                field.value = value ?? "";
+            }
         }
 
-    }
+        // Basic information
+        setProfileValue("profileNameInput", restaurant.name);
+        setProfileValue("profileIdInput", restaurant.id);
+        setProfileValue("profileCuisineInput", restaurant.cuisine);
+        setProfileValue("profileRatingInput", restaurant.rating);
+        setProfileValue("profileLocationInput", restaurant.location);
+        setProfileValue("profileDescriptionInput", restaurant.description);
 
-    catch (error) {
+        // Contact information
+        setProfileValue("profileEmailInput", restaurant.email);
 
-        console.error(
-            "RESTAURANT ERROR:",
-            error
+        // These fields may not exist in your current API yet
+        setProfileValue("profilePhoneInput", restaurant.phone);
+
+        // Working hours: populate only if the API returns these fields
+        setProfileValue(
+            "profileOpeningTimeInput",
+            restaurant.opening_time
         );
 
-    }
+        setProfileValue(
+            "profileClosingTimeInput",
+            restaurant.closing_time
+        );
 
+        const temporarilyClosed =
+            document.getElementById("profileTemporarilyClosed");
+
+        if (temporarilyClosed) {
+            temporarilyClosed.checked =
+                restaurant.is_temporarily_closed === true;
+        }
+
+        // FSSAI information
+        setProfileValue(
+            "profileFssaiNumberInput",
+            restaurant.fssai_number
+        );
+
+        setProfileValue(
+            "profileFssaiTypeInput",
+            restaurant.fssai_license_type
+        );
+
+        setProfileValue(
+            "profileFssaiValidFromInput",
+            restaurant.fssai_valid_from
+        );
+
+        setProfileValue(
+            "profileFssaiValidUntilInput",
+            restaurant.fssai_valid_until
+        );
+
+        const demoCheckbox =
+            document.getElementById("profileFssaiDemoInput");
+
+        if (demoCheckbox) {
+            demoCheckbox.checked =
+                restaurant.fssai_is_demo === true;
+        }
+
+        // Restaurant image
+        const imageElement =
+            document.getElementById("profileRestaurantImage");
+
+        if (imageElement && restaurant.image) {
+
+            let imageUrl = restaurant.image;
+
+            if (!/^https?:\/\//i.test(imageUrl)) {
+                imageUrl = API_BASE_URL.replace(/\/$/, "") +
+                    "/" + imageUrl.replace(/^\/+/, "");
+            }
+
+            imageElement.src = imageUrl;
+            imageElement.style.display = "block";
+
+        } else if (imageElement) {
+            imageElement.style.display = "none";
+        }
+
+        // Restaurant visibility, if returned by the API
+        const visibilityCheckbox =
+            document.getElementById("profileVisibilityInput");
+
+        if (visibilityCheckbox) {
+            visibilityCheckbox.checked =
+                restaurant.is_visible !== false;
+        }
+
+    } catch (error) {
+
+        console.error("RESTAURANT PROFILE ERROR:", error);
+
+        document.getElementById("restaurantName").textContent =
+            "Unable to load restaurant.";
+
+    }
 }
 
 
@@ -2784,6 +3166,124 @@ function cancelEditFood() {
 
 }
 
+async function uploadRestaurantLicense() {
+
+    const fileInput = document.getElementById("licensePdfInput");
+    const passwordInput = document.getElementById("licensePasswordInput");
+    const message = document.getElementById("licenseUploadMessage");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        message.textContent = "Please select a PDF file.";
+        return;
+    }
+
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+        message.textContent = "Only PDF files are allowed.";
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        message.textContent = "PDF must not exceed 5 MB.";
+        return;
+    }
+
+    const password = passwordInput.value;
+
+    if (!password) {
+        message.textContent = "Please enter your restaurant password.";
+        return;
+    }
+
+    
+    const storedRestaurantId = localStorage.getItem("restaurantId");
+
+    const restaurantIdForUpload = storedRestaurantId || restaurantId;
+
+    if (!restaurantIdForUpload) {
+        message.textContent =
+            "Restaurant ID not found. Please log out and log in again.";
+        return;
+    }
+
+    let email = "";
+
+    try {
+        const restaurantsResponse = await fetch(
+            API_BASE_URL + "/api/restaurants/"
+        );
+
+        const restaurantsData = await restaurantsResponse.json();
+
+        if (restaurantsData.success && Array.isArray(restaurantsData.restaurants)) {
+            const currentRestaurant = restaurantsData.restaurants.find(
+                function(item) {
+                    return String(item.id) === String(restaurantIdForUpload);
+                }
+            );
+
+            if (currentRestaurant) {
+                email = (currentRestaurant.email || "").trim();
+            }
+        }
+    } catch (error) {
+        console.error("ERROR LOADING RESTAURANT EMAIL:", error);
+    }
+
+    if (!email) {
+        message.textContent =
+            "Restaurant email not found. Please check the restaurant details.";
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("restaurant_id", restaurantIdForUpload);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("license_pdf", file);
+
+    message.textContent = "Uploading PDF...";
+
+    try {
+        const response = await fetch(
+            API_BASE_URL + "/api/upload-restaurant-license/",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            message.textContent =
+                data.message || "PDF upload failed.";
+            return;
+        }
+
+        message.textContent = "License PDF uploaded successfully!";
+        passwordInput.value = "";
+        fileInput.value = "";
+
+        const link = document.createElement("a");
+        link.href = data.pdf_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "View Uploaded PDF";
+
+        const existingLink = document.getElementById("existingLicensePdf");
+        existingLink.replaceChildren(link);
+
+        alert("FSSAI license PDF uploaded successfully!");
+
+    } catch (error) {
+        console.error("LICENSE UPLOAD ERROR:", error);
+        message.textContent =
+            "Unable to connect to the server. Check your backend.";
+    }
+}
+
+
 // =========================
 // START DASHBOARD
 // =========================
@@ -2801,6 +3301,110 @@ setInterval(
     loadNotifications,
     10000
 );
+
+/* =========================
+   RESTAURANT PROFILE EDIT MODE
+========================= */
+
+const profileForm = document.getElementById("restaurantProfileForm");
+const editProfileBtn = document.getElementById("editRestaurantProfileBtn");
+const saveProfileBtn = document.getElementById("saveRestaurantProfileBtn");
+const cancelProfileBtn = document.getElementById("cancelRestaurantProfileBtn");
+const profileMessage = document.getElementById("restaurantProfileMessage");
+
+const profileEditableFields = [
+    "profileImageInput",
+    "profileNameInput",
+    "profileCuisineInput",
+    "profileLocationInput",
+    "profileDescriptionInput",
+    "profileEmailInput",
+    "profilePhoneInput",
+    "profileOpeningTimeInput",
+    "profileClosingTimeInput",
+    "profileTemporarilyClosed",
+    "profileFssaiNumberInput",
+    "profileFssaiTypeInput",
+    "profileFssaiValidFromInput",
+    "profileFssaiValidUntilInput",
+    "profileFssaiDemoInput"
+];
+
+let originalProfileValues = {};
+
+function setProfileEditMode(editing) {
+
+    profileEditableFields.forEach(function(id) {
+        const field = document.getElementById(id);
+
+        if (field) {
+            field.disabled = !editing;
+        }
+    });
+
+    editProfileBtn.style.display = editing ? "none" : "inline-block";
+    saveProfileBtn.style.display = editing ? "inline-block" : "none";
+    cancelProfileBtn.style.display = editing ? "inline-block" : "none";
+
+    saveProfileBtn.disabled = !editing;
+    cancelProfileBtn.disabled = !editing;
+}
+
+function getProfileValues() {
+
+    const values = {};
+
+    profileEditableFields.forEach(function(id) {
+        const field = document.getElementById(id);
+
+        if (field) {
+            values[id] = field.type === "checkbox"
+                ? field.checked
+                : field.value;
+        }
+    });
+
+    return values;
+}
+
+function restoreProfileValues(values) {
+
+    profileEditableFields.forEach(function(id) {
+        const field = document.getElementById(id);
+
+        if (field && values[id] !== undefined) {
+            if (field.type === "checkbox") {
+                field.checked = values[id];
+            } else {
+                field.value = values[id];
+            }
+        }
+    });
+}
+
+editProfileBtn.addEventListener("click", function() {
+
+    originalProfileValues = getProfileValues();
+
+    profileMessage.textContent = "";
+
+    setProfileEditMode(true);
+});
+
+cancelProfileBtn.addEventListener("click", function() {
+
+    restoreProfileValues(originalProfileValues);
+
+    document.getElementById("profileImageInput").value = "";
+
+    profileMessage.textContent = "";
+
+    setProfileEditMode(false);
+});
+
+/* Initial view mode */
+setProfileEditMode(false);
+
 
 </script>
 

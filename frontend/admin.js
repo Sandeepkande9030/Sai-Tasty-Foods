@@ -344,6 +344,10 @@ function loadAdminRestaurants() {
                         <p>
                             📍 ${restaurant.location}
                         </p>
+                        <p>
+                            <strong>FSSAI Lic No:</strong><br>
+                            ${restaurant.fssai_number || "Not available"}
+                        </p>
 
                     </div>
 
@@ -650,7 +654,7 @@ async function loadRestaurantPermissions() {
 
             table.innerHTML = `
                 <tr>
-                    <td colspan="4">No restaurants found</td>
+                    <td colspan="5">No restaurants found</td>
                 </tr>
             `;
 
@@ -683,6 +687,21 @@ async function loadRestaurantPermissions() {
                         <span>${restaurant.is_visible ? "Active" : "Inactive"}</span>
                     </label>
                 </td>
+                
+                
+                <td>
+                    ${
+                        restaurant.fssai_license_pdf
+                            ? `<a
+                                href="${restaurant.fssai_license_pdf}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="license-details-button"
+                            >View PDF</a>`
+                            : `<span>Not uploaded</span>`
+                    }
+                </td>
+
 
                 <td>
                     <button
@@ -709,7 +728,7 @@ async function loadRestaurantPermissions() {
 
         table.innerHTML = `
             <tr>
-                <td colspan="4">
+                <td colspan="5">
                     Unable to load restaurants.
                     Check the backend connection.
                 </td>

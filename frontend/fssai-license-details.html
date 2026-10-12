@@ -114,15 +114,13 @@
             <div class="value" id="validUntil">Not provided</div>
         </div>
 
-
-        <a href="restaurants.html" class="back-link">
-            ← Back to Restaurants
+        <a href="restaurant-permissions.html" class="back-link">
+            ← Back to Restaurant Permissions
         </a>
     </main>
 
     <script>
         const API_BASE_URL = "https://backend-dl8i.vercel.app";
-
         async function loadLicenseDetails() {
             const params = new URLSearchParams(window.location.search);
             const restaurantId = params.get("id");
@@ -166,12 +164,25 @@
                 document.getElementById("licenseType").textContent =
                     restaurant.fssai_license_type || "Sample registration";
 
+                function formatDate(dateString) {
+                    if (!dateString) {
+                        return "Not provided";
+                    }
+
+                    const date = new Date(dateString + "T00:00:00");
+
+                    return date.toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric"
+                    });
+                }
+
                 document.getElementById("validFrom").textContent =
-                    restaurant.fssai_valid_from || "Not provided";
+                    formatDate(restaurant.fssai_valid_from);
 
                 document.getElementById("validUntil").textContent =
-                    restaurant.fssai_valid_until || "Not provided";
-
+                    formatDate(restaurant.fssai_valid_until);
             } catch (error) {
                 document.getElementById("restaurantName").textContent =
                     "Unable to load details";
