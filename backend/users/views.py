@@ -2720,14 +2720,13 @@ def upload_restaurant_license(request):
             )
         })
 
+    
     except Exception as e:
-    import traceback
-
-    traceback.print_exc()
-
-    return JsonResponse({
-        "success": False,
-        "message": str(e)
-    }, status=500)
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            "success": False,
+            "message": str(e)
+        }, status=500)
 
 
