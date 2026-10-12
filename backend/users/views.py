@@ -2721,12 +2721,13 @@ def upload_restaurant_license(request):
         })
 
     except Exception as e:
-        print("LICENSE PDF UPLOAD ERROR:", str(e), flush=True)
+    import traceback
 
-        return JsonResponse({
-            "success": False,
-            "message": "Unable to upload license PDF"
-        }, status=500)
+    traceback.print_exc()
 
+    return JsonResponse({
+        "success": False,
+        "message": str(e)
+    }, status=500)
 
 

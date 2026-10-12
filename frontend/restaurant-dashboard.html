@@ -3193,16 +3193,12 @@ async function uploadRestaurantLicense() {
     if (!password) {
         message.textContent = "Please enter your restaurant password.";
         return;
-    }
-
-    
+    }  
     const storedRestaurantId = localStorage.getItem("restaurantId");
-
     const restaurantIdForUpload = storedRestaurantId || restaurantId;
 
     if (!restaurantIdForUpload) {
-        message.textContent =
-            "Restaurant ID not found. Please log out and log in again.";
+        message.textContent = "Restaurant ID not found. Please log in again.";
         return;
     }
 
@@ -3213,26 +3209,32 @@ async function uploadRestaurantLicense() {
             API_BASE_URL + "/api/restaurants/"
         );
 
+        if (!restaurantsResponse.ok) {
+            throw new Error("Restaurant API returned HTTP " + restaurantsResponse.status);
+        }
+
         const restaurantsData = await restaurantsResponse.json();
 
-        if (restaurantsData.success && Array.isArray(restaurantsData.restaurants)) {
-            const currentRestaurant = restaurantsData.restaurants.find(
-                function(item) {
-                    return String(item.id) === String(restaurantIdForUpload);
-                }
-            );
+        const currentRestaurant = restaurantsData.restaurants?.find(
+            item => String(item.id) === String(restaurantIdForUpload)
+        );
 
-            if (currentRestaurant) {
-                email = (currentRestaurant.email || "").trim();
-            }
-        }
+        email = (currentRestaurant?.email || "").trim();
+
+        console.log("Restaurant ID:", restaurantIdForUpload);
+        console.log("Restaurant found:", Boolean(currentRestaurant));
+        console.log("Restaurant email found:", Boolean(email));
+
     } catch (error) {
-        console.error("ERROR LOADING RESTAURANT EMAIL:", error);
+        console.error("Restaurant lookup error:", error);
+        message.textContent = "Unable to load restaurant details. Please try again.";
+        return;
     }
 
     if (!email) {
         message.textContent =
-            "Restaurant email not found. Please check the restaurant details.";
+            "Email missing for restaurant ID " + restaurantIdForUpload +
+            ". Please check the restaurant account details.";
         return;
     }
 
