@@ -718,6 +718,7 @@ def get_restaurants(request):
                 "location": restaurant.location,
                 "description": restaurant.description,
                 "is_visible": restaurant.is_visible,
+                "can_add_food_items": restaurant.can_add_food_items,
                 # Restaurant contact and timings
                 "email": restaurant.email or "",
                 "phone": restaurant.phone or "",
@@ -1541,6 +1542,11 @@ def add_food_item(request):
                     "success": False,
                     "message": "Restaurant not found"
                 })
+            if not restaurant.can_add_food_items:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Admin has disabled adding food items for this restaurant."
+                }, status=403)
 
             food_item = FoodItem.objects.create(
 
@@ -2631,4 +2637,47 @@ def delete_restaurant(request, restaurant_id):
             "success": False,
             "message": "Unable to delete restaurant."
         }, status=500)
+
+@csrf_exempt
+def update_restaurant_food_permission(request):
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST requests are allowed."
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+        restaurant_id = data.get("restaurant_id")
+        can_add_food_items = data.get("can_add_food_items")
+
+        if restaurant_id is None or not isinstance(can_add_food_items, bool):
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant ID and a valid permission are required."
+            }, status=400)
+
+        restaurant = Restaurant.objects.get(id=restaurant_id)
+        restaurant.can_add_food_items = can_add_food_items
+        restaurant.save(update_fields=["can_add_food_items"])
+
+        return JsonResponse({
+            "success": True,
+            "message": "Food-item permission updated.",
+            "restaurant_id": restaurant.id,
+            "can_add_food_items": restaurant.can_add_food_items
+        })
+
+    except Restaurant.DoesNotExist:
+        return JsonResponse({
+            "success": False,
+            "message": "Restaurant not found."
+        }, status=404)
+
+    except (json.JSONDecodeError, TypeError, ValueError):
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request data."
+        }, status=400)
+
 

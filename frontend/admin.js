@@ -664,21 +664,9 @@ async function loadRestaurantPermissions() {
         table.innerHTML = restaurants.map(restaurant => `
             <tr>
                 <td>${restaurant.name}</td>
-
+               
                 <td>
                     <label>
-                        <input
-                            type="checkbox"
-                            checked
-                            onchange="updatePermissionLabel(this)"
-                        >
-                        <span>Active</span>
-                    </label>
-                </td>
-
-                <td>
-                    <label>
-                        
                         <input
                             type="checkbox"
                             ${restaurant.is_visible ? "checked" : ""}
@@ -688,17 +676,35 @@ async function loadRestaurantPermissions() {
                     </label>
                 </td>
                 
-                
+                <td>
+                    <label>
+                        <input
+                            type="checkbox"
+                            ${restaurant.can_add_food_items ? "checked" : ""}
+                            onchange="updateRestaurantFoodPermission(${restaurant.id}, this)"
+                        >
+                        <span>${restaurant.can_add_food_items ? "Active" : "Inactive"}</span>
+                    </label>
+                </td>
+
                 <td>
                     ${
-                        restaurant.fssai_license_pdf
+                        ({
+                            1: "restaurant_1_sai_tasty_restaurant.pdf",
+                            2: "restaurant_2_spice_garden.pdf",
+                            3: "restaurant_3_food_palace.pdf"
+                        })[restaurant.id]
                             ? `<a
-                                href="${restaurant.fssai_license_pdf}"
+                                href="restaurant-licenses/${({
+                                    1: "restaurant_1_sai_tasty_restaurant.pdf",
+                                    2: "restaurant_2_spice_garden.pdf",
+                                    3: "restaurant_3_food_palace.pdf"
+                                })[restaurant.id]}"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="license-details-button"
                             >View PDF</a>`
-                            : `<span>Not uploaded</span>`
+                            : `<span>Not added</span>`
                     }
                 </td>
 
@@ -819,6 +825,7 @@ async function deleteRestaurantPermission(restaurantId, restaurantName) {
 }
 
 async function updateRestaurantVisibility(restaurantId, checkbox) {
+    console.log("VISIBILITY FUNCTION CALLED:", restaurantId, checkbox.checked);
     const previousValue = !checkbox.checked;
     const label = checkbox.parentElement.querySelector("span");
 
@@ -845,10 +852,11 @@ async function updateRestaurantVisibility(restaurantId, checkbox) {
 
         const data = await response.json();
 
+        console.log("Visibility API status:", response.status);
+        console.log("Visibility API response:", data);
+
         if (!response.ok || !data.success) {
-            throw new Error(
-                data.message || "Unable to update visibility"
-            );
+            throw new Error(data.message || "Unable to update visibility");
         }
 
         if (label) {
@@ -872,5 +880,41 @@ async function updateRestaurantVisibility(restaurantId, checkbox) {
 
     } finally {
         checkbox.disabled = false;
+    }
+}
+
+async function updateRestaurantFoodPermission(restaurantId, checkbox) {
+    const previousChecked = !checkbox.checked;
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/api/update-restaurant-food-permission/`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    restaurant_id: restaurantId,
+                    can_add_food_items: checkbox.checked
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Permission update failed.");
+        }
+
+        checkbox.nextElementSibling.textContent =
+            checkbox.checked ? "Active" : "Inactive";
+
+    } catch (error) {
+        checkbox.checked = previousChecked;
+        checkbox.nextElementSibling.textContent =
+            previousChecked ? "Active" : "Inactive";
+
+        alert("Could not update Add Food Items permission: " + error.message);
     }
 }

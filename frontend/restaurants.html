@@ -135,9 +135,9 @@
             try {
 
                 const response =
-                    await fetch(
-                        "https://backend-dl8i.vercel.app/api/restaurants/"
-                    );
+                await fetch(
+                    "https://backend-dl8i.vercel.app/api/restaurants/?visible_only=true"
+                );
 
                 const data =
                     await response.json();

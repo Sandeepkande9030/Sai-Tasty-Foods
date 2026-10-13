@@ -59,6 +59,8 @@ class Restaurant(models.Model):
     description = models.TextField()
     # Controls whether customers can see this restaurant
     is_visible = models.BooleanField(default=True)
+    # Controls whether the restaurant can add food items
+    can_add_food_items = models.BooleanField(default=True)
     
     # Sample FSSAI details for project demonstration
     fssai_number = models.CharField(

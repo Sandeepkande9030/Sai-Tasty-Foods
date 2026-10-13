@@ -25,6 +25,7 @@ from .views import (
     add_restaurant,
     delete_restaurant,
     update_restaurant_visibility,
+    update_restaurant_food_permission,
 
 )
 
@@ -112,15 +113,20 @@ urlpatterns = [
     add_restaurant,
     name="add_restaurant"
     ),
-        path(
-        "delete-restaurant/<int:restaurant_id>/",
-        delete_restaurant,
-        name="delete_restaurant"
+    path(
+    "delete-restaurant/<int:restaurant_id>/",
+    delete_restaurant,
+    name="delete_restaurant"
     ),
     path(
     "update-restaurant-visibility/",
     update_restaurant_visibility,
     name="update_restaurant_visibility"
+    ),
+    path(
+    "update-restaurant-food-permission/",
+    update_restaurant_food_permission,
+    name="update_restaurant_food_permission"
     ),
 
 

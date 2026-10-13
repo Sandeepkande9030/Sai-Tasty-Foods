@@ -1199,6 +1199,7 @@ const restaurantId =
     localStorage.getItem(
         "restaurantId"
     );
+let canAddFoodItems = true;
   async function loadFoodItems() {
 
     const container =
@@ -1643,6 +1644,13 @@ async function loadRestaurantName() {
         }
 
         console.log("RESTAURANT PROFILE DATA:", restaurant);
+                // Check whether the admin allows adding food items
+        canAddFoodItems = restaurant.can_add_food_items !== false;
+
+        // Hide the Add Food Item form if permission is inactive
+        if (!canAddFoodItems) {
+            document.getElementById("addFoodForm").style.display = "none";
+        }
 
         // Dashboard heading
         document.getElementById("restaurantName").textContent =
@@ -2618,6 +2626,11 @@ function logoutRestaurant() {
 
 function showAddFoodForm() {
 
+    if (canAddFoodItems === false) {
+        alert("Adding food items has been disabled by the admin.");
+        return;
+    }
+
     document.getElementById(
         "addFoodForm"
     ).style.display = "block";
@@ -2643,6 +2656,10 @@ function hideAddFoodForm() {
 // =========================
 
 async function addFoodItem() {
+    if (canAddFoodItems === false) {
+        alert("Adding food items has been disabled by the admin.");
+        return;
+    }
 
     const name =
         document.getElementById(
