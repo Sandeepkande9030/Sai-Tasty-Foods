@@ -2784,14 +2784,8 @@ def update_restaurant_profile(request):
                 ),
                 "fssai_number": restaurant.fssai_number,
                 "fssai_license_type": restaurant.fssai_license_type,
-                "fssai_valid_from": (
-                    restaurant.fssai_valid_from.isoformat()
-                    if restaurant.fssai_valid_from else ""
-                ),
-                "fssai_valid_until": (
-                    restaurant.fssai_valid_until.isoformat()
-                    if restaurant.fssai_valid_until else ""
-                ),
+                "fssai_valid_from": str(restaurant.fssai_valid_from) if restaurant.fssai_valid_from else "",
+                "fssai_valid_until": str(restaurant.fssai_valid_until) if restaurant.fssai_valid_until else "",
                 "fssai_is_demo": restaurant.fssai_is_demo
             }
         })
