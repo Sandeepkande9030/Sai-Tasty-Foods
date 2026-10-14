@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-qb17yf70fsz6^(qwgbv*5j+rcgrasiap0%m(0&)p5t7qn^(9m9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     ".vercel.app",
@@ -146,9 +146,5 @@ DEFAULT_FROM_EMAIL = f"Sai Tasty Foods <{EMAIL_HOST_USER}>"
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = False
 CORS_URLS_REGEX = r"^/api/.*$"
-# =========================
-# PDF FILE STORAGE
-# =========================
-
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

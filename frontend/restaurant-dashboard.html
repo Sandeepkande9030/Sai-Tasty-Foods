@@ -1286,18 +1286,16 @@
 
         <!-- WORKING HOURS -->
         <h3>🕒 Working Hours</h3>
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:18px;">
 
             <div>
                 <label for="profileOpeningTimeInput">Opening Time</label>
-                <!-- Opening Time -->
                 <input
                     type="time"
                     id="profileOpeningTimeInput"
                     class="custom-profile-time"
-                    placeholder="07:00 AM"
-                    value="09:00 AM"
-                    readonly
+                    value="09:00"
                     disabled
                 >
             </div>
@@ -1308,13 +1306,13 @@
                     type="time"
                     id="profileClosingTimeInput"
                     class="custom-profile-time"
-                    placeholder="07:00 PM"
-                    value="10:00 PM"
-                    readonly
-                    disabled>
+                    value="22:00"
+                    disabled
+                >
             </div>
 
         </div>
+
 
         <div style="margin-top:18px;">
             <label>
@@ -1438,7 +1436,7 @@
 // =========================
 // API URL
 // =========================
-
+//const API_BASE_URL = "http://127.0.0.1:8000";
 const API_BASE_URL =
     "https://backend-dl8i.vercel.app";
     let notificationsOpen = false;
@@ -1978,6 +1976,7 @@ async function loadRestaurantName() {
                 restaurant.fssai_is_demo === true;
         }
 
+        
         // Restaurant image
         const imageElement =
             document.getElementById("profileRestaurantImage");
@@ -1987,9 +1986,27 @@ async function loadRestaurantName() {
             let imageUrl = restaurant.image;
 
             if (!/^https?:\/\//i.test(imageUrl)) {
-                imageUrl = API_BASE_URL.replace(/\/$/, "") +
-                    "/" + imageUrl.replace(/^\/+/, "");
+
+                const imagePath = imageUrl.replace(/^\/+/, "");
+
+                if (imagePath.startsWith("media/")) {
+                    imageUrl =
+                        API_BASE_URL.replace(/\/$/, "") +
+                        "/" + imagePath;
+                } else {
+                    imageUrl =
+                        API_BASE_URL.replace(/\/$/, "") +
+                        "/media/" + imagePath;
+                }
             }
+
+            imageElement.onerror = function() {
+                console.error("Unable to load restaurant image:", imageUrl);
+            };
+
+            imageElement.onload = function() {
+                imageElement.style.display = "block";
+            };
 
             imageElement.src = imageUrl;
             imageElement.style.display = "block";
@@ -1997,6 +2014,7 @@ async function loadRestaurantName() {
         } else if (imageElement) {
             imageElement.style.display = "none";
         }
+
 
         // Restaurant visibility, if returned by the API
         const visibilityCheckbox =
@@ -3505,24 +3523,67 @@ profileForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const values = getProfileValues();
+    const formData = new FormData();
 
-    const payload = {
-        restaurant_id: localStorage.getItem("restaurantId"),
-        name: values.profileNameInput,
-        image: values.profileImageInput,
-        cuisine: values.profileCuisineInput,
-        location: values.profileLocationInput,
-        description: values.profileDescriptionInput,
-        email: values.profileEmailInput,
-        phone: values.profilePhoneInput,
-        opening_time: values.profileOpeningTimeInput || "",
-        closing_time: values.profileClosingTimeInput || "",
-        fssai_number: values.profileFssaiNumberInput,
-        fssai_license_type: values.profileFssaiTypeInput,
-        fssai_valid_from: values.profileFssaiValidFromInput || "",
-        fssai_valid_until: values.profileFssaiValidUntilInput || "",
-        fssai_is_demo: values.profileFssaiDemoInput
-    };
+    // Restaurant ID
+    formData.append(
+        "restaurant_id",
+        localStorage.getItem("restaurantId") || ""
+    );
+
+    // Basic information
+    formData.append("name", values.profileNameInput || "");
+    formData.append("cuisine", values.profileCuisineInput || "");
+    formData.append("location", values.profileLocationInput || "");
+    formData.append("description", values.profileDescriptionInput || "");
+
+    // Contact information
+    formData.append("email", values.profileEmailInput || "");
+    formData.append("phone", values.profilePhoneInput || "");
+
+    // Working hours
+    formData.append(
+        "opening_time",
+        values.profileOpeningTimeInput || ""
+    );
+
+    formData.append(
+        "closing_time",
+        values.profileClosingTimeInput || ""
+    );
+
+    // FSSAI details
+    formData.append(
+        "fssai_number",
+        values.profileFssaiNumberInput || ""
+    );
+
+    formData.append(
+        "fssai_license_type",
+        values.profileFssaiTypeInput || ""
+    );
+
+    formData.append(
+        "fssai_valid_from",
+        values.profileFssaiValidFromInput || ""
+    );
+
+    formData.append(
+        "fssai_valid_until",
+        values.profileFssaiValidUntilInput || ""
+    );
+
+    // Include the image only when a new file is selected.
+    // Otherwise, Django keeps the existing restaurant image.
+    const imageInput = document.getElementById("profileImageInput");
+    const selectedImage =
+        imageInput.files && imageInput.files.length > 0
+            ? imageInput.files[0]
+            : null;
+
+    if (selectedImage) {
+        formData.append("image", selectedImage);
+    }
 
     try {
 
@@ -3533,10 +3594,7 @@ profileForm.addEventListener("submit", async function(event) {
             API_BASE_URL + "/api/update-restaurant-profile/",
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
+                body: formData
             }
         );
 
@@ -3548,6 +3606,38 @@ profileForm.addEventListener("submit", async function(event) {
             );
         }
 
+        // Update the restaurant image preview after saving.
+        const imageElement =
+            document.getElementById("profileRestaurantImage");
+
+        const savedImage = result.restaurant.image;
+
+        if (imageElement && savedImage) {
+
+            let imageUrl = savedImage;
+
+            if (!/^https?:\/\//i.test(imageUrl)) {
+
+                const imagePath = imageUrl.replace(/^\/+/, "");
+
+                if (imagePath.startsWith("media/")) {
+                    imageUrl =
+                        API_BASE_URL.replace(/\/$/, "") +
+                        "/" + imagePath;
+                } else {
+                    imageUrl =
+                        API_BASE_URL.replace(/\/$/, "") +
+                        "/media/" + imagePath;
+                }
+            }
+
+            imageElement.src = imageUrl;
+            imageElement.style.display = "block";
+        }
+
+        // Clear the file input after successful upload.
+        imageInput.value = "";
+
         profileMessage.textContent =
             "Profile updated successfully!";
 
@@ -3557,6 +3647,9 @@ profileForm.addEventListener("submit", async function(event) {
             "restaurantName",
             result.restaurant.name
         );
+
+        document.getElementById("restaurantName").textContent =
+            result.restaurant.name;
 
         setProfileEditMode(false);
 
@@ -3574,6 +3667,7 @@ profileForm.addEventListener("submit", async function(event) {
     }
 
 });
+
 
 
 

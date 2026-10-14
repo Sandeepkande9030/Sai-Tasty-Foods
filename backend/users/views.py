@@ -8,7 +8,10 @@ from .models import User, Restaurant, Order, FoodItem, Admin
 import json
 import random
 import os
-
+import uuid
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from vercel.blob import BlobClient
 # =========================
 # REGISTER USER
 # =========================
@@ -2693,7 +2696,10 @@ def update_restaurant_profile(request):
         }, status=405)
 
     try:
-        data = json.loads(request.body)
+        if request.content_type and request.content_type.startswith("multipart/form-data"):
+            data = request.POST
+        else:
+            data = json.loads(request.body)
 
         restaurant_id = data.get("restaurant_id")
 
@@ -2715,7 +2721,41 @@ def update_restaurant_profile(request):
         if "name" in data:
             restaurant.name = data["name"].strip()
 
-        if "image" in data:
+        # Upload a new restaurant image when a file is selected
+        uploaded_image = request.FILES.get("image")
+
+        if uploaded_image:
+            extension = os.path.splitext(uploaded_image.name)[1].lower()
+
+            allowed_extensions = [".jpg", ".jpeg", ".png", ".webp"]
+
+            if extension not in allowed_extensions:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Please upload a JPG, JPEG, PNG, or WebP image."
+                }, status=400)
+
+            
+            # Generate a unique filename for Blob storage
+            filename = f"{uuid.uuid4().hex}{extension}"
+
+            # Upload the image to Vercel Blob
+            token = os.getenv("BLOB_READ_WRITE_TOKEN")
+            blob_client = BlobClient(token=token)
+            uploaded_blob = blob_client.put(
+                f"restaurants/{filename}",
+                uploaded_image.read(),
+                access="public",
+                content_type=uploaded_image.content_type or "image/jpeg",
+                add_random_suffix=True
+            )
+
+            # Save the online image URL in the database
+            restaurant.image = uploaded_blob.url
+
+
+        elif "image" in data and data.get("image", "").strip():
+            # Preserve existing URL-based image updates
             restaurant.image = data["image"].strip()
 
         if "cuisine" in data:

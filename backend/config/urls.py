@@ -26,9 +26,8 @@ urlpatterns = [
 ]
 
 # Serve uploaded files during local development
-if "localhost" in settings.ALLOWED_HOSTS or "127.0.0.1" in settings.ALLOWED_HOSTS:
+if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT
     )
-
