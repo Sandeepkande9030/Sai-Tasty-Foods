@@ -2680,4 +2680,125 @@ def update_restaurant_food_permission(request):
             "message": "Invalid request data."
         }, status=400)
 
+# =========================
+# UPDATE RESTAURANT PROFILE
+# =========================
+
+@csrf_exempt
+def update_restaurant_profile(request):
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed."
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        restaurant_id = data.get("restaurant_id")
+
+        if not restaurant_id:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant ID is required."
+            }, status=400)
+
+        try:
+            restaurant = Restaurant.objects.get(id=restaurant_id)
+        except Restaurant.DoesNotExist:
+            return JsonResponse({
+                "success": False,
+                "message": "Restaurant not found."
+            }, status=404)
+
+        # Update basic profile details
+        if "name" in data:
+            restaurant.name = data["name"].strip()
+
+        if "image" in data:
+            restaurant.image = data["image"].strip()
+
+        if "cuisine" in data:
+            restaurant.cuisine = data["cuisine"].strip()
+
+        if "location" in data:
+            restaurant.location = data["location"].strip()
+
+        if "description" in data:
+            restaurant.description = data["description"].strip()
+
+        if "email" in data:
+            restaurant.email = data["email"].strip()
+
+        if "phone" in data:
+            restaurant.phone = data["phone"].strip()
+
+        # Update opening and closing times
+        if "opening_time" in data:
+            value = data["opening_time"]
+            restaurant.opening_time = value or None
+
+        if "closing_time" in data:
+            value = data["closing_time"]
+            restaurant.closing_time = value or None
+
+        # Update FSSAI details
+        if "fssai_number" in data:
+            restaurant.fssai_number = data["fssai_number"].strip()
+
+        if "fssai_license_type" in data:
+            restaurant.fssai_license_type = data["fssai_license_type"].strip()
+
+        if "fssai_valid_from" in data:
+            value = data["fssai_valid_from"]
+            restaurant.fssai_valid_from = value or None
+
+        if "fssai_valid_until" in data:
+            value = data["fssai_valid_until"]
+            restaurant.fssai_valid_until = value or None
+
+        if "fssai_is_demo" in data:
+            restaurant.fssai_is_demo = data["fssai_is_demo"]
+
+        restaurant.save()
+
+        return JsonResponse({
+            "success": True,
+            "message": "Restaurant profile updated successfully.",
+            "restaurant": {
+                "id": restaurant.id,
+                "name": restaurant.name,
+                "image": restaurant.image,
+                "cuisine": restaurant.cuisine,
+                "location": restaurant.location,
+                "description": restaurant.description,
+                "email": restaurant.email,
+                "phone": restaurant.phone,
+                "opening_time": (
+                    restaurant.opening_time.strftime("%H:%M")
+                    if restaurant.opening_time else ""
+                ),
+                "closing_time": (
+                    restaurant.closing_time.strftime("%H:%M")
+                    if restaurant.closing_time else ""
+                ),
+                "fssai_number": restaurant.fssai_number,
+                "fssai_license_type": restaurant.fssai_license_type,
+                "fssai_valid_from": (
+                    restaurant.fssai_valid_from.isoformat()
+                    if restaurant.fssai_valid_from else ""
+                ),
+                "fssai_valid_until": (
+                    restaurant.fssai_valid_until.isoformat()
+                    if restaurant.fssai_valid_until else ""
+                ),
+                "fssai_is_demo": restaurant.fssai_is_demo
+            }
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "message": str(e)
+        }, status=400)
 

@@ -256,6 +256,249 @@
     cursor: pointer;
 }
 
+/* ==============================
+   RESTAURANT PROFILE - MODERN UI
+============================== */
+
+#profileSection {
+    padding: 28px;
+    background: #f5f7fb;
+    border-radius: 18px;
+    color: #263238;
+}
+
+#profileSection h2 {
+    font-size: 27px;
+    font-weight: 750;
+    color: #202638;
+    margin: 0 0 10px;
+}
+
+#profileSection > p {
+    margin-bottom: 28px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #727989;
+}
+
+/* Main profile form card */
+#restaurantProfileForm {
+    background: #ffffff;
+    padding: 30px;
+    border: 1px solid #e9edf3;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(32, 38, 56, 0.06);
+}
+
+/* Image section */
+#profileSection #profileRestaurantImage {
+    width: 150px;
+    height: 125px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 4px solid #fff0f0;
+    box-shadow: 0 5px 18px rgba(211, 47, 47, 0.13);
+    background: #f5f5f5;
+}
+
+/* Section headings inside the form */
+#restaurantProfileForm h3,
+#restaurantProfileForm h4 {
+    color: #292f40;
+    font-weight: 700;
+    margin: 25px 0 18px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+/* Form labels */
+#restaurantProfileForm label {
+    display: block;
+    color: #4b5365;
+    font-size: 13px;
+    font-weight: 650;
+    margin-bottom: 8px;
+}
+
+/* Input fields and description */
+#restaurantProfileForm input:not([type="checkbox"]):not([type="file"]),
+#restaurantProfileForm select,
+#restaurantProfileForm textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 45px;
+    padding: 12px 14px;
+    border: 1px solid #dfe4ec;
+    border-radius: 10px;
+    background: #fafbfe;
+    color: #283044;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+}
+
+#restaurantProfileForm textarea {
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* Input focus */
+#restaurantProfileForm input:not([type="checkbox"]):not([type="file"]):focus,
+#restaurantProfileForm select:focus,
+#restaurantProfileForm textarea:focus {
+    border-color: #e53935;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.09);
+}
+
+/* Disabled fields */
+#restaurantProfileForm input:disabled,
+#restaurantProfileForm select:disabled,
+#restaurantProfileForm textarea:disabled {
+    color: #60697a;
+    background: #f1f3f7;
+    border-color: #e6e9ef;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+/* Temporary closure option */
+#profileTemporarilyClosed {
+    width: 18px;
+    height: 18px;
+    accent-color: #d32f2f;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+#restaurantProfileForm label:has(#profileTemporarilyClosed) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px;
+    background: #fff6f5;
+    border: 1px solid #ffe1df;
+    border-radius: 12px;
+}
+
+/* Action buttons */
+#profileSection button {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+}
+
+#editRestaurantProfileBtn,
+#saveRestaurantProfileBtn {
+    color: #ffffff;
+    background: linear-gradient(135deg, #d32f2f, #ff5252);
+    box-shadow: 0 5px 13px rgba(211, 47, 47, 0.18);
+}
+
+#cancelRestaurantProfileBtn {
+    color: #454d60;
+    background: #edf0f5;
+}
+
+#profileSection button:not(:disabled):hover {
+    transform: translateY(-2px);
+}
+
+#editRestaurantProfileBtn:not(:disabled):hover,
+#saveRestaurantProfileBtn:not(:disabled):hover {
+    box-shadow: 0 8px 18px rgba(211, 47, 47, 0.25);
+}
+
+#profileSection button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Status message */
+#restaurantProfileMessage {
+    margin-top: 18px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    color: #a72828;
+    background: #fff3f2;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    #profileSection {
+        padding: 16px;
+    }
+
+    #restaurantProfileForm {
+        padding: 20px 16px;
+    }
+
+    #profileSection h2 {
+        font-size: 22px;
+    }
+
+    #profileSection #profileRestaurantImage {
+        width: 120px;
+        height: 100px;
+    }
+
+    #profileSection button {
+        padding: 11px 15px;
+        margin-bottom: 8px;
+    }
+}
+
+/* Reduce profile input box size */
+
+#restaurantProfileForm input:not([type="checkbox"]):not([type="file"]),
+#restaurantProfileForm select {
+    min-height: 36px;
+    padding: 7px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
+#restaurantProfileForm textarea {
+    min-height: 75px;
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
+/* Reduce space between form fields */
+#restaurantProfileForm label {
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+/* Reduce overall form padding */
+#restaurantProfileForm {
+    padding: 22px;
+}
+
+/* Reduce restaurant description box size */
+#restaurantProfileForm #profileDescriptionInput {
+    min-height: 45px;
+    height: 55px;
+    padding: 8px 10px;
+    font-size: 13px;
+    resize: vertical;
+}
+
 
 /* =========================
    MOBILE
@@ -1047,11 +1290,16 @@
 
             <div>
                 <label for="profileOpeningTimeInput">Opening Time</label>
+                <!-- Opening Time -->
                 <input
                     type="time"
                     id="profileOpeningTimeInput"
+                    class="custom-profile-time"
+                    placeholder="07:00 AM"
+                    value="09:00 AM"
+                    readonly
                     disabled
-                    style="width:100%;padding:11px;box-sizing:border-box;">
+                >
             </div>
 
             <div>
@@ -1059,8 +1307,11 @@
                 <input
                     type="time"
                     id="profileClosingTimeInput"
-                    disabled
-                    style="width:100%;padding:11px;box-sizing:border-box;">
+                    class="custom-profile-time"
+                    placeholder="07:00 PM"
+                    value="10:00 PM"
+                    readonly
+                    disabled>
             </div>
 
         </div>
@@ -1645,7 +1896,7 @@ async function loadRestaurantName() {
 
         console.log("RESTAURANT PROFILE DATA:", restaurant);
                 // Check whether the admin allows adding food items
-        canAddFoodItems = restaurant.can_add_food_items !== false;
+        canAddFoodItems = restaurant.can_add_food_items === true;
 
         // Hide the Add Food Item form if permission is inactive
         if (!canAddFoodItems) {
@@ -3243,6 +3494,87 @@ cancelProfileBtn.addEventListener("click", function() {
 
 /* Initial view mode */
 setProfileEditMode(false);
+
+
+// =========================
+// SAVE RESTAURANT PROFILE
+// =========================
+
+profileForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const values = getProfileValues();
+
+    const payload = {
+        restaurant_id: localStorage.getItem("restaurantId"),
+        name: values.profileNameInput,
+        image: values.profileImageInput,
+        cuisine: values.profileCuisineInput,
+        location: values.profileLocationInput,
+        description: values.profileDescriptionInput,
+        email: values.profileEmailInput,
+        phone: values.profilePhoneInput,
+        opening_time: values.profileOpeningTimeInput || "",
+        closing_time: values.profileClosingTimeInput || "",
+        fssai_number: values.profileFssaiNumberInput,
+        fssai_license_type: values.profileFssaiTypeInput,
+        fssai_valid_from: values.profileFssaiValidFromInput || "",
+        fssai_valid_until: values.profileFssaiValidUntilInput || "",
+        fssai_is_demo: values.profileFssaiDemoInput
+    };
+
+    try {
+
+        saveProfileBtn.disabled = true;
+        profileMessage.textContent = "Saving profile...";
+
+        const response = await fetch(
+            API_BASE_URL + "/api/update-restaurant-profile/",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message || "Unable to save profile."
+            );
+        }
+
+        profileMessage.textContent =
+            "Profile updated successfully!";
+
+        originalProfileValues = getProfileValues();
+
+        localStorage.setItem(
+            "restaurantName",
+            result.restaurant.name
+        );
+
+        setProfileEditMode(false);
+
+    } catch (error) {
+
+        console.error("Profile save error:", error);
+
+        profileMessage.textContent =
+            "Failed to save profile: " + error.message;
+
+    } finally {
+
+        saveProfileBtn.disabled = false;
+
+    }
+
+});
+
 
 
 </script>

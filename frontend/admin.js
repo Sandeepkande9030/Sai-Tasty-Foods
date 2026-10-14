@@ -888,7 +888,7 @@ async function updateRestaurantFoodPermission(restaurantId, checkbox) {
 
     try {
         const response = await fetch(
-            `${API_BASE_URL}/api/update-restaurant-food-permission/`,
+            "https://backend-dl8i.vercel.app/api/update-restaurant-food-permission/",
             {
                 method: "POST",
                 headers: {
