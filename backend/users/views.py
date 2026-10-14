@@ -728,12 +728,14 @@ def get_restaurants(request):
 
                 "opening_time": (
                     restaurant.opening_time.strftime("%H:%M")
-                    if restaurant.opening_time else ""
+                    if hasattr(restaurant.opening_time, "strftime")
+                    else str(restaurant.opening_time or "")
                 ),
 
                 "closing_time": (
                     restaurant.closing_time.strftime("%H:%M")
-                    if restaurant.closing_time else ""
+                    if hasattr(restaurant.closing_time, "strftime")
+                    else str(restaurant.closing_time or "")
                 ),
 
                 # Sample FSSAI details
@@ -2816,11 +2818,13 @@ def update_restaurant_profile(request):
                 "phone": restaurant.phone,
                 "opening_time": (
                     restaurant.opening_time.strftime("%H:%M")
-                    if restaurant.opening_time else ""
+                    if hasattr(restaurant.opening_time, "strftime")
+                    else str(restaurant.opening_time or "")
                 ),
                 "closing_time": (
                     restaurant.closing_time.strftime("%H:%M")
-                    if restaurant.closing_time else ""
+                    if hasattr(restaurant.closing_time, "strftime")
+                    else str(restaurant.closing_time or "")
                 ),
                 "fssai_number": restaurant.fssai_number,
                 "fssai_license_type": restaurant.fssai_license_type,
