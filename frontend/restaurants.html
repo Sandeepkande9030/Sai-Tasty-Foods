@@ -122,6 +122,59 @@
 
 
     <script>
+        
+        function getRestaurantStatus(restaurant) {
+            const openingTime = restaurant.opening_time;
+            const closingTime = restaurant.closing_time;
+
+            if (!openingTime || !closingTime) {
+                return "Hours not available";
+            }
+
+            function toMinutes(time) {
+                const parts = time.split(":");
+                return Number(parts[0]) * 60 + Number(parts[1]);
+            }
+
+            const now = new Date();
+            const currentMinutes =
+                now.getHours() * 60 + now.getMinutes();
+
+            const openingMinutes = toMinutes(openingTime);
+            const closingMinutes = toMinutes(closingTime);
+
+            let isOpen;
+
+            if (closingMinutes > openingMinutes) {
+                isOpen =
+                    currentMinutes >= openingMinutes &&
+                    currentMinutes < closingMinutes;
+            } else {
+                // Supports restaurants open past midnight
+                isOpen =
+                    currentMinutes >= openingMinutes ||
+                    currentMinutes < closingMinutes;
+            }
+
+            if (isOpen) {
+                return `🟢 Open · Closes at ${formatTime(closingTime)}`;
+            }
+
+            return `🔴 Closed · Opens at ${formatTime(openingTime)}`;
+        }
+
+        function formatTime(time) {
+            const [hours, minutes] = time.split(":").map(Number);
+            const date = new Date();
+            date.setHours(hours, minutes, 0, 0);
+
+            return date.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+            });
+        }
+
 
         // =========================
         // LOAD RESTAURANTS
@@ -191,6 +244,12 @@
                             <p>
                                 📍 ${restaurant.location}
                             </p>
+                           
+                            <p class="restaurant-status">
+                                ${getRestaurantStatus(restaurant)}
+                            </p>
+
+
                             <p>
                                 <strong>FSSAI Lic No:</strong>
                                 ${restaurant.fssai_number || "Not provided"}

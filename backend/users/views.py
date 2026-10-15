@@ -686,7 +686,8 @@ def get_restaurants(request):
         # Customers can request visible restaurants only
         if request.GET.get("visible_only") == "true":
             restaurants = Restaurant.objects.filter(
-                is_visible=True
+                is_visible=True,
+                is_temporarily_closed=False
             ).order_by("id")
         else:
             # Admin can see all restaurants
@@ -2719,9 +2720,13 @@ def update_restaurant_profile(request):
                 "message": "Restaurant not found."
             }, status=404)
 
-        # Update basic profile details
+        
+        # Update restaurant name only when a non-empty name is provided
         if "name" in data:
-            restaurant.name = data["name"].strip()
+            new_name = data.get("name", "").strip()
+
+            if new_name:
+                restaurant.name = new_name
 
         # Upload a new restaurant image when a file is selected
         uploaded_image = request.FILES.get("image")
@@ -2783,7 +2788,11 @@ def update_restaurant_profile(request):
         if "closing_time" in data:
             value = data["closing_time"]
             restaurant.closing_time = value or None
-
+        # Update temporary closure status
+        if "is_temporarily_closed" in data:
+            restaurant.is_temporarily_closed = (
+                data.get("is_temporarily_closed") == "true"
+            )
         # Update FSSAI details
         if "fssai_number" in data:
             restaurant.fssai_number = data["fssai_number"].strip()

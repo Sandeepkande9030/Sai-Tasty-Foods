@@ -1201,7 +1201,7 @@
                     id="profileNameInput"
                     required
                     disabled
-                    style="width:100%;padding:11px;box-sizing:border-box;">
+                    style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
             </div>
 
             <div>
@@ -1209,7 +1209,8 @@
                 <input
                     type="text"
                     id="profileIdInput"
-                    readonly
+                    required
+                    disabled
                     style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
             </div>
 
@@ -1227,7 +1228,8 @@
                 <input
                     type="text"
                     id="profileRatingInput"
-                    readonly
+                    required
+                    disabled
                     style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
             </div>
 
@@ -1336,7 +1338,7 @@
                     type="text"
                     id="profileFssaiNumberInput"
                     disabled
-                    style="width:100%;padding:11px;box-sizing:border-box;">
+                    style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
             </div>
 
             <div>
@@ -1344,7 +1346,7 @@
                 <select
                     id="profileFssaiTypeInput"
                     disabled
-                    style="width:100%;padding:11px;box-sizing:border-box;">
+                    style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
                     <option value="">Select license type</option>
                     <option value="Basic Registration">Basic Registration</option>
                     <option value="State License">State License</option>
@@ -1358,7 +1360,7 @@
                     type="date"
                     id="profileFssaiValidFromInput"
                     disabled
-                    style="width:100%;padding:11px;box-sizing:border-box;">
+                    style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
             </div>
 
             <div>
@@ -1367,7 +1369,7 @@
                     type="date"
                     id="profileFssaiValidUntilInput"
                     disabled
-                    style="width:100%;padding:11px;box-sizing:border-box;">
+                    style="width:100%;padding:11px;box-sizing:border-box;background:#eee;">
             </div>
 
         </div>
@@ -3421,23 +3423,16 @@ const cancelProfileBtn = document.getElementById("cancelRestaurantProfileBtn");
 const profileMessage = document.getElementById("restaurantProfileMessage");
 
 const profileEditableFields = [
-    "profileImageInput",
-    "profileNameInput",
-    "profileCuisineInput",
-    "profileLocationInput",
-    "profileDescriptionInput",
-    "profileEmailInput",
-    "profilePhoneInput",
-    "profileOpeningTimeInput",
-    "profileClosingTimeInput",
-    "profileTemporarilyClosed",
-    "profileFssaiNumberInput",
-    "profileFssaiTypeInput",
-    "profileFssaiValidFromInput",
-    "profileFssaiValidUntilInput",
-    "profileFssaiDemoInput"
+"profileImageInput",
+"profileCuisineInput",
+"profileLocationInput",
+"profileDescriptionInput",
+"profileEmailInput",
+"profilePhoneInput",
+"profileOpeningTimeInput",
+"profileClosingTimeInput",
+"profileTemporarilyClosed"
 ];
-
 let originalProfileValues = {};
 
 function setProfileEditMode(editing) {
@@ -3532,7 +3527,10 @@ profileForm.addEventListener("submit", async function(event) {
     );
 
     // Basic information
-    formData.append("name", values.profileNameInput || "");
+    formData.append(
+    "name",
+    document.getElementById("profileNameInput").value.trim()
+    );
     formData.append("cuisine", values.profileCuisineInput || "");
     formData.append("location", values.profileLocationInput || "");
     formData.append("description", values.profileDescriptionInput || "");
@@ -3551,6 +3549,13 @@ profileForm.addEventListener("submit", async function(event) {
         "closing_time",
         values.profileClosingTimeInput || ""
     );
+    
+    // Temporary closure status
+    formData.append(
+        "is_temporarily_closed",
+        values.profileTemporarilyClosed ? "true" : "false"
+    );
+
 
     // FSSAI details
     formData.append(
