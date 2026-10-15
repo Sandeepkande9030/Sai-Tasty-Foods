@@ -1154,6 +1154,98 @@ nav a:hover {
     font-weight: bold;
 }
 
+/* =========================================================
+   MY ACCOUNT - EDIT PROFILE
+========================================================= */
+
+.account-card {
+    box-sizing: border-box;
+}
+
+#accountEditMode {
+    margin-top: 20px;
+    text-align: left;
+}
+
+#accountEditMode label {
+    display: block;
+    margin: 15px 0 6px;
+    font-weight: 600;
+    color: #2b2d42;
+}
+
+#accountEditMode input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    background: #fff;
+}
+
+#accountEditMode input:focus {
+    border-color: #e63946;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.12);
+}
+
+#editProfileBtn,
+#saveProfileBtn,
+#cancelProfileBtn {
+    padding: 11px 20px;
+    margin: 12px 5px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#editProfileBtn,
+#saveProfileBtn {
+    background: #e63946;
+    color: white;
+}
+
+#editProfileBtn:hover,
+#saveProfileBtn:hover {
+    background: #c92f3b;
+}
+
+#cancelProfileBtn {
+    background: #eee;
+    color: #333;
+}
+
+#cancelProfileBtn:hover {
+    background: #ddd;
+}
+
+#profileMessage {
+    font-size: 14px;
+    margin-top: 15px;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+    .account-container {
+        width: 92%;
+        margin: 35px auto;
+    }
+
+    .account-card {
+        padding: 22px 18px;
+    }
+
+    #editProfileBtn,
+    #saveProfileBtn,
+    #cancelProfileBtn {
+        margin: 8px 3px 0;
+    }
+}
+
 
 /* =========================================================
    DELIVERY ADDRESS PAGE

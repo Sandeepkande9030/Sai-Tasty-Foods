@@ -271,7 +271,8 @@ def login_user(request):
                     "user": {
                         "id": user.id,
                         "name": user.name,
-                        "email": user.email
+                        "email": user.email,
+                        "phone": user.phone
                     }
                 })
 
@@ -293,6 +294,74 @@ def login_user(request):
         "success": False,
         "message": "Only POST method is allowed"
     })
+
+@csrf_exempt
+def update_user_profile(request):
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed"
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        user_id = data.get("user_id")
+        name = data.get("name", "").strip()
+        phone = data.get("phone", "").strip()
+
+        if not user_id:
+            return JsonResponse({
+                "success": False,
+                "message": "User ID is required"
+            }, status=400)
+
+        if not name:
+            return JsonResponse({
+                "success": False,
+                "message": "Name is required"
+            }, status=400)
+
+        if not phone.isdigit() or len(phone) != 10:
+            return JsonResponse({
+                "success": False,
+                "message": "Enter a valid 10-digit phone number"
+            }, status=400)
+
+        user = User.objects.filter(id=user_id).first()
+
+        if not user:
+            return JsonResponse({
+                "success": False,
+                "message": "User not found"
+            }, status=404)
+
+        user.name = name
+        user.phone = phone
+        user.save(update_fields=["name", "phone"])
+
+        return JsonResponse({
+            "success": True,
+            "message": "Profile updated successfully",
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "phone": user.phone
+            }
+        })
+
+    except (ValueError, TypeError):
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request data"
+        }, status=400)
+
+    except Exception:
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to update profile"
+        }, status=500)
 
 
 # =========================

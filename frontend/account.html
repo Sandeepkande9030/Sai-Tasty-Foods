@@ -27,8 +27,6 @@
 
             <a href="#">Restaurants</a>
 
-            <a href="#">Offers</a>
-
             <a href="cart.html" class="cart-link">
                 🛒 Cart
                 <span id="cartCount" class="cart-badge">0</span>
@@ -85,21 +83,62 @@
                 👤
             </div>
 
-            <h2 id="accountName">
-                User
-            </h2>
+            <h2 id="accountName">User</h2>
 
-            <p>
-                <strong>Email:</strong>
-                <span id="accountEmail"></span>
-            </p>
+            <div id="accountViewMode">
+                <p>
+                    <strong>Email:</strong>
+                    <span id="accountEmail"></span>
+                </p>
 
-            <p>
-                <strong>Account Status:</strong>
-                <span class="active">
-                    Active
-                </span>
-            </p>
+                <p>
+                    <strong>Phone:</strong>
+                    <span id="accountPhone">Not provided</span>
+                </p>
+
+
+                <button type="button" id="editProfileBtn">
+                    Edit Profile
+                </button>
+            </div>
+
+            <div id="accountEditMode" style="display: none;">
+
+                <label for="editAccountName">Name</label>
+                <input
+                    type="text"
+                    id="editAccountName"
+                    maxlength="150"
+                    required
+                >
+
+                <label for="editAccountPhone">Phone Number</label>
+                <input
+                    type="tel"
+                    id="editAccountPhone"
+                    maxlength="10"
+                    inputmode="numeric"
+                    pattern="[0-9]{10}"
+                    placeholder="Enter 10-digit phone number"
+                    required
+                >
+
+                <p>
+                    <strong>Email:</strong>
+                    <span id="editAccountEmail"></span>
+                </p>
+
+                <button type="button" id="saveProfileBtn">
+                    Save Changes
+                </button>
+
+                <button type="button" id="cancelProfileBtn">
+                    Cancel
+                </button>
+
+                <p id="profileMessage" role="status"></p>
+
+            </div>
 
         </div>
 
@@ -112,26 +151,134 @@
 
         // Display user details
 
-        let user = JSON.parse(localStorage.getItem("user"));
+        
+        let user = JSON.parse(
+            localStorage.getItem("currentUser") || "null"
+        );
 
-        let isLoggedIn =
-            localStorage.getItem("isLoggedIn");
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
 
+        const accountName = document.getElementById("accountName");
+        const accountEmail = document.getElementById("accountEmail");
+        const accountPhone = document.getElementById("accountPhone");
+
+        const accountViewMode = document.getElementById("accountViewMode");
+        const accountEditMode = document.getElementById("accountEditMode");
+
+        const editAccountName = document.getElementById("editAccountName");
+        const editAccountPhone = document.getElementById("editAccountPhone");
+        const editAccountEmail = document.getElementById("editAccountEmail");
+
+        const editProfileBtn = document.getElementById("editProfileBtn");
+        const saveProfileBtn = document.getElementById("saveProfileBtn");
+        const cancelProfileBtn = document.getElementById("cancelProfileBtn");
+        const profileMessage = document.getElementById("profileMessage");
 
         if (isLoggedIn !== "true" || !user) {
-
             window.location.href = "login.html";
-
+        } else {
+            accountName.textContent = user.name || "User";
+            accountEmail.textContent = user.email || "";
+            accountPhone.textContent = user.phone || "Not provided";
+            editAccountEmail.textContent = user.email || "";
         }
-        else {
 
-            document.getElementById("accountName")
-                .textContent = user.name;
+        editProfileBtn.addEventListener("click", function () {
+            editAccountName.value = user.name || "";
+            editAccountPhone.value = user.phone || "";
 
-            document.getElementById("accountEmail")
-                .textContent = user.email;
+            profileMessage.textContent = "";
+            accountViewMode.style.display = "none";
+            accountEditMode.style.display = "block";
+        });
 
-        }
+        cancelProfileBtn.addEventListener("click", function () {
+            accountEditMode.style.display = "none";
+            accountViewMode.style.display = "block";
+            profileMessage.textContent = "";
+        });
+
+        saveProfileBtn.addEventListener("click", async function () {
+            const name = editAccountName.value.trim();
+            const phone = editAccountPhone.value.trim();
+
+            if (!name) {
+                profileMessage.textContent = "Please enter your name.";
+                profileMessage.style.color = "#e63946";
+                return;
+            }
+
+            if (!/^[0-9]{10}$/.test(phone)) {
+                profileMessage.textContent =
+                    "Enter a valid 10-digit phone number.";
+                profileMessage.style.color = "#e63946";
+                return;
+            }
+
+            if (!user.id) {
+                profileMessage.textContent =
+                    "User ID is missing. Please log out and log in again.";
+                profileMessage.style.color = "#e63946";
+                return;
+            }
+
+            saveProfileBtn.disabled = true;
+            saveProfileBtn.textContent = "Saving...";
+
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/api/update-user-profile/`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            user_id: user.id,
+                            name: name,
+                            phone: phone
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(
+                        data.message || "Unable to update profile."
+                    );
+                }
+
+                user = { ...user, ...data.user };
+
+                localStorage.setItem(
+                    "currentUser",
+                    JSON.stringify(user)
+                );
+
+                accountName.textContent = user.name || "User";
+                accountEmail.textContent = user.email || "";
+                accountPhone.textContent = user.phone || "Not provided";
+                editAccountEmail.textContent = user.email || "";
+
+                accountEditMode.style.display = "none";
+                accountViewMode.style.display = "block";
+
+                profileMessage.textContent = "";
+                alert("Profile updated successfully!");
+
+            } catch (error) {
+                console.error("Profile update error:", error);
+
+                profileMessage.textContent =
+                    error.message || "Unable to update profile.";
+                profileMessage.style.color = "#e63946";
+
+            } finally {
+                saveProfileBtn.disabled = false;
+                saveProfileBtn.textContent = "Save Changes";
+            }
+        });
 
     </script>
 

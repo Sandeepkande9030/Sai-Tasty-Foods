@@ -27,7 +27,7 @@ from .views import (
     update_restaurant_visibility,
     update_restaurant_food_permission,
     update_restaurant_profile,
-
+    update_user_profile,
 )
 
 
@@ -134,5 +134,10 @@ urlpatterns = [
     update_restaurant_profile,
     name="update_restaurant_profile"
     ),
-
+    path(
+    "update-user-profile/",
+    update_user_profile,
+    name="update_user_profile"
+    ),
+    
 ]

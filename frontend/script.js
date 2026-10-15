@@ -26,7 +26,7 @@ async function addToCart(name, price) {
 
     if (isLoggedIn !== "true") {
 
-        alert("Please login first to add items to cart.");
+       // alert("Please login first to add items to cart.");
 
         window.location.href = "login.html";
 
@@ -209,13 +209,6 @@ async function addToCart(name, price) {
         updateCartCount();
 
         displayCart();
-
-
-        alert(
-            foodItem.name +
-            " added to cart"
-        );
-
 
     } catch (error) {
 
