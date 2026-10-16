@@ -216,7 +216,19 @@ async function loadOrders() {
                             </p>
 
                         </div>
-
+                         ${
+                            (order.status || "").toLowerCase() === "pending"
+                            ? `
+                                <button
+                                    type="button"
+                                    onclick="cancelOrder(${order.id})"
+                                    style="background-color: #d32f2f; color: white; margin-right: 8px;"
+                                >
+                                    Cancel Order
+                                </button>
+                            `
+                            : ""
+                        }
 
                         <button
                             type="button"
@@ -247,6 +259,62 @@ async function loadOrders() {
 
     }
 
+}
+async function cancelOrder(orderId) {
+
+    const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "null"
+    );
+
+    if (!currentUser || !currentUser.email) {
+        alert("Please login to cancel your order.");
+        return;
+    }
+
+    const order = (window.ordersData || []).find(
+        item => Number(item.id) === Number(orderId)
+    );
+
+    if (!order || (order.status || "").toLowerCase() !== "pending") {
+        alert("Only pending orders can be cancelled.");
+        await loadOrders();
+        return;
+    }
+
+    if (!confirm("Are you sure you want to cancel Order #" + orderId + "?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/api/cancel-customer-order/`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    order_id: orderId,
+                    customer_email: currentUser.email
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            alert(data.message || "Unable to cancel this order.");
+            await loadOrders();
+            return;
+        }
+
+        alert("Order #" + orderId + " cancelled successfully.");
+        await loadOrders();
+
+    } catch (error) {
+        console.error("Cancel Order Error:", error);
+        alert("Unable to connect to the server. Please try again.");
+    }
 }
 function viewOrderDetails(orderId) {
 

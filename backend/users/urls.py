@@ -28,6 +28,7 @@ from .views import (
     update_restaurant_food_permission,
     update_restaurant_profile,
     update_user_profile,
+    cancel_customer_order,
 )
 
 
@@ -138,6 +139,11 @@ urlpatterns = [
     "update-user-profile/",
     update_user_profile,
     name="update_user_profile"
+    ),
+    path(
+    "cancel-customer-order/",
+    cancel_customer_order,
+    name="cancel_customer_order"
     ),
     
 ]

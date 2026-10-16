@@ -1969,6 +1969,73 @@ def get_customer_orders(request):
             "Only GET method is allowed"
 
     })
+    # =========================
+# CANCEL CUSTOMER ORDER
+# =========================
+
+@csrf_exempt
+def cancel_customer_order(request):
+
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed"
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        order_id = data.get("order_id")
+        customer_email = data.get("customer_email")
+
+        if not order_id or not customer_email:
+            return JsonResponse({
+                "success": False,
+                "message": "Order ID and customer email are required"
+            }, status=400)
+
+        # Confirm that this order belongs to the customer.
+        try:
+            order = Order.objects.get(
+                id=order_id,
+                customer_email=customer_email
+            )
+        except Order.DoesNotExist:
+            return JsonResponse({
+                "success": False,
+                "message": "Order not found for this customer"
+            }, status=404)
+
+        # Cancellation is allowed only while pending.
+        if order.status.lower() != "pending":
+            return JsonResponse({
+                "success": False,
+                "message": "Only pending orders can be cancelled"
+            }, status=400)
+
+        order.status = "cancelled"
+        order.save(update_fields=["status"])
+
+        return JsonResponse({
+            "success": True,
+            "message": "Order cancelled successfully",
+            "order_id": order.id,
+            "status": order.status
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request data"
+        }, status=400)
+
+    except Exception as e:
+        print("CANCEL CUSTOMER ORDER ERROR:", str(e), flush=True)
+
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to cancel order"
+        }, status=500)
 
     # =========================
 # GET RESTAURANT FOOD ITEMS
