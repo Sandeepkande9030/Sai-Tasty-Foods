@@ -158,7 +158,9 @@ async function loadOrders() {
                             </h2>
 
                             <span class="order-status">
-                                ${order.status}
+                                ${(order.status || "").toLowerCase() === "cancelled"
+                                    ? "Order Cancelled"
+                                    : order.status}
                             </span>
 
                         </div>

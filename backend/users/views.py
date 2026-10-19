@@ -12,6 +12,7 @@ import uuid
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from vercel.blob import BlobClient
+from django.core import signing
 # =========================
 # REGISTER USER
 # =========================
@@ -2698,6 +2699,11 @@ def admin_login(request):
                 "message": "Invalid admin email or password"
             })
 
+        token = signing.dumps(
+            {"admin_id": admin.id},
+            salt="admin-orders"
+        )
+
         return JsonResponse({
             "success": True,
             "message": "Admin login successful",
@@ -2705,7 +2711,8 @@ def admin_login(request):
                 "id": admin.id,
                 "name": admin.name,
                 "email": admin.email
-            }
+            },
+            "token": token
         })
 
     except Exception as e:
@@ -2720,7 +2727,102 @@ def admin_login(request):
             "success": False,
             "message": str(e)
         })
+# =========================
+# GET ALL ORDERS - ADMIN
+# =========================
 
+@csrf_exempt
+def admin_all_orders(request):
+
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Only POST method is allowed"
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+        token = data.get("token", "")
+
+        if not token:
+            return JsonResponse({
+                "success": False,
+                "message": "Admin authentication is required"
+            }, status=401)
+
+        # Verify the signed admin token.
+        # Tokens expire after 1 hour.
+        from django.core import signing
+
+        try:
+            token_data = signing.loads(
+                token,
+                salt="admin-orders",
+                max_age=3600
+            )
+        except signing.BadSignature:
+            return JsonResponse({
+                "success": False,
+                "message": "Invalid or expired admin token"
+            }, status=401)
+
+        admin = Admin.objects.filter(
+            id=token_data.get("admin_id")
+        ).first()
+
+        if not admin:
+            return JsonResponse({
+                "success": False,
+                "message": "Admin account not found"
+            }, status=401)
+
+        orders = Order.objects.select_related(
+            "restaurant"
+        ).order_by("-created_at")
+
+        order_list = []
+
+        for order in orders:
+            try:
+                items = json.loads(order.items or "[]")
+            except (json.JSONDecodeError, TypeError):
+                items = []
+
+            local_time = timezone.localtime(
+                order.created_at
+            )
+
+            order_list.append({
+                "id": order.id,
+                "customer_name": order.customer_name,
+                "customer_email": order.customer_email,
+                "restaurant_id": order.restaurant_id,
+                "restaurant_name": order.restaurant.name,
+                "items": items,
+                "total_amount": str(order.total_amount),
+                "status": order.status,
+                "created_at": local_time.strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+            })
+
+        return JsonResponse({
+            "success": True,
+            "count": len(order_list),
+            "orders": order_list
+        })
+
+    except Exception as e:
+        print(
+            "ADMIN ALL ORDERS ERROR:",
+            str(e),
+            flush=True
+        )
+
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to fetch admin orders"
+        }, status=500)
 # =========================
 # DELETE RESTAURANT - ADMIN
 # =========================

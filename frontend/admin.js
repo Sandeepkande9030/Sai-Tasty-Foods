@@ -61,6 +61,10 @@ function adminLogin() {
                 "adminData",
                 JSON.stringify(data.admin)
             );
+            localStorage.setItem(
+                "adminToken",
+                data.token
+            );
 
             window.location.href =
                 "admin-dashboard.html";
@@ -242,12 +246,11 @@ fetch(
 
 function adminLogout() {
 
-    localStorage.removeItem(
-        "adminLoggedIn"
-    );
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("adminData");
+    localStorage.removeItem("adminToken");
 
-    window.location.href =
-        "admin.html";
+    window.location.href = "admin.html";
 }
 // =========================
 // GET ALL RESTAURANTS
@@ -918,3 +921,176 @@ async function updateRestaurantFoodPermission(restaurantId, checkbox) {
         alert("Could not update Add Food Items permission: " + error.message);
     }
 }
+
+/* =========================
+   LOAD ALL FOOD ITEMS
+========================= */
+
+function loadFoodItemCount() {
+
+    fetch(
+        "https://backend-dl8i.vercel.app/api/all-food-items/"
+    )
+
+    .then(function(response) {
+
+        if (!response.ok) {
+            throw new Error(
+                "Food items API returned status " +
+                response.status
+            );
+        }
+
+        return response.json();
+
+    })
+
+    .then(function(data) {
+
+        console.log(
+            "ALL FOOD ITEMS API RESPONSE:",
+            data
+        );
+
+        if (!data.success) {
+            throw new Error(
+                data.message || "Unable to load food items"
+            );
+        }
+
+        const foodItems = data.food_items || [];
+
+        const totalFoodItems =
+            document.getElementById("totalFoodItems");
+
+        if (totalFoodItems) {
+            totalFoodItems.textContent =
+                foodItems.length;
+        }
+
+    })
+
+    .catch(function(error) {
+
+        console.error(
+            "FOOD ITEMS COUNT ERROR:",
+            error
+        );
+
+    });
+
+}
+
+loadFoodItemCount();
+
+/* =========================
+   LOAD ADMIN DASHBOARD ORDERS
+========================= */
+
+async function loadAdminDashboardOrders() {
+    const totalOrdersElement =
+        document.getElementById("totalOrders");
+
+    const recentOrdersTable =
+        document.getElementById("recentOrdersTable");
+
+    // Run only on the admin dashboard.
+    if (!totalOrdersElement || !recentOrdersTable) {
+        return;
+    }
+
+    const token = localStorage.getItem("adminToken");
+
+    if (!token) {
+        recentOrdersTable.innerHTML =
+            '<tr><td colspan="5">Please log in again to view orders.</td></tr>';
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            "https://backend-dl8i.vercel.app/api/admin-all-orders/",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    token: token
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to load dashboard orders."
+            );
+        }
+
+        const orders = Array.isArray(data.orders)
+            ? data.orders
+            : [];
+
+        // Update the total orders count.
+        totalOrdersElement.textContent =
+            data.count ?? orders.length;
+
+        // Show the five most recent orders.
+        recentOrdersTable.replaceChildren();
+
+        if (orders.length === 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+
+            cell.colSpan = 5;
+            cell.textContent = "No orders available";
+
+            row.appendChild(cell);
+            recentOrdersTable.appendChild(row);
+            return;
+        }
+
+        orders.slice(0, 5).forEach(function(order) {
+            const row = document.createElement("tr");
+
+            const values = [
+                "#" + order.id,
+                order.customer_name || "Unknown Customer",
+                order.restaurant_name || "Unknown Restaurant",
+                "₹" + Number(order.total_amount || 0).toFixed(2),
+                order.status || "Pending"
+            ];
+
+            values.forEach(function(value) {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+
+            recentOrdersTable.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error(
+            "ADMIN DASHBOARD ORDERS ERROR:",
+            error
+        );
+
+        recentOrdersTable.replaceChildren();
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 5;
+        cell.textContent = "Unable to load orders. Please try again.";
+
+        row.appendChild(cell);
+        recentOrdersTable.appendChild(row);
+    }
+}
+
+loadAdminDashboardOrders();
+
+

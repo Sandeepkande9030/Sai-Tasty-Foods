@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Food Items - Sai Tasty Foods Admin</title>
+
+    <link rel="stylesheet" href="admin.css">
+
+    <style>
+        .food-items-container {
+            padding: 25px;
+        }
+
+        .food-items-container h2 {
+            margin-bottom: 8px;
+        }
+
+        .food-items-container p {
+            color: #443e8f;
+            margin-bottom: 20px;
+        }
+
+        .food-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .food-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        .food-table th,
+        .food-table td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .food-table th {
+            background: #28bb4b;
+            color: white;
+        }
+
+        .food-table tbody tr:hover {
+            background: #f8f8f8;
+        }
+
+        .food-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .food-available {
+            background: #e0f7e9;
+            color: #168344;
+        }
+
+        .food-unavailable {
+            background: #ffe5e5;
+            color: #c62828;
+        }
+
+        .food-message {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .food-error {
+            color: #c62828;
+        }
+    </style>
+</head>
+
+
+<body class="admin-dashboard-body">
+
+    <!-- ADMIN SIDEBAR -->
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            SAI TASTY FOODS
+        </div>
+
+        <nav class="admin-nav">
+
+            <a href="admin-dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="users.html">
+                👥 Users
+            </a>
+
+            <a href="admin-restaurants.html">
+                🍽️ Restaurants
+            </a>
+
+            <a href="restaurant-permissions.html">
+                🔐 Restaurant Permissions
+            </a>
+
+            <a href="food-items.html" class="active">
+                🍴 Food Items
+            </a>
+
+            <a href="admin-orders.html">
+                📦 Orders
+            </a>
+
+        </nav>
+
+        <button
+            class="admin-logout-button"
+            onclick="adminLogout()">
+            🚪 Logout
+        </button>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <div class="food-items-container">
+
+
+        <h2>All Food Items</h2>
+
+        <p>
+            View food items added by all registered restaurants.
+        </p>
+
+        <h3>
+            Total Food Items:
+            <span id="foodItemsTotal">0</span>
+        </h3>
+
+        <div class="food-table-wrapper">
+
+            <table class="food-table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Food Name</th>
+                        <th>Restaurant</th>
+                        <th>Price</th>
+                        <th>Availability</th>
+                    </tr>
+                </thead>
+
+                <tbody id="foodItemsTableBody">
+                    <tr>
+                        <td colspan="5" class="food-message">
+                            Loading food items...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+        const FOOD_ITEMS_API =
+            "https://backend-dl8i.vercel.app/api/all-food-items/";
+
+        async function loadAllFoodItems() {
+
+            const tableBody =
+                document.getElementById("foodItemsTableBody");
+
+            const totalElement =
+                document.getElementById("foodItemsTotal");
+
+            try {
+
+                const response = await fetch(FOOD_ITEMS_API);
+
+                if (!response.ok) {
+                    throw new Error(
+                        "API request failed: " + response.status
+                    );
+                }
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(
+                        data.message || "Unable to load food items."
+                    );
+                }
+
+                const foodItems = data.food_items || [];
+
+                totalElement.textContent = foodItems.length;
+
+                if (foodItems.length === 0) {
+
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="food-message">
+                                No food items found.
+                            </td>
+                        </tr>
+                    `;
+
+                    return;
+                }
+
+                tableBody.innerHTML = foodItems.map(function(food) {
+
+                    const statusClass = food.is_available
+                        ? "food-available"
+                        : "food-unavailable";
+
+                    const statusText = food.is_available
+                        ? "Available"
+                        : "Unavailable";
+
+                    return `
+                        <tr>
+                            <td>${food.id}</td>
+                            <td>${escapeHTML(food.name)}</td>
+                            <td>${escapeHTML(food.restaurant_name)}</td>
+                            <td>₹${escapeHTML(food.price)}</td>
+                            <td>
+                                <span class="food-status ${statusClass}">
+                                    ${statusText}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+
+                }).join("");
+
+            } catch (error) {
+
+                console.error("Food items loading error:", error);
+
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5"
+                            class="food-message food-error">
+                            Failed to load food items.
+                            Check the browser console for details.
+                        </td>
+                    </tr>
+                `;
+
+            }
+        }
+
+        function escapeHTML(value) {
+            return String(value ?? "").replace(/[&<>"']/g, function(char) {
+                return {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                }[char];
+            });
+        }
+
+        loadAllFoodItems();
+    </script>
+
+</body>
+</html>

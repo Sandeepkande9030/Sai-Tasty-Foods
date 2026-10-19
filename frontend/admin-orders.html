@@ -1,0 +1,602 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Orders - Sai Tasty Foods</title>
+
+    <link rel="stylesheet" href="admin.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #202638;
+        }
+
+        .orders-page {
+            max-width: 1200px;
+            margin: auto;
+            padding: 35px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #737b8c;
+        }
+
+        .back-link {
+            text-decoration: none;
+            background: #a64718;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+        }
+        .order-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 22px;
+            max-width: 1000px;
+        }
+
+        .order-tab {
+            border: 2px solid transparent;
+            background: white;
+            border-radius: 10px;
+            padding: 13px 14px;
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+            transition: 0.2s ease;
+        }
+
+        .order-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .order-tab.active {
+            border-color: #d32f2f;
+            background: #fff5f5;
+        }
+
+        .tab-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            font-size: 18px;
+            margin-bottom: 9px;
+        }
+
+        .tab-title {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .tab-description {
+            display: block;
+            font-size: 11px;
+            color: #7b8291;
+            line-height: 1.4;
+        }
+
+
+        .orders-content {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .content-header h2 {
+            margin: 0 0 6px;
+            font-size: 22px;
+        }
+
+        .content-header p {
+            margin: 0;
+            color: #7b8291;
+            font-size: 13px;
+        }
+
+        .search-box {
+            width: 260px;
+            max-width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #dce1ea;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            border-color: #d32f2f;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 16px 13px;
+            text-align: left;
+            border-bottom: 1px solid #edf0f5;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8f9fc;
+            color: #687083;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-delivered {
+            background: #e2f8e9;
+            color: #18743a;
+        }
+
+        .status-rejected {
+            background: #ffe6e6;
+            color: #b42323;
+        }
+
+        .status-cancelled {
+            background: #fff0d9;
+            color: #985900;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 45px 15px;
+            color: #7b8291;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h3 {
+            color: #202638;
+            margin: 0 0 8px;
+        }
+
+        @media (max-width: 850px) {
+            .order-tabs {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .orders-page {
+                padding: 22px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .order-tabs {
+                grid-template-columns: 1fr;
+            }
+
+            .orders-page {
+                padding: 15px;
+            }
+
+            .orders-content {
+                padding: 16px;
+            }
+
+            .page-header h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="orders-page">
+
+        <header class="page-header">
+            <div>
+                <h1>Order Management</h1>
+                <p>Manage and review customer orders</p>
+            </div>
+
+            <a href="admin-dashboard.html" class="back-link">
+                ← Dashboard
+            </a>
+        </header>
+
+        <section class="order-tabs">
+
+            <button class="order-tab active"
+                    data-status="all"
+                    onclick="showOrderOption('all', this)">
+                <span class="tab-icon all-icon">📋</span>
+                <span class="tab-title">All Orders</span>
+                <span class="tab-description">View every customer order</span>
+            </button>
+
+            <button class="order-tab"
+                    data-status="delivered"
+                    onclick="showOrderOption('delivered', this)">
+                <span class="tab-icon delivered-icon">✅</span>
+                <span class="tab-title">Delivered Orders</span>
+                <span class="tab-description">Successfully completed orders</span>
+            </button>
+
+            <button class="order-tab"
+                    data-status="rejected"
+                    onclick="showOrderOption('rejected', this)">
+                <span class="tab-icon rejected-icon">❌</span>
+                <span class="tab-title">Rejected Orders</span>
+                <span class="tab-description">Orders rejected by restaurants</span>
+            </button>
+
+            <button class="order-tab"
+                    data-status="cancelled"
+                    onclick="showOrderOption('cancelled', this)">
+                <span class="tab-icon cancelled-icon">🚫</span>
+                <span class="tab-title">Cancelled Orders</span>
+                <span class="tab-description">Orders cancelled by customers</span>
+            </button>
+
+        </section>
+
+        <section class="orders-content">
+
+            <div class="content-header">
+                <div>
+                    <h2 id="sectionTitle">All Orders</h2>
+                    <p id="sectionDescription">Showing all customer orders</p>
+                </div>
+
+                <input
+                    type="search"
+                    id="orderSearch"
+                    class="search-box"
+                    placeholder="Search orders..."
+                    aria-label="Search orders">
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Restaurant</th>
+                            <th>Order Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="ordersTableBody">
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📭</div>
+                                    <h3 id="emptyTitle">No orders loaded yet</h3>
+                                    <p id="emptyMessage">
+                                        The frontend design is ready.
+                                        Orders will appear here after backend integration.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+    </main>
+
+    
+<script>
+    const API_BASE_URL = "https://backend-dl8i.vercel.app/api";
+
+    const orderOptions = {
+        all: {
+            title: "All Orders",
+            description: "Showing all customer orders"
+        },
+        delivered: {
+            title: "Delivered Orders",
+            description: "Showing successfully delivered orders"
+        },
+        rejected: {
+            title: "Rejected Orders",
+            description: "Showing rejected orders"
+        },
+        cancelled: {
+            title: "Cancelled Orders",
+            description: "Showing cancelled orders"
+        }
+    };
+
+    let allOrders = [];
+    let currentStatus = "all";
+
+    const tableBody =
+        document.getElementById("ordersTableBody");
+
+    const searchBox =
+        document.getElementById("orderSearch");
+
+    function showMessage(title, message) {
+        tableBody.replaceChildren();
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 6;
+
+        const container = document.createElement("div");
+        container.className = "empty-state";
+
+        const heading = document.createElement("h3");
+        heading.textContent = title;
+
+        const description = document.createElement("p");
+        description.textContent = message;
+
+        container.append(heading, description);
+        cell.appendChild(container);
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+    }
+
+    function renderOrders() {
+        const searchText =
+            searchBox.value.trim().toLowerCase();
+
+        const filteredOrders = allOrders.filter(function(order) {
+            const status =
+                String(order.status || "pending").toLowerCase();
+
+            const matchesStatus =
+                currentStatus === "all" ||
+                status === currentStatus;
+
+            const searchableText = [
+                order.id,
+                order.customer_name,
+                order.customer_email,
+                order.restaurant_name,
+                order.status,
+                order.total_amount,
+                order.created_at
+            ].join(" ").toLowerCase();
+
+            return matchesStatus &&
+                searchableText.includes(searchText);
+        });
+
+        tableBody.replaceChildren();
+
+        if (filteredOrders.length === 0) {
+            showMessage(
+                allOrders.length === 0
+                    ? "No orders found"
+                    : "No matching orders",
+                allOrders.length === 0
+                    ? "Orders will appear here when customers place them."
+                    : "Try another status filter or search term."
+            );
+            return;
+        }
+
+        filteredOrders.forEach(function(order) {
+            const row = document.createElement("tr");
+
+            const values = [
+                "#" + order.id,
+                order.customer_name || "Unknown Customer",
+                order.restaurant_name || "Unknown Restaurant",
+                order.created_at || "Date unavailable",
+                "₹" + Number(order.total_amount || 0).toFixed(2),
+                order.status || "Pending"
+            ];
+
+            values.forEach(function(value, index) {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+
+                if (index === 5) {
+                    const badge = document.createElement("span");
+                    const normalizedStatus =
+                        String(value).toLowerCase();
+
+                    badge.className = "status";
+
+                    if (
+                        normalizedStatus === "delivered" ||
+                        normalizedStatus === "rejected" ||
+                        normalizedStatus === "cancelled"
+                    ) {
+                        badge.classList.add(
+                            "status-" + normalizedStatus
+                        );
+                    }
+
+                    badge.textContent = value;
+                    cell.replaceChildren(badge);
+                }
+
+                row.appendChild(cell);
+            });
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    function showOrderOption(status, button) {
+        if (!orderOptions[status]) {
+            status = "all";
+        }
+
+        currentStatus = status;
+
+        document.querySelectorAll(".order-tab").forEach(
+            function(tab) {
+                tab.classList.toggle(
+                    "active",
+                    tab.dataset.status === status
+                );
+            }
+        );
+
+        document.getElementById("sectionTitle").textContent =
+            orderOptions[status].title;
+
+        document.getElementById("sectionDescription").textContent =
+            orderOptions[status].description;
+
+        const params =
+            new URLSearchParams(window.location.search);
+
+        if (status === "all") {
+            params.delete("status");
+        } else {
+            params.set("status", status);
+        }
+
+        const query = params.toString();
+
+        history.replaceState(
+            null,
+            "",
+            window.location.pathname + (query ? "?" + query : "")
+        );
+
+        renderOrders();
+    }
+
+    searchBox.addEventListener("input", renderOrders);
+
+    async function loadOrders() {
+        const token = localStorage.getItem("adminToken");
+
+        if (!token) {
+            showMessage(
+                "Admin login required",
+                "Please log in again before viewing orders."
+            );
+            return;
+        }
+
+        showMessage("Loading orders...", "Please wait.");
+
+        try {
+            const response = await fetch(
+                API_BASE_URL + "/admin-all-orders/",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token: token
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                if (response.status === 401) {
+                    localStorage.removeItem("adminToken");
+                    localStorage.removeItem("adminLoggedIn");
+                    localStorage.removeItem("adminData");
+
+                    showMessage(
+                        "Session expired",
+                        "Please log in again to access orders."
+                    );
+
+                    return;
+                }
+
+                throw new Error(
+                    data.message || "Unable to load orders."
+                );
+            }
+
+            allOrders = Array.isArray(data.orders)
+                ? data.orders
+                : [];
+
+            renderOrders();
+
+        } catch (error) {
+            console.error("ADMIN ORDERS ERROR:", error);
+
+            showMessage(
+                "Unable to load orders",
+                "Check the backend endpoint and connection, then refresh the page."
+            );
+        }
+    }
+
+    const initialStatus =
+        new URLSearchParams(window.location.search)
+            .get("status") || "all";
+
+    showOrderOption(
+        orderOptions[initialStatus] ? initialStatus : "all"
+    );
+
+    loadOrders();
+</script>
+
+</body>
+</html>

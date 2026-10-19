@@ -308,7 +308,60 @@ async function loadOrderDetails() {
         // REJECTED ORDER
         // =================================
 
-        if (currentStatus === "rejected") {
+       
+        // =================================
+        // CANCELLED ORDER
+        // =================================
+
+        if (currentStatus === "cancelled") {
+
+            trackingHTML = `
+
+                <div class="order-tracking">
+
+                    <h3>
+                        Order Status
+                    </h3>
+
+                    <div class="tracking-rejected"
+                         style="
+                            background: #fff3f3;
+                            border: 1px solid #ffcdd2;
+                         ">
+
+                        <div class="tracking-circle"
+                             style="
+                                background: #d32f2f;
+                                color: white;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                flex-shrink: 0;
+                             ">
+                            ×
+                        </div>
+
+                        <div>
+
+                            <strong style="color: #d32f2f;">
+                                Order Cancelled
+                            </strong>
+
+                            <p>
+                                This order has been cancelled.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+        else if (currentStatus === "rejected") {
 
             trackingHTML = `
 
@@ -344,6 +397,7 @@ async function loadOrderDetails() {
             `;
 
         }
+        
 
             else {
 
