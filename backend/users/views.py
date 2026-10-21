@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.uploadedfile import UploadedFile
 from django.utils import timezone
 from django.core.mail import send_mail
-from .models import User, Restaurant, Order, FoodItem, Admin
+from .models import User, Restaurant, Order, FoodItem, Admin, CustomerAddress
 import json
 import random
 import os
@@ -3086,4 +3086,275 @@ def update_restaurant_profile(request):
             "success": False,
             "message": str(e)
         }, status=400)
+
+# =========================
+# CUSTOMER ADDRESS APIs
+# =========================
+
+@csrf_exempt
+def customer_addresses(request):
+    if request.method != "GET":
+        return JsonResponse({
+            "success": False,
+            "message": "Method not allowed."
+        }, status=405)
+
+    try:
+        user_id = request.GET.get("user_id")
+
+        if not user_id:
+            return JsonResponse({
+                "success": False,
+                "message": "User ID is required."
+            }, status=400)
+
+        user = User.objects.filter(id=user_id).first()
+
+        if not user:
+            return JsonResponse({
+                "success": False,
+                "message": "Customer not found."
+            }, status=404)
+
+        addresses = CustomerAddress.objects.filter(
+            user=user
+        ).order_by("-is_default", "-id")
+
+        address_list = []
+
+        for address in addresses:
+            address_list.append({
+                "id": address.id,
+                "address_type": address.address_type,
+                "full_name": address.full_name,
+                "phone": address.phone,
+                "house": address.house,
+                "area": address.area,
+                "city": address.city,
+                "state": address.state,
+                "pincode": address.pincode,
+                "landmark": address.landmark,
+                "is_default": address.is_default,
+            })
+
+        return JsonResponse({
+            "success": True,
+            "addresses": address_list
+        })
+
+    except Exception:
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to load addresses."
+        }, status=500)
+
+
+@csrf_exempt
+def save_customer_address(request):
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Method not allowed."
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        user_id = data.get("user_id")
+        address_id = data.get("address_id")
+
+        user = User.objects.filter(id=user_id).first()
+
+        if not user:
+            return JsonResponse({
+                "success": False,
+                "message": "Customer not found."
+            }, status=404)
+
+        full_name = str(data.get("full_name", "")).strip()
+        phone = str(data.get("phone", "")).strip()
+        house = str(data.get("house", "")).strip()
+        area = str(data.get("area", "")).strip()
+        city = str(data.get("city", "")).strip()
+        state = str(data.get("state", "")).strip()
+        pincode = str(data.get("pincode", "")).strip()
+        landmark = str(data.get("landmark", "")).strip()
+        address_type = str(data.get("address_type", "Home")).strip()
+
+        if not all([
+            full_name, phone, house, area,
+            city, state, pincode
+        ]):
+            return JsonResponse({
+                "success": False,
+                "message": "Please fill in all required address fields."
+            }, status=400)
+
+        if not phone.isdigit() or len(phone) != 10:
+            return JsonResponse({
+                "success": False,
+                "message": "Enter a valid 10-digit phone number."
+            }, status=400)
+
+        if not pincode.isdigit() or len(pincode) != 6:
+            return JsonResponse({
+                "success": False,
+                "message": "Enter a valid 6-digit PIN code."
+            }, status=400)
+
+        if address_type not in ["Home", "Work", "Other"]:
+            return JsonResponse({
+                "success": False,
+                "message": "Invalid address type."
+            }, status=400)
+
+        if address_id:
+            address = CustomerAddress.objects.filter(
+                id=address_id,
+                user=user
+            ).first()
+
+            if not address:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Address not found."
+                }, status=404)
+        else:
+            address = CustomerAddress(user=user)
+
+        address.address_type = address_type
+        address.full_name = full_name
+        address.phone = phone
+        address.house = house
+        address.area = area
+        address.city = city
+        address.state = state
+        address.pincode = pincode
+        address.landmark = landmark
+
+        if data.get("is_default") is True:
+            CustomerAddress.objects.filter(
+                user=user,
+                is_default=True
+            ).update(is_default=False)
+
+            address.is_default = True
+        elif not address_id:
+            address.is_default = not CustomerAddress.objects.filter(
+                user=user
+            ).exists()
+
+        address.save()
+
+        return JsonResponse({
+            "success": True,
+            "message": "Address saved successfully.",
+            "address_id": address.id
+        })
+
+    except (ValueError, TypeError):
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request data."
+        }, status=400)
+
+    except Exception:
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to save address."
+        }, status=500)
+
+
+@csrf_exempt
+def delete_customer_address(request):
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Method not allowed."
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+        user_id = data.get("user_id")
+        address_id = data.get("address_id")
+
+        address = CustomerAddress.objects.filter(
+            id=address_id,
+            user_id=user_id
+        ).first()
+
+        if not address:
+            return JsonResponse({
+                "success": False,
+                "message": "Address not found."
+            }, status=404)
+
+        address.delete()
+
+        return JsonResponse({
+            "success": True,
+            "message": "Address deleted successfully."
+        })
+
+    except (ValueError, TypeError):
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request data."
+        }, status=400)
+
+    except Exception:
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to delete address."
+        }, status=500)
+
+
+@csrf_exempt
+def set_default_customer_address(request):
+    if request.method != "POST":
+        return JsonResponse({
+            "success": False,
+            "message": "Method not allowed."
+        }, status=405)
+
+    try:
+        data = json.loads(request.body)
+        user_id = data.get("user_id")
+        address_id = data.get("address_id")
+
+        address = CustomerAddress.objects.filter(
+            id=address_id,
+            user_id=user_id
+        ).first()
+
+        if not address:
+            return JsonResponse({
+                "success": False,
+                "message": "Address not found."
+            }, status=404)
+
+        CustomerAddress.objects.filter(
+            user_id=user_id,
+            is_default=True
+        ).update(is_default=False)
+
+        address.is_default = True
+        address.save(update_fields=["is_default"])
+
+        return JsonResponse({
+            "success": True,
+            "message": "Default address updated successfully."
+        })
+
+    except (ValueError, TypeError):
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request data."
+        }, status=400)
+
+    except Exception:
+        return JsonResponse({
+            "success": False,
+            "message": "Unable to update default address."
+        }, status=500)
 

@@ -239,6 +239,159 @@
                 font-size: 25px;
             }
         }
+        
+@media print {
+    /* Hide page controls and navigation */
+    .page-header,
+    .order-tabs,
+    .content-header,
+    .orders-actions,
+    .search-box,
+    .print-button,
+    .back-link {
+        display: none !important;
+    }
+
+    /* Keep only the orders table */
+    body,
+    .orders-page,
+    .orders-content,
+    .table-wrapper {
+        background: white !important;
+        color: black !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    th,
+    td {
+        border: 1px solid #999 !important;
+        padding: 8px !important;
+        color: black !important;
+        font-size: 11px !important;
+        text-align: left !important;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .status {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #999 !important;
+    }
+}
+
+/* Hide report headings on the normal dashboard */
+.print-report-header,
+.print-table-heading {
+    display: none;
+}
+
+@media print {
+    .content-header,
+    .page-header,
+    .order-tabs,
+    .search-box,
+    .print-button,
+    .back-link,
+    .orders-actions {
+        display: none !important;
+    }
+
+    .print-report-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #222;
+    }
+
+    .print-report-header h1 {
+        display: block !important;
+        font-size: 24px;
+        margin: 0;
+        color: black !important;
+    }
+
+    .print-date-time {
+        text-align: right;
+        font-size: 12px;
+        line-height: 1.8;
+        color: black !important;
+    }
+
+    .print-table-heading {
+        display: block !important;
+        margin: 0 0 12px;
+        font-size: 18px;
+        color: black !important;
+    }
+
+    body,
+    .orders-page,
+    .orders-content,
+    .table-wrapper {
+        background: white !important;
+        color: black !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        min-width: 0 !important;
+    }
+
+    th,
+    td {
+        border: 1px solid #999 !important;
+        padding: 8px !important;
+        color: black !important;
+        font-size: 11px !important;
+        text-align: left !important;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .status {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #999 !important;
+    }
+}
+
+
+        
     </style>
 </head>
 
@@ -306,7 +459,21 @@
                     class="search-box"
                     placeholder="Search orders..."
                     aria-label="Search orders">
+                    <button type="button" class="print-button" onclick="printOrders()">
+                        🖨️ Print
+                    </button>
             </div>
+            <div class="print-report-header">
+                <h1>SAI TASTY FOODS</h1>
+                <div class="print-date-time">
+                    <div id="printDate"></div>
+                    <div id="printTime"></div>
+                </div>
+            </div>
+
+            <h2 id="printTableHeading" class="print-table-heading">
+                All Orders
+            </h2>
 
             <div class="table-wrapper">
                 <table>
@@ -596,6 +763,51 @@
     );
 
     loadOrders();
+    
+    function printOrders() {
+        // Get orders belonging to the selected category,
+        // regardless of the search text.
+        const selectedOrders = allOrders.filter(function(order) {
+            const status = String(order.status || "pending").toLowerCase();
+            return currentStatus === "all" || status === currentStatus;
+        });
+
+        if (selectedOrders.length === 0) {
+            alert("No orders are available to print in this category.");
+            return;
+        }
+
+        const previousSearch = searchBox.value;
+
+        // Temporarily remove search filtering.
+        searchBox.value = "";
+        renderOrders();
+
+        // Show the selected category in the print report.
+        document.getElementById("printTableHeading").textContent =
+            orderOptions[currentStatus]?.title || "All Orders";
+
+        // Show the current date and time.
+        const now = new Date();
+
+        document.getElementById("printDate").textContent =
+            "Date: " + now.toLocaleDateString("en-IN");
+
+        document.getElementById("printTime").textContent =
+            "Time: " + now.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+            });
+
+        window.print();
+
+        // Restore the original search after printing.
+        searchBox.value = previousSearch;
+        renderOrders();
+    }
+
+
 </script>
 
 </body>

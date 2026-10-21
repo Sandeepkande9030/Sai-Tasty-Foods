@@ -603,6 +603,144 @@
     font-weight: bold;
 }
 
+
+/* =========================
+   RESTAURANT PRINT BUTTON
+========================= */
+
+.restaurant-print-button {
+    background: #1769aa;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.restaurant-orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.restaurant-orders-header h2 {
+    margin: 0;
+}
+
+.restaurant-print-report {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .restaurant-orders-header {
+        flex-wrap: wrap;
+    }
+}
+
+/* =========================
+   PRINT ORDERS
+========================= */
+
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+
+    #ordersSection,
+    #ordersSection * {
+        visibility: visible !important;
+    }
+
+    #ordersSection {
+        display: block !important;
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 15px !important;
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+
+    .restaurant-print-report {
+        display: block !important;
+        position: relative;
+        min-height: 65px;
+        margin-bottom: 20px;
+        color: black !important;
+    }
+
+    .restaurant-print-report h1 {
+        text-align: center;
+        font-size: 24px;
+        margin: 0;
+        padding-top: 8px;
+        color: black !important;
+    }
+
+    .restaurant-print-datetime {
+        position: absolute;
+        top: 0;
+        right: 0;
+        text-align: right;
+        font-size: 11px;
+        line-height: 1.5;
+        color: black !important;
+    }
+
+    .restaurant-orders-header {
+        display: none !important;
+    }
+
+    #ordersContainer {
+        display: block !important;
+    }
+
+    .order-card {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #999 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .order-card p,
+    .order-card h3,
+    .order-card strong {
+        color: black !important;
+    }
+
+    .order-card button {
+        display: none !important;
+    }
+}
+
+.restaurant-orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.restaurant-orders-header h2 {
+    margin: 0;
+}
+
+@media (max-width: 480px) {
+    .restaurant-orders-header {
+        flex-wrap: wrap;
+    }
+}
+
+
+
 </style>
 
 </head>
@@ -799,10 +937,26 @@
         id="ordersSection"
         class="content-section"
         style="display:none;">
+        <div class="restaurant-print-report">
+        <h1 id="restaurantPrintName">Restaurant Name</h1>
 
-        <h2>
-            📦 Orders
-        </h2>
+        <div class="restaurant-print-datetime">
+            <div id="restaurantPrintDate"></div>
+            <div id="restaurantPrintTime"></div>
+        </div>
+    </div>
+        
+        <div class="restaurant-orders-header">
+            <h2>📦 Orders</h2>
+
+            <button
+                type="button"
+                onclick="printRestaurantOrders()"
+                class="restaurant-print-button">
+                🖨️ Print
+            </button>
+        </div>
+
 
         <div id="ordersContainer">
 
@@ -3674,10 +3828,38 @@ profileForm.addEventListener("submit", async function(event) {
 });
 
 
+function printRestaurantOrders() {
+    const ordersContainer =
+        document.getElementById("ordersContainer");
 
+    if (!ordersContainer.querySelector(".order-card")) {
+        alert("No orders available to print.");
+        return;
+    }
 
-</script>
+    const now = new Date();
 
-</body>
+    // Get the restaurant name from the dashboard
+    const restaurantName =
+        document.getElementById("restaurantName").textContent.trim();
 
-</html>
+    document.getElementById("restaurantPrintName").textContent =
+        restaurantName && restaurantName !== "Loading restaurant..."
+            ? restaurantName
+            : localStorage.getItem("restaurantName") || "Restaurant";
+
+    // Set the current date
+    document.getElementById("restaurantPrintDate").textContent =
+        "Date: " + now.toLocaleDateString("en-IN");
+
+    // Set the current time without seconds
+    document.getElementById("restaurantPrintTime").textContent =
+        "Time: " + now.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        });
+
+    window.print();
+}
+</script> 

@@ -30,6 +30,10 @@ from .views import (
     update_restaurant_profile,
     update_user_profile,
     cancel_customer_order,
+    customer_addresses,
+    save_customer_address,
+    delete_customer_address,
+    set_default_customer_address,
 )
 
 
@@ -151,5 +155,24 @@ urlpatterns = [
     cancel_customer_order,
     name="cancel_customer_order"
     ),
-    
+        path(
+        "customer-addresses/",
+        customer_addresses,
+        name="customer_addresses"
+    ),
+    path(
+        "save-customer-address/",
+        save_customer_address,
+        name="save_customer_address"
+    ),
+    path(
+        "delete-customer-address/",
+        delete_customer_address,
+        name="delete_customer_address"
+    ),
+    path(
+        "set-default-customer-address/",
+        set_default_customer_address,
+        name="set_default_customer_address"
+    ),
 ]

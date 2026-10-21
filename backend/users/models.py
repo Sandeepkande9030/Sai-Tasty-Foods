@@ -32,6 +32,75 @@ class User(models.Model):
 
 
 # =========================
+# CUSTOMER ADDRESS MODEL
+# =========================
+
+class CustomerAddress(models.Model):
+
+    ADDRESS_TYPES = [
+        ("Home", "Home"),
+        ("Work", "Work"),
+        ("Other", "Other"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="saved_addresses"
+    )
+
+    address_type = models.CharField(
+        max_length=20,
+        choices=ADDRESS_TYPES,
+        default="Home"
+    )
+
+    full_name = models.CharField(
+        max_length=100
+    )
+
+    phone = models.CharField(
+        max_length=10
+    )
+
+    house = models.CharField(
+        max_length=255
+    )
+
+    area = models.CharField(
+        max_length=255
+    )
+
+    city = models.CharField(
+        max_length=100
+    )
+
+    state = models.CharField(
+        max_length=100
+    )
+
+    pincode = models.CharField(
+        max_length=6
+    )
+
+    landmark = models.CharField(
+        max_length=255,
+        blank=True,
+        default=""
+    )
+
+    is_default = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.address_type} - {self.user.email}"
+
+# =========================
 # RESTAURANT MODEL
 # =========================
 

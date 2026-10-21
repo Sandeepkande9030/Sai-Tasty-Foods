@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Addresses - Sai Tasty Foods</title>
+    <link rel="stylesheet" href="./style.css">
+
+    <style>
+        .addresses-page {
+            max-width: 900px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .address-form,
+        .saved-address {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 18px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .address-form label {
+            display: block;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        .address-form input,
+        .address-form select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .address-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .address-actions button,
+        .address-form button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .primary-address-button {
+            background: #1769aa;
+            color: white;
+        }
+
+        .delete-address-button {
+            background: #c62828;
+            color: white;
+        }
+
+        .default-label {
+            color: #087443;
+            font-weight: bold;
+        }
+
+        #addressMessage {
+            margin-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">SAI TASTY FOODS</div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="restaurants.html">Restaurants</a>
+        <a href="cart.html">🛒 Cart</a>
+        <a href="account.html">My Account</a>
+        <a href="orders.html">My Orders</a>
+    </nav>
+</header>
+
+<main class="addresses-page">
+    <h1>My Addresses</h1>
+    <p>Manage your saved delivery addresses.</p>
+
+    <button
+        type="button"
+        class="primary-address-button"
+        id="addAddressBtn">
+        + Add New Address
+    </button>
+
+    <form id="addressForm" class="address-form" style="display:none;">
+        <h2 id="addressFormTitle">Add New Address</h2>
+
+        <label for="addressType">Address Type</label>
+        <select id="addressType" required>
+            <option value="Home">Home</option>
+            <option value="Work">Work</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="fullName">Recipient Name</label>
+        <input id="fullName" maxlength="100" required>
+
+        <label for="addressPhone">Phone Number</label>
+        <input id="addressPhone" type="tel"
+               inputmode="numeric" maxlength="10"
+               pattern="[0-9]{10}" required>
+
+        <label for="house">House / Building</label>
+        <input id="house" maxlength="255" required>
+
+        <label for="area">Street / Area</label>
+        <input id="area" maxlength="255" required>
+
+        <label for="city">City</label>
+        <input id="city" maxlength="100" required>
+
+        <label for="state">State</label>
+        <input id="state" maxlength="100" required>
+
+        <label for="pincode">PIN Code</label>
+        <input id="pincode" inputmode="numeric"
+               maxlength="6" pattern="[0-9]{6}" required>
+
+        <label for="landmark">Landmark (Optional)</label>
+        <input id="landmark" maxlength="255">
+
+        <label>
+            <input type="checkbox" id="isDefault" style="width:auto;">
+            Set as default address
+        </label>
+
+        <div class="address-actions">
+            <button type="submit"
+                    class="primary-address-button"
+                    id="saveAddressBtn">
+                Save Address
+            </button>
+
+            <button type="button" id="cancelAddressBtn">
+                Cancel
+            </button>
+        </div>
+
+        <p id="addressMessage" role="status"></p>
+    </form>
+
+    <section id="savedAddresses">
+        <p>Loading addresses...</p>
+    </section>
+</main>
+
+<script src="./script.js"></script>
+
+<script>
+    const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "null"
+    );
+
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    if (!loggedIn || !currentUser || !currentUser.id) {
+        window.location.href = "login.html";
+    }
+
+    const customerAddressForm = document.getElementById("addressForm");
+    const savedAddresses = document.getElementById("savedAddresses");
+    const addressMessage = document.getElementById("addressMessage");
+    const saveAddressBtn = document.getElementById("saveAddressBtn");
+
+    let editingAddressId = null;
+    let addressCache = [];
+
+    async function addressRequest(url, options = {}) {
+        const response = await fetch(`${API_BASE_URL}/api/${url}`, options);
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Address request failed.");
+        }
+
+        return data;
+    }
+
+    function resetAddressForm() {
+        customerAddressForm.reset();
+        editingAddressId = null;
+        document.getElementById("addressFormTitle").textContent =
+            "Add New Address";
+        saveAddressBtn.textContent = "Save Address";
+        addressMessage.textContent = "";
+    }
+
+    document.getElementById("addAddressBtn").addEventListener("click", () => {
+        resetAddressForm();
+        customerAddressForm.style.display = "block";
+        document.getElementById("fullName").focus();
+    });
+
+    document.getElementById("cancelAddressBtn").addEventListener("click", () => {
+        customerAddressForm.style.display = "none";
+        resetAddressForm();
+    });
+
+    async function loadAddresses() {
+        try {
+            const data = await addressRequest(
+                `customer-addresses/?user_id=${encodeURIComponent(currentUser.id)}`
+            );
+
+            addressCache = data.addresses || [];
+            savedAddresses.replaceChildren();
+
+            if (addressCache.length === 0) {
+                const emptyMessage = document.createElement("p");
+                emptyMessage.textContent = "No saved addresses yet.";
+                savedAddresses.appendChild(emptyMessage);
+                return;
+            }
+
+            addressCache.forEach(address => {
+                const card = document.createElement("article");
+                card.className = "saved-address";
+
+                const heading = document.createElement("h3");
+                heading.textContent =
+                    `${address.address_type} — ${address.full_name}`;
+                card.appendChild(heading);
+
+                if (address.is_default) {
+                    const defaultLabel = document.createElement("p");
+                    defaultLabel.className = "default-label";
+                    defaultLabel.textContent = "Default Address";
+                    card.appendChild(defaultLabel);
+                }
+
+                const details = [
+                    `Phone: ${address.phone}`,
+                    address.house,
+                    address.area,
+                    `${address.city}, ${address.state} - ${address.pincode}`,
+                    address.landmark ? `Landmark: ${address.landmark}` : ""
+                ].filter(Boolean);
+
+                details.forEach(text => {
+                    const line = document.createElement("p");
+                    line.textContent = text;
+                    card.appendChild(line);
+                });
+
+                const actions = document.createElement("div");
+                actions.className = "address-actions";
+
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.textContent = "Edit";
+                editButton.addEventListener("click", () => editAddress(address.id));
+                actions.appendChild(editButton);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "delete-address-button";
+                deleteButton.textContent = "Delete";
+                deleteButton.addEventListener("click", () => deleteAddress(address.id));
+                actions.appendChild(deleteButton);
+
+                if (!address.is_default) {
+                    const defaultButton = document.createElement("button");
+                    defaultButton.type = "button";
+                    defaultButton.className = "primary-address-button";
+                    defaultButton.textContent = "Set as Default";
+                    defaultButton.addEventListener(
+                        "click",
+                        () => setDefaultAddress(address.id)
+                    );
+                    actions.appendChild(defaultButton);
+                }
+
+                card.appendChild(actions);
+                savedAddresses.appendChild(card);
+            });
+        } catch (error) {
+            savedAddresses.textContent = error.message;
+        }
+    }
+
+    function editAddress(addressId) {
+        const address = addressCache.find(item => item.id === addressId);
+        if (!address) return;
+
+        editingAddressId = address.id;
+
+        document.getElementById("addressType").value = address.address_type;
+        document.getElementById("fullName").value = address.full_name;
+        document.getElementById("addressPhone").value = address.phone;
+        document.getElementById("house").value = address.house;
+        document.getElementById("area").value = address.area;
+        document.getElementById("city").value = address.city;
+        document.getElementById("state").value = address.state;
+        document.getElementById("pincode").value = address.pincode;
+        document.getElementById("landmark").value = address.landmark || "";
+        document.getElementById("isDefault").checked = address.is_default;
+
+        document.getElementById("addressFormTitle").textContent = "Edit Address";
+        saveAddressBtn.textContent = "Update Address";
+        addressMessage.textContent = "";
+        customerAddressForm.style.display = "block";
+        customerAddressForm.scrollIntoView({ behavior: "smooth" });
+    }
+
+    customerAddressForm.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        saveAddressBtn.disabled = true;
+        saveAddressBtn.textContent = "Saving...";
+
+        const payload = {
+            user_id: currentUser.id,
+            address_id: editingAddressId,
+            address_type: document.getElementById("addressType").value,
+            full_name: document.getElementById("fullName").value.trim(),
+            phone: document.getElementById("addressPhone").value.trim(),
+            house: document.getElementById("house").value.trim(),
+            area: document.getElementById("area").value.trim(),
+            city: document.getElementById("city").value.trim(),
+            state: document.getElementById("state").value.trim(),
+            pincode: document.getElementById("pincode").value.trim(),
+            landmark: document.getElementById("landmark").value.trim(),
+            is_default: document.getElementById("isDefault").checked
+        };
+
+        try {
+            await addressRequest("save-customer-address/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            customerAddressForm.style.display = "none";
+            resetAddressForm();
+            await loadAddresses();
+        } catch (error) {
+            addressMessage.textContent = error.message;
+        } finally {
+            saveAddressBtn.disabled = false;
+            saveAddressBtn.textContent =
+                editingAddressId ? "Update Address" : "Save Address";
+        }
+    });
+
+    async function deleteAddress(addressId) {
+        if (!confirm("Delete this saved address?")) return;
+
+        try {
+            await addressRequest("delete-customer-address/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id: currentUser.id,
+                    address_id: addressId
+                })
+            });
+
+            await loadAddresses();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function setDefaultAddress(addressId) {
+        try {
+            await addressRequest("set-default-customer-address/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id: currentUser.id,
+                    address_id: addressId
+                })
+            });
+
+            await loadAddresses();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    if (loggedIn && currentUser && currentUser.id) {
+        loadAddresses();
+    }
+</script>
+
+</body>
+</html>
