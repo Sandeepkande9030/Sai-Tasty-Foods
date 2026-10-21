@@ -8,71 +8,189 @@
     <link rel="stylesheet" href="./style.css">
 
     <style>
-        .addresses-page {
-            max-width: 900px;
-            margin: 35px auto;
-            padding: 20px;
-        }
+       
+.addresses-page {
+    max-width: 1180px;
+    margin: 35px auto;
+    padding: 24px;
+    color: #172b4d;
+}
 
-        .address-form,
-        .saved-address {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 18px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
+.addresses-page h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    color: #172b4d;
+}
 
-        .address-form label {
-            display: block;
-            margin-top: 12px;
-            font-weight: 600;
-        }
+.addresses-page > p {
+    margin: 0 0 24px;
+    color: #64748b;
+    font-size: 16px;
+}
 
-        .address-form input,
-        .address-form select {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 11px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+.address-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 24px 0;
+}
 
-        .address-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
+.address-form,
 
-        .address-actions button,
-        .address-form button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+.saved-address {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e5edf7;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    box-shadow: 0 3px 12px rgba(29, 63, 107, 0.06);
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
 
-        .primary-address-button {
-            background: #1769aa;
-            color: white;
-        }
+.saved-address h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: #172b4d;
+}
 
-        .delete-address-button {
-            background: #c62828;
-            color: white;
-        }
+.saved-address p {
+    color: #475569;
+    line-height: 1.4;
+    margin: 4px 0;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
 
-        .default-label {
-            color: #087443;
-            font-weight: bold;
-        }
+.saved-address .address-actions {
+    margin-top: 12px;
+}
 
-        #addressMessage {
-            margin-top: 12px;
-        }
+
+.default-label {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: #15803d !important;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.address-form label {
+    display: block;
+    margin-top: 16px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.address-form input:not([type="checkbox"]),
+.address-form select {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    margin-top: 7px;
+    border: 1px solid #d7e0ec;
+    border-radius: 9px;
+    background: #fff;
+    font: inherit;
+    outline: none;
+}
+
+.address-form input:focus {
+    border-color: #1677ff;
+    box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.12);
+}
+
+.address-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.address-actions button,
+.address-form button,
+#addAddressBtn {
+    min-height: 42px;
+    padding: 11px 18px;
+    border: 0;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.address-actions button:hover,
+.address-form button:hover,
+#addAddressBtn:hover {
+    transform: translateY(-1px);
+}
+
+.primary-address-button,
+.edit-address-button,
+#addAddressBtn {
+    background: #1677ff;
+    color: #fff;
+}
+
+.primary-address-button:hover,
+.edit-address-button:hover,
+#addAddressBtn:hover {
+    background: #095fd4;
+}
+
+.delete-address-button {
+    background: #fff0f0;
+    color: #dc2626;
+}
+
+.delete-address-button:hover {
+    background: #ffe0e0;
+}
+
+.cancel-address-button {
+    background: #eef2f7;
+    color: #334155;
+}
+
+#addressMessage {
+    margin-top: 12px;
+    color: #dc2626;
+}
+
+@media (max-width: 600px) {
+    .addresses-page {
+        margin: 16px auto;
+        padding: 14px;
+    }
+
+    .addresses-page h1 {
+        font-size: 26px;
+    }
+
+    .address-form,
+    .saved-address {
+        padding: 17px;
+        border-radius: 12px;
+    }
+
+    .address-toolbar {
+        justify-content: stretch;
+    }
+
+    #addAddressBtn {
+        width: 100%;
+    }
+
+    .address-actions button {
+        flex: 1 1 auto;
+    }
+}
+
     </style>
 </head>
 
@@ -94,22 +212,17 @@
     <h1>My Addresses</h1>
     <p>Manage your saved delivery addresses.</p>
 
+    <div class="address-toolbar">
     <button
         type="button"
         class="primary-address-button"
         id="addAddressBtn">
         + Add New Address
     </button>
+</div>
 
     <form id="addressForm" class="address-form" style="display:none;">
         <h2 id="addressFormTitle">Add New Address</h2>
-
-        <label for="addressType">Address Type</label>
-        <select id="addressType" required>
-            <option value="Home">Home</option>
-            <option value="Work">Work</option>
-            <option value="Other">Other</option>
-        </select>
 
         <label for="fullName">Recipient Name</label>
         <input id="fullName" maxlength="100" required>
@@ -267,6 +380,7 @@
                 const editButton = document.createElement("button");
                 editButton.type = "button";
                 editButton.textContent = "Edit";
+                editButton.className = "edit-address-button";
                 editButton.addEventListener("click", () => editAddress(address.id));
                 actions.appendChild(editButton);
 
@@ -303,7 +417,6 @@
 
         editingAddressId = address.id;
 
-        document.getElementById("addressType").value = address.address_type;
         document.getElementById("fullName").value = address.full_name;
         document.getElementById("addressPhone").value = address.phone;
         document.getElementById("house").value = address.house;
@@ -330,7 +443,6 @@
         const payload = {
             user_id: currentUser.id,
             address_id: editingAddressId,
-            address_type: document.getElementById("addressType").value,
             full_name: document.getElementById("fullName").value.trim(),
             phone: document.getElementById("addressPhone").value.trim(),
             house: document.getElementById("house").value.trim(),

@@ -1474,16 +1474,14 @@ if (addressForm) {
                     .getElementById("deliveryName")
                     .value
                     .trim();
-
-            const deliveryPhone =
-                document
-                    .getElementById("deliveryPhone")
-                    .value
-                    .trim();
-
             const deliveryHouse =
                 document
                     .getElementById("deliveryHouse")
+                    .value
+                    .trim();
+            const deliveryPhone =
+                document
+                    .getElementById("deliveryPhone")
                     .value
                     .trim();
 
@@ -1675,7 +1673,6 @@ if (addressForm) {
 
                 delivery_phone:
                     deliveryPhone,
-
                 delivery_house:
                     deliveryHouse,
 
